@@ -35,12 +35,22 @@ public class Xxx {
 
 ##### 开发流程
 
-`git checkout master && git pull` 保证目前代码为最新版本。
+`git checkout main && git pull` 保证目前代码为最新版本。
 
 `git checkout -b your-name/your-feature-name` 创建一个新分支。
 
 
-
+#### domain
+```
+activity: 动态中心
+activity_comment: 动态评论中心
+auth: 用户鉴权
+join: 纳新报名中心
+join_admin: 纳新管理中心
+search: 主搜
+user: 用户中心
+...
+```
 
 
 
