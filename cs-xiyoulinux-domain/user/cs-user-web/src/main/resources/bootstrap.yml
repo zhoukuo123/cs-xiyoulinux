@@ -1,0 +1,34 @@
+###############################################
+#
+# Nacos注册中心
+#
+###############################################
+spring:
+  cloud:
+    nacos:
+      config:
+        server-addr: localhost:8848
+      discovery:
+        enabled: true
+        register-enabled: true
+        server-addr: localhost:8848
+
+
+###############################################
+#
+# dubbo
+#
+###############################################
+dubbo:
+  application:
+    name: cs-user-service
+  registry:
+    address: nacos://localhost:8848
+    # 启动时检查是否存在, 注册中心不存在就报错
+    check: false
+  protocol:
+    name: dubbo
+  consumer:
+    # 启动时检查服务提供者是否存在, 不存在就报错
+    check: false
+    timeout: 3000

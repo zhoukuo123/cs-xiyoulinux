@@ -1,0 +1,59 @@
+server:
+  port: 10002
+  # spring boot 2.3.X和2.2.X的一个异常处理的改动
+  error:
+    include-exception: true
+    include-stacktrace: on_param
+    include-message: always
+
+spring:
+  datasource:
+  # 拆分数据源到独立database instance, 或者独立schema
+    # url: jdbc:mysql://localhost:3306/foodie-cloud-item?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+#    url: jdbc:mysql://localhost:3306/foodie-shop-dev?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+#    password: zhoukuo
+
+#     Spring Cloud Config 从 github 拉取
+#    url: ${mariadb.url}
+#    password: ${mariadb.password}
+
+    url: jdbc:mysql://localhost:3306/cs_user?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+    password: zhoukuo
+  redis:
+    # redis 单机单实例
+    database: 0
+    host: localhost
+    port: 6379
+    password: zhoukuo
+
+management:
+  endpoints:
+    web:
+      exposure:
+        # 暴露所有endpoint
+        include: '*'
+  endpoint:
+    health:
+      # 总是显示各个组件的actuator信息
+      show-details: always
+  security:
+    enabled: false
+
+mybatis:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
