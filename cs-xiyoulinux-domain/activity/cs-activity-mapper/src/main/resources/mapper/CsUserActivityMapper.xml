@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiyoulinux.activity.mapper.CsUserActivityMapper">
+
+    <resultMap id="BaseResultMap" type="com.xiyoulinux.activity.pojo.CsUserActivity">
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="activityContent" column="activity_content" jdbcType="VARCHAR"/>
+        <result property="activityCreateTime" column="activity_create_time" jdbcType="TIMESTAMP"/>
+        <result property="questionIsSolve" column="question_is_solve" jdbcType="INTEGER"/>
+        <result property="activityType" column="activity_type" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,user_id,activity_content,
+        activity_create_time,question_is_solve,activity_type
+    </sql>
+
+    <select id="selectCurrentActivity" resultMap="BaseResultMap">
+        select *
+        from cs_user_activity
+        where activity_create_time corder by activity_create_time DESC limit 0,100;
+    </select>
+
+    <select id="selectByUserId" resultMap="BaseResultMap">
+        select *
+        from cs_user_activity
+        where user_id = #{userId}
+        order by activity_create_time DESC;
+    </select>
+
+    <select id="getUnresolvedIssues" resultMap="BaseResultMap">
+        select *
+        from from cs_user_activity
+        where activity_type == 0 and question_is_solve == 0
+        order by activity_create_time DESC;
+    </select>
+
+    <select id="getResolvedIssues" resultMap="BaseResultMap">
+        select *
+        from from cs_user_activity
+        where activity_type == 0 and question_is_solve == 1
+        order by activity_create_time DESC;
+    </select>
+
+    <select id="getTasks" resultMap="BaseResultMap">
+        select *
+        from from cs_user_activity
+        where activity_type == 3
+        order by activity_create_time DESC;
+    </select>
+
+    <select id="selectOldActivity" resultMap="BaseResultMap">
+        select *
+        from cs_user_activity
+        where activity_create_time corder by activity_create_time DESC limit ;
+    </select>
+
+
+</mapper>

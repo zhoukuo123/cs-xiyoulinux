@@ -13,8 +13,17 @@
         <module>cs-xiyoulinux-common/cs-xiyoulinux-web-componets</module>
         <module>cs-xiyoulinux-platform/gateway</module>
         <module>cs-xiyoulinux-domain/auth/cs-auth-api</module>
-        <module>cs-xiyoulinux-domain/cs-activity</module>
         <module>cs-xiyoulinux-platform/zipkin-server</module>
+        <module>cs-xiyoulinux-domain/activity/cs-activity-pojo</module>
+        <module>cs-xiyoulinux-domain/activity/cs-activity-web</module>
+        <module>cs-xiyoulinux-domain/activity/cs-activity-api</module>
+        <module>cs-xiyoulinux-domain/activity/cs-activity-mapper</module>
+        <module>cs-xiyoulinux-domain/activity/cs-activity-service</module>
+        <module>cs-xiyoulinux-domain/comment/cs-activity-comment-api</module>
+        <module>cs-xiyoulinux-domain/comment/cs-activity-comment-web</module>
+        <module>cs-xiyoulinux-domain/comment/cs-activity-comment-pojo</module>
+        <module>cs-xiyoulinux-domain/comment/cs-activity-comment-mapper</module>
+        <module>cs-xiyoulinux-domain/comment/cs-activity-comment-service</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -104,10 +113,16 @@
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.21</version>
         </dependency>
-<!--        测试-->
+        <!--        测试-->
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>ch.qos.logback</groupId>
+                    <artifactId>logback-classic</artifactId>
+                </exclusion>
+            </exclusions>
             <scope>test</scope>
         </dependency>
     </dependencies>
