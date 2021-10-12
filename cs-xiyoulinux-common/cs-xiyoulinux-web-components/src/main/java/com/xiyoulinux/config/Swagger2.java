@@ -44,7 +44,7 @@ public class Swagger2 {
                         "1178053078@qq.com"))
                 .description("专为CS平台提供的api文档")    // 详细信息
                 .version("1.0.1")                        // 文档版本号
-                .termsOfServiceUrl("https://github.com") // 网站地址
+                .termsOfServiceUrl("http://cs.xiyoulinux.com") // 网站地址
                 .build();
     }
 }
