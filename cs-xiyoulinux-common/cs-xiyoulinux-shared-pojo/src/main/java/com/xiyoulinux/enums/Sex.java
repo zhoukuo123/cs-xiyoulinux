@@ -6,9 +6,9 @@ package com.xiyoulinux.enums;
  * 性别 枚举
  */
 public enum Sex {
-    woman(0, "女"),
-    man(1, "男"),
-    secret(2, "保密");
+    WOMAN(0, "女"),
+    MAN(1, "男"),
+    SECRET(2, "保密");
 
     public final Integer type;
     public final String value;
