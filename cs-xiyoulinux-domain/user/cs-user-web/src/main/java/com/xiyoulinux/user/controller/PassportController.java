@@ -112,6 +112,7 @@ public class PassportController {
             return JSONResult.errorMsg("用户名或密码不正确");
         }
 
+        // 调用Auth微服务生成token
         AuthResponse token = authService.tokennize(userResult.getUid());
         if (!AuthCode.SUCCESS.getCode().equals(token.getCode())) {
             log.error("Token error - uid={}", userResult.getUid());

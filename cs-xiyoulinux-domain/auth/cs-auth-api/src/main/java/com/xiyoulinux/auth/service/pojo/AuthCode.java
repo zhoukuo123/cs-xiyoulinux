@@ -13,7 +13,9 @@ public enum AuthCode {
     /**
      * 无效的凭证
      */
-    INVALID_CREDENTIAL(2000L);
+    INVALID_CREDENTIAL(2000L),
+
+    TOKEN_EXPIRED(3000L);
 
     @Getter
     private Long code;

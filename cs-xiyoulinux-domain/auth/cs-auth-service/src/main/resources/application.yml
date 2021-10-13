@@ -1,0 +1,33 @@
+server:
+  port: 10006
+
+spring:
+  application:
+    name: cs-auth-service
+  redis:
+    database: 0
+    host: localhost
+    port: 6379
+    password: zhoukuo
+#  zipkin:
+#    base-url: http://ZIPKIN-SERVER/
+#    discovery-client-enabled: true
+#    locator:
+#      discovery:
+#        enabled: true
+#  sleuth:
+#    sampler:
+#      probability: 1
+
+management:
+  endpoint:
+    health:
+      show-details: always
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  security:
+    enabled: false
+
+
