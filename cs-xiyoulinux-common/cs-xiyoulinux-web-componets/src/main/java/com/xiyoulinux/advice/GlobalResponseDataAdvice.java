@@ -25,16 +25,15 @@ public class GlobalResponseDataAdvice implements ResponseBodyAdvice<Object> {
     @SuppressWarnings("all")
     public boolean supports(MethodParameter methodParameter,
                             Class<? extends HttpMessageConverter<?>> aClass) {
-//        if (methodParameter.getDeclaringClass()
-//                .isAnnotationPresent(IgnoreResponseAdvice.class)) {
-//            return false;
-//        }
-//
-//        if (methodParameter.getMethod().isAnnotationPresent(IgnoreResponseAdvice.class)) {
-//            return false;
-//        }
-//
-//        return true;
+        if (methodParameter.getDeclaringClass()
+                .isAnnotationPresent(IgnoreResponseAdvice.class)) {
+            return false;
+        }
+
+        if (methodParameter.getMethod().isAnnotationPresent(IgnoreResponseAdvice.class)) {
+            return false;
+        }
+
         return false;
     }
 
