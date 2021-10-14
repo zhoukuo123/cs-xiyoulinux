@@ -1,0 +1,69 @@
+###
+POST http://127.0.0.1:8089/cs-activity-comment/activity-comment/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityId":"21122509KK461BTC",
+  "commentContent":"第一条问题的第一条评论",
+  "commentCreateTime":"2021-12-25T19:00:00.000Z"
+
+}
+
+###
+POST http://127.0.0.1:8089/cs-activity-comment/activity-comment/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityId":"21122509RFD57KWH",
+  "commentContent":"第二条问题的第一条评论",
+  "commentCreateTime":"2021-12-25T19:00:00.000Z"
+}
+
+###
+POST http://127.0.0.1:8089/cs-activity-comment/activity-comment/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityId":"21122509STXDYH4H",
+  "commentContent":"第一条任务的第一条评论",
+  "commentCreateTime":"2021-12-25T19:00:00.000Z"
+}
+
+###
+POST http://127.0.0.1:8089/cs-activity-comment/activity-comment/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityId":"21122509TSRYF32W",
+  "commentContent":"第二条任务的第一条评论",
+  "commentCreateTime":"2021-12-25T19:00:00.000Z"
+}
+
+###
+POST http://127.0.0.1:8089/cs-activity-comment/activity-comment/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityId":"21122509WGXS4CPH",
+  "commentContent":"第三条任务的第一条评论",
+  "commentCreateTime":"2021-12-25T19:00:00.000Z"
+}
+
+###
+PUT http://127.0.0.1:7002/cs-gateway/cs-activity-comment/activity-comment/dislike/211225D7FARWKW6W
+
+###
+PUT http://127.0.0.1:8089/cs-activity-comment/activity-comment/like/211225D7FARWKW6W
+
+###
+GET http://127.0.0.1:8089/cs-activity-comment/activity-comment/21122509KK461BTC/1

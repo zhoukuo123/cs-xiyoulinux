@@ -1,0 +1,45 @@
+server:
+  port: 8089
+  servlet:
+    context-path: /cs-activity-comment
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 100MB
+  application:
+    name: cs-activity-comment-service
+  datasource:
+    url: jdbc:p6spy:mysql://localhost:3306/cs_comment?useSSL=false&useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8
+    type: com.alibaba.druid.pool.DruidDataSource
+    username: root
+    password: 13468724917qkm,
+    driver-class-name: com.p6spy.engine.spy.P6SpyDriver
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+        namespace: 2b1ec0ac-fd61-4aef-a32f-cd829bea9d97
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
+p6spy:
+  config:
+    appender: com.p6spy.engine.spy.appender.Slf4JLogger
+    logMessageFormat: com.p6spy.engine.spy.appender.CustomLineFormat
+    customLogMessageFormat: executionTime:%(executionTime)|执行sql:%(sqlSingleLine)
+    executionThreshold: 20
+dubbo:
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: spring-cloud://localhost
+  cloud:
+    subscribed-services: cs-file-service
+#mybaits-plus 设置为null的列
+mybatis-plus:
+  configuration:
+    jdbc-type-for-null: null
