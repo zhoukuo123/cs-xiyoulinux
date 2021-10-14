@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiyoulinux.activity.mapper.CsUserQuestionMapper">
+
+    <resultMap id="BaseResultMap" type="com.xiyoulinux.activity.entity.CsUserQuestion">
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <id property="questionId" column="question_id" jdbcType="VARCHAR"/>
+        <result property="userId" column="user_id" jdbcType="VARCHAR"/>
+        <result property="questionTitle" column="question_title" jdbcType="VARCHAR"/>
+        <result property="questionContent" column="question_content" jdbcType="VARCHAR"/>
+        <result property="questionCreateTime" column="question_create_time" jdbcType="TIMESTAMP"/>
+        <result property="questionStatus" column="question_status" jdbcType="INTEGER"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,user_id,question_title,question_content,question_id
+        question_create_time,question_status
+    </sql>
+
+    <delete id="deleteByQuestionId">
+        delete from cs_user_question where question_id = #{questionId}
+    </delete>
+
+    <select id="getPageUnresolvedIssues" resultMap="BaseResultMap">
+        select *
+        from cs_user_question
+        where question_status = 1
+        order by question_create_time DESC
+    </select>
+
+    <select id="getPageResolvedIssues" resultMap="BaseResultMap">
+        select *
+        from cs_user_question
+        where question_status = 0
+        order by question_create_time DESC
+    </select>
+
+    <update id="updateQuestionStatus">
+        update cs_user_question
+        set question_status = #{questionStatus}
+        where question_id = #{id}
+    </update>
+
+</mapper>
