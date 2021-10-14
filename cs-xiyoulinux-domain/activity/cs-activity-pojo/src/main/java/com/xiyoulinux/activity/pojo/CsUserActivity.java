@@ -3,9 +3,12 @@ package com.xiyoulinux.activity.pojo;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
+import com.xiyoulinux.enums.ActivityType;
+import com.xiyoulinux.enums.ActivityStatus;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.io.Serializable;
 import java.util.Date;
 
 /**
@@ -14,9 +17,12 @@ import java.util.Date;
  * @author qkm
  * @TableName cs_user_activity
  */
-@TableName(value = "cs_user_activity")
 @Data
-public class CsUserActivity implements Serializable {
+@TableName(value = "cs_user_activity")
+@AllArgsConstructor
+@NoArgsConstructor
+public class CsUserActivity{
+
     /**
      * 主键
      */
@@ -42,17 +48,23 @@ public class CsUserActivity implements Serializable {
     private Date activityCreateTime;
 
     /**
-     * 问题是否解决(0代表未解决)
+     * 结束时间
      */
-    @TableField(value = "question_is_solve")
-    private Integer questionIsSolve;
+    @TableField(value = "activity_end_time")
+    private Date activityEndTime;
 
     /**
      * 问题or动态or讲座or任务(0/1/2/3)
+     * {@link ActivityType}
      */
     @TableField(value = "activity_type")
-    private Integer activityType;
+    private ActivityType activityType;
 
-    @TableField(exist = false)
-    private static final long serialVersionUID = 1L;
+    /**
+     * 任务/讲座/问题的状态
+     * {@link ActivityStatus}
+     */
+    @TableField(value = "activity_status")
+    private ActivityStatus activityStatus;
+
 }

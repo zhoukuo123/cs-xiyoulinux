@@ -1,0 +1,127 @@
+###
+POST http://127.0.0.1:8001/cs-activity/activity/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityContent": "第一条动态",
+  "activityCreateTime": "2021-12-24T16:00:00.000Z",
+  "activityType": "发起动态"
+}
+
+###
+POST http://127.0.0.1:8001/cs-activity/activity/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityContent": "第1个问题",
+  "activityCreateTime": "2021-12-24T16:00:00.000Z",
+  "activityType": "发起问题",
+  "activityStatus": "未解决"
+}
+
+###
+POST http://127.0.0.1:8001/cs-activity/activity/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityContent": "第2个问题",
+  "activityCreateTime": "2021-12-24T16:00:00.000Z",
+  "activityType": "发起问题",
+  "activityStatus": "已解决"
+}
+
+###
+POST http://127.0.0.1:8001/cs-activity/activity/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityContent": "第102个任务",
+  "activityCreateTime": "2021-12-24T16:00:00.000Z",
+  "activityEndTime": "2021-12-28T16:00:00.000Z",
+  "activityType": "发起任务",
+  "activityStatus": "待进行"
+}
+
+###
+POST http://127.0.0.1:8001/cs-activity/activity/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityContent": "第101个任务",
+  "activityCreateTime": "2021-12-24T16:00:00.000Z",
+  "activityEndTime": "2021-12-26T16:00:00.000Z",
+  "activityType": "发起任务",
+  "activityStatus": "进行中"
+}
+
+###
+POST http://127.0.0.1:8001/cs-activity/activity/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityContent": "第100个任务",
+  "activityCreateTime": "2021-12-24T16:00:00.000Z",
+  "activityEndTime": "2021-12-24T16:00:00.000Z",
+  "activityType": "发起任务",
+  "activityStatus": "已完成"
+}
+
+###
+POST http://127.0.0.1:8001/cs-activity/activity/
+Content-Type: application/json
+Accept: application/json
+
+{
+  "userId": "1",
+  "activityContent": "第4个任务",
+  "activityCreateTime": "2021-12-24T16:00:00.000Z",
+  "activityEndTime": "2021-12-24T16:00:00.000Z",
+  "activityType": "发起任务",
+  "activityStatus": "已完成"
+}
+
+
+###
+GET http://127.0.0.1:7002/cs-gateway/cs-activity/activity/1
+Content-Type: application/json
+cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJkMzliNTU1MS05NTdiLTQyZDAtYTQwOS01ZTRhMjkyYmU0OGYiLCJleHAiOjE2NDExMzkyMDB9.BtbNd7xkOxqeZB1Uea0wpSWBFzYJ8uIpnVDw7AVx9amqrx662W0M5RfEve-GRJw2d10qoCLIZHZcZDehuulgnhHYfVZgOgmuVv33uaFNRmS9IOIxmLwTFLaQ5njtnTRCC4Yakp51iYHYvMjnb35gaarp0IzlFu8i-JkJ4wA7tgXYuWx21UuSjSIhJuSTLOS6mRTsoCyo0DnsR4byRvNNFpBw33ekw64n9E1Ek-E03O6UGX1pslThNVaznTOAL6EqvICHhZ82VTnIf3Pw2Gxal50oqYDA0eCA-W_1zrLCr04S5UTnUnUKgwdfVWgFkkK3nc88qDkdtlfnHwtZ3t8QWQ
+
+
+###
+DELETE http://127.0.0.1:8001/cs-activity/activity/21122509X7AHSW00/发起任务
+
+###
+GET http://127.0.0.1:8001/cs-activity/activity/issues/unsolved/1
+
+###
+GET http://127.0.0.1:8001/cs-activity/activity/issues/solved/1
+
+###
+GET http://127.0.0.1:8001/cs-activity/activity/did/tasks/1
+
+###
+GET http://127.0.0.1:8001/cs-activity/activity/doing/tasks/2
+
+###
+GET http://127.0.0.1:8001/cs-activity/activity/future/tasks/2
+
+###
+GET http://127.0.0.1:8001/cs-activity/activity/1/1
+
+###
+PUT http://127.0.0.1:8001/cs-activity/activity/revise/21122509STXDYH4H/2021-12-28 00:00:00/进行中
+
+###
+PUT http://127.0.0.1:8001/cs-activity/activity/revise/21122509KK461BTC/已解决

@@ -9,54 +9,40 @@
         <result property="userId" column="user_id" jdbcType="VARCHAR"/>
         <result property="activityContent" column="activity_content" jdbcType="VARCHAR"/>
         <result property="activityCreateTime" column="activity_create_time" jdbcType="TIMESTAMP"/>
-        <result property="questionIsSolve" column="question_is_solve" jdbcType="INTEGER"/>
+        <result property="activityEndTime" column="activity_end_time" jdbcType="TIMESTAMP"/>
         <result property="activityType" column="activity_type" jdbcType="INTEGER"/>
+        <result property="activityStatus" column="activity_status" jdbcType="INTEGER"/>
     </resultMap>
 
     <sql id="Base_Column_List">
         id
-        ,user_id,activity_content,
-        activity_create_time,question_is_solve,activity_type
+        ,user_id,activity_content,task_id
+        activity_create_time,activity_end_time,activity_type,activity_status
     </sql>
 
-    <select id="selectCurrentActivity" resultMap="BaseResultMap">
+    <update id="updateEndTimeAndStatusById">
+        update cs_user_activity
+        set activity_end_time = #{endTime} and activity_status = #{activityStatus}
+        where id = #{id}
+    </update>
+
+    <update id="updateQuestionStatus">
+        update cs_user_activity
+        set activity_status = #{questionStatus}
+        where id = #{id}
+    </update>
+
+    <select id="selectPageActivity" resultMap="BaseResultMap">
         select *
         from cs_user_activity
-        where activity_create_time corder by activity_create_time DESC limit 0,100;
+        order by activity_create_time DESC
     </select>
 
-    <select id="selectByUserId" resultMap="BaseResultMap">
+    <select id="selectPageByUserId" resultMap="BaseResultMap">
         select *
         from cs_user_activity
         where user_id = #{userId}
-        order by activity_create_time DESC;
-    </select>
-
-    <select id="getUnresolvedIssues" resultMap="BaseResultMap">
-        select *
-        from from cs_user_activity
-        where activity_type == 0 and question_is_solve == 0
-        order by activity_create_time DESC;
-    </select>
-
-    <select id="getResolvedIssues" resultMap="BaseResultMap">
-        select *
-        from from cs_user_activity
-        where activity_type == 0 and question_is_solve == 1
-        order by activity_create_time DESC;
-    </select>
-
-    <select id="getTasks" resultMap="BaseResultMap">
-        select *
-        from from cs_user_activity
-        where activity_type == 3
-        order by activity_create_time DESC;
-    </select>
-
-    <select id="selectOldActivity" resultMap="BaseResultMap">
-        select *
-        from cs_user_activity
-        where activity_create_time corder by activity_create_time DESC limit ;
+        order by activity_create_time DESC
     </select>
 
 

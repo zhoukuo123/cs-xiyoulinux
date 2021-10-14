@@ -1,60 +1,54 @@
 package com.xiyoulinux.activity.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.xiyoulinux.activity.pojo.CsUserActivity;
+import com.xiyoulinux.enums.ActivityStatus;
 import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
-import java.util.List;
+import java.util.Date;
 
 /**
  * @author qkm
- * @Entity com.xiyoulinux.dynamic.entity.CsUserDynamic
+ * @Entity com.xiyoulinux.activity.pojo.CsUserActivity
  */
 @Repository
 public interface CsUserActivityMapper extends BaseMapper<CsUserActivity> {
-    /**
-     * 查询最近的1000条数据
-     *
-     * @return 动态集合
-     */
-    List<CsUserActivity> selectCurrentActivity();
 
     /**
-     * 查询从1000条开始的动态
+     * 查询从50条开始的动态,之后以分页的形式展示，每页10条
      *
+     * @param page 分页
      * @return 动态集合
      */
-    List<CsUserActivity> selectOldActivity();
+    IPage<CsUserActivity> selectPageActivity(@Param("page") IPage<CsUserActivity> page);
 
     /**
      * 通过userId查找发表过的动态
      *
+     * @param page   分页
      * @param userId 用户id
      * @return 动态集合
      */
-    List<CsUserActivity> selectByUserId(@Param(("userId")) String userId);
+    IPage<CsUserActivity> selectPageByUserId(@Param("page") IPage<CsUserActivity> page, @Param(("userId")) String userId);
 
     /**
-     * 获取未解决的问题
+     * 更新结束时间
      *
-     * @return 未解决问题集合
+     * @param id             id
+     * @param endTime        要更新的结束时间
+     * @param activityStatus 要更新的状态
      */
-    public List<CsUserActivity> getUnresolvedIssues();
+    void updateEndTimeAndStatusById(@Param("id") String id, @Param("endTime") Date endTime,
+                                    @Param("activityStatus") ActivityStatus activityStatus);
 
     /**
-     * 获取已解决的问题
-     *
-     * @return 已解决问题集合
+     * 更新问题的状态
+     * @param id 问题id
+     * @param questionStatus 要更新的问题状态
      */
-    public List<CsUserActivity> getResolvedIssues();
-
-    /**
-     * 获取发布的任务数
-     *
-     * @return 任务集合
-     */
-    public List<CsUserActivity> getTasks();
+    void updateQuestionStatus(@Param("id") String id, @Param("questionStatus") ActivityStatus questionStatus);
 }
 
 
