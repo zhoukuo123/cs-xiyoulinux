@@ -68,11 +68,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
-    public CsUser queryUserForLogin(String username, String password) {
+    public CsUser queryUserForLogin(String phone, String password) {
         Example userExample = new Example(CsUser.class);
         Example.Criteria userCriteria = userExample.createCriteria();
 
-        userCriteria.andEqualTo("username", username);
+        userCriteria.andEqualTo("phone", phone);
         userCriteria.andEqualTo("password", password);
 
         CsUser result = csUserMapper.selectOneByExample(userExample);
@@ -98,5 +98,12 @@ public class UserServiceImpl implements UserService {
 
         int result = csUserMapper.updateByExampleSelective(user, userExample);
         return result;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public CsUser queryUserByUid(String uid) {
+
+        return csUserMapper.selectByPrimaryKey(uid);
     }
 }

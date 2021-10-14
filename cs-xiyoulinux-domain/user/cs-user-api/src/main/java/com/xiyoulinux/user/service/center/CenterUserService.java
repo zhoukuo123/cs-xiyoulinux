@@ -2,7 +2,6 @@ package com.xiyoulinux.user.service.center;
 
 import com.xiyoulinux.user.pojo.CsUser;
 import com.xiyoulinux.user.pojo.bo.center.CenterUserBO;
-import org.springframework.web.bind.annotation.*;
 
 /**
  * @author CoderZk

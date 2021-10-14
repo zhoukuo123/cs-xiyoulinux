@@ -42,7 +42,8 @@ public class CenterUserBO {
     @ApiModelProperty(value = "邮箱地址", name = "mail", example = "123123@qq.com", required = false)
     private String mail;
 
-    @Length(min = 5, max = 12, message = "qq号不能超过12位")
+    @Min(value = 5, message = "qq号不能小于5位, 且必须是数字")
+    @Max(value = 12, message = "qq号不能超过12位, 且必须是数字")
     @ApiModelProperty(value = "qq号", name = "qq", example = "1178053011", required = false)
     private String qq;
 
@@ -56,7 +57,8 @@ public class CenterUserBO {
     @ApiModelProperty(value = "github地址", name = "github", example = "https://github.com/xxxxx", required = false)
     private String github;
 
-    @Length(min = 4, max = 4, message = "届别必须为4位, 例如2018")
+    @Min(value = 4, message = "届别必须为4位, 且必须是数字, 例如2018")
+    @Max(value = 4, message = "届别必须为4位, 且必须是数字, 例如2018")
     @ApiModelProperty(value = "届别", name = "grade", example = "2019", required = false)
     private String grade;
 

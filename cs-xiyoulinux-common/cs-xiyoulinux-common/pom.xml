@@ -42,6 +42,12 @@
             <artifactId>spring-boot-starter-aop</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cs-xiyoulinux-shared-pojo</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Spring Boot的配置默认只能解析yml, 引入后可以解析xml, properties -->
         <dependency>
             <groupId>org.springframework.boot</groupId>

@@ -4,6 +4,8 @@ import com.xiyoulinux.auth.service.AuthService;
 import com.xiyoulinux.auth.service.pojo.Account;
 import com.xiyoulinux.auth.service.pojo.AuthCode;
 import com.xiyoulinux.auth.service.pojo.AuthResponse;
+import com.xiyoulinux.enums.ReturnCode;
+import com.xiyoulinux.exception.business.PassportException;
 import com.xiyoulinux.pojo.JSONResult;
 import com.xiyoulinux.user.pojo.CsUser;
 import com.xiyoulinux.user.pojo.bo.UserBO;
@@ -14,13 +16,13 @@ import com.xiyoulinux.utils.MD5Utils;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.Calendar;
 
 /**
@@ -45,78 +47,55 @@ public class PassportController {
 
     @ApiOperation(value = "用户注册", notes = "用户注册", httpMethod = "POST")
     @PostMapping("/register")
-    public JSONResult register(@RequestBody UserBO userBO,
-                               HttpServletRequest request,
-                               HttpServletResponse response) {
+    public JSONResult register(@RequestBody @Valid UserBO userBO) throws PassportException {
         // 校验
-        String username = userBO.getUsername();
         String password = userBO.getPassword();
         String confirmPwd = userBO.getConfirmPassword();
         String phone = userBO.getPhone();
         String verificationCode = userBO.getVerificationCode();
 
-        // 0. 判断用户名和密码必须不为空
-        if (StringUtils.isBlank(username) ||
-                StringUtils.isBlank(password) ||
-                StringUtils.isBlank(confirmPwd)) {
-            return JSONResult.errorMsg("用户名或密码不能为空");
-        }
-        if (StringUtils.isBlank(phone) || StringUtils.isBlank(verificationCode)) {
-            return JSONResult.errorMsg("手机号或手机验证码不能为空");
-        }
-
         // 1. 查询手机号是否已经注册
         boolean isExist = userService.queryPhoneIsExist(phone);
         if (isExist) {
-            return JSONResult.errorMsg("该手机号已经注册");
-        }
-        // 2. 密码长度不能少于6位
-        if (password.length() < 6) {
-            return JSONResult.errorMsg("密码长度不能少于6");
+            throw new PassportException(ReturnCode.INVALID_PARAM.code, "该手机号已经注册");
         }
 
-        // 3. 判断两次密码是否一致
+        // 2. 判断两次密码是否一致
         if (!password.equals(confirmPwd)) {
-            return JSONResult.errorMsg("两次密码输入不一致");
+            throw new PassportException(ReturnCode.INVALID_PARAM.code, "两次密码输入不一致");
         }
 
-        // 4. 判断短信验证码是否正确 TODO: 等写完SMS短信通知服务后, 修改短信验证码
+        // 3. 判断短信验证码是否正确 TODO: 等写完SMS短信通知服务后, 修改短信验证码
         if (verificationCode.equals("123456")) {
-            return JSONResult.errorMsg("短信验证码错误!");
+            throw new PassportException(ReturnCode.INVALID_PARAM.code, "短信验证码错误");
         }
 
         // 4. 实现注册
-        CsUser userResult = userService.createUser(userBO);
+        userService.createUser(userBO);
 
         return JSONResult.ok();
     }
 
     @ApiOperation(value = "用户登录", notes = "用户登录", httpMethod = "POST")
     @PostMapping("/login")
-    public JSONResult login(@RequestBody UserBO userBO,
+    public JSONResult login(@RequestBody @Valid UserBO userBO,
                             HttpServletRequest request,
                             HttpServletResponse response) throws Exception {
-        String username = userBO.getUsername();
+        String phone = userBO.getPhone();
         String password = userBO.getPassword();
 
-        // 0. 判断用户名和密码必须不为空
-        if (StringUtils.isBlank(username) ||
-                StringUtils.isBlank(password)) {
-            return JSONResult.errorMsg("用户名或密码不能为空");
-        }
-
         // 1. 实现登录
-        CsUser userResult = userService.queryUserForLogin(username, MD5Utils.getMD5Str(password));
+        CsUser userResult = userService.queryUserForLogin(phone, MD5Utils.getMD5Str(password));
 
         if (userResult == null) {
-            return JSONResult.errorMsg("用户名或密码不正确");
+            throw new PassportException(ReturnCode.INVALID_PARAM.code, "手机号或密码不正确");
         }
 
         // 调用Auth微服务生成token
         AuthResponse token = authService.tokennize(userResult.getUid());
         if (!AuthCode.SUCCESS.getCode().equals(token.getCode())) {
             log.error("Token error - uid={}", userResult.getUid());
-            return JSONResult.errorMsg("Token error");
+            throw new PassportException(ReturnCode.UNAUTHORIZED.code, "Token error");
         }
 
         // 将token添加到header当中
@@ -133,7 +112,7 @@ public class PassportController {
     @PostMapping("/logout")
     public JSONResult logout(@RequestParam String userId,
                              HttpServletRequest request,
-                             HttpServletResponse response) {
+                             HttpServletResponse response) throws PassportException {
 
         Account account = Account.builder()
                 .token(request.getHeader(AUTH_HEADER))
@@ -143,7 +122,7 @@ public class PassportController {
         AuthResponse auth = authService.delete(account);
         if (!AuthCode.SUCCESS.getCode().equals(auth.getCode())) {
             log.error("Token error - uid={}", userId);
-            return JSONResult.errorMsg("Token error");
+            throw new PassportException(ReturnCode.UNAUTHORIZED.code, "Token error");
         }
 
         // 清除用户相关信息的cookie
@@ -157,41 +136,28 @@ public class PassportController {
     @PostMapping("/retrievePassword")
     public JSONResult retrievePassword(@RequestBody UserBO userBO,
                                        HttpServletRequest request,
-                                       HttpServletResponse response) {
+                                       HttpServletResponse response) throws PassportException {
         // 校验
         String password = userBO.getPassword();
         String confirmPwd = userBO.getConfirmPassword();
         String phone = userBO.getPhone();
         String verificationCode = userBO.getVerificationCode();
 
-        // 0. 判断用户名和密码必须不为空
-        if (StringUtils.isBlank(password) ||
-                StringUtils.isBlank(confirmPwd)) {
-            return JSONResult.errorMsg("密码不能为空");
-        }
-
-        if (StringUtils.isBlank(phone) || StringUtils.isBlank(verificationCode)) {
-            return JSONResult.errorMsg("手机号或手机验证码不能为空");
-        }
 
         // 1. 查询手机号是否已经注册
         boolean isExist = userService.queryPhoneIsExist(phone);
         if (!isExist) {
-            return JSONResult.errorMsg("该手机号还未注册, 请先注册");
-        }
-        // 2. 密码长度不能少于6位
-        if (password.length() < 6) {
-            return JSONResult.errorMsg("密码长度不能少于6");
+            throw new PassportException(ReturnCode.INVALID_PARAM.code, "该手机号还未注册, 请先注册");
         }
 
-        // 3. 判断两次密码是否一致
+        // 2. 判断两次密码是否一致
         if (!password.equals(confirmPwd)) {
-            return JSONResult.errorMsg("两次密码输入不一致");
+            throw new PassportException(ReturnCode.INVALID_PARAM.code, "两次密码输入不一致");
         }
 
-        // 4. 判断短信验证码是否正确 TODO: 等写完SMS短信通知服务后, 修改短信验证码
+        // 3. 判断短信验证码是否正确 TODO: 等写完SMS短信通知服务后, 修改短信验证码
         if (verificationCode.equals("123456")) {
-            return JSONResult.errorMsg("短信验证码错误!");
+            throw new PassportException(ReturnCode.INVALID_PARAM.code, "短信验证码错误");
         }
 
         // 4. 修改密码

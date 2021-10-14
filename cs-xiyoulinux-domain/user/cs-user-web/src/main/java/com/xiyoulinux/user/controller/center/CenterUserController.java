@@ -1,5 +1,7 @@
 package com.xiyoulinux.user.controller.center;
 
+import com.xiyoulinux.enums.ReturnCode;
+import com.xiyoulinux.exception.business.PassportException;
 import com.xiyoulinux.pojo.JSONResult;
 import com.xiyoulinux.user.pojo.CsUser;
 import com.xiyoulinux.user.pojo.bo.center.CenterUserBO;
@@ -41,7 +43,7 @@ public class CenterUserController {
             @RequestParam String userId,
             @ApiParam(name = "file", value = "用户头像", required = true)
                     MultipartFile file,
-            HttpServletRequest request, HttpServletResponse response) {
+            HttpServletRequest request, HttpServletResponse response) throws PassportException {
 
         String path = "";
 
@@ -61,14 +63,14 @@ public class CenterUserController {
                 if (!suffix.equalsIgnoreCase("png") &&
                         !suffix.equalsIgnoreCase("jpg") &&
                         !suffix.equalsIgnoreCase("jpeg")) {
-                    return JSONResult.errorMsg("图片格式不正确!");
+                    throw new PassportException(ReturnCode.INVALID_PARAM.code, "图片格式不正确");
                 }
 
                 // TODO 调用文件微服务
                 path = fdfsService.uploadOSS(file, userId, suffix);
             }
         } else {
-            return JSONResult.errorMsg("文件不能为空!");
+            throw new PassportException(ReturnCode.INVALID_PARAM.code, "文件不能为空");
         }
 
         if (StringUtils.isNotBlank(path)) {
@@ -82,7 +84,7 @@ public class CenterUserController {
                     JsonUtils.objectToJson(userResult), true);
 
         } else {
-            return JSONResult.errorMsg("上传头像失败");
+            throw new PassportException(ReturnCode.ERROR.code, "上传头像失败");
         }
 
         return JSONResult.ok();
@@ -91,17 +93,9 @@ public class CenterUserController {
     @ApiOperation(value = "修改用户信息", notes = "修改用户信息", httpMethod = "POST")
     @PostMapping("/update")
     public JSONResult update(
-            @ApiParam(name = "userId", value = "用户id", required = true)
             @RequestParam String userId,
             @RequestBody @Valid CenterUserBO centerUserBO,
-            BindingResult result,
             HttpServletRequest request, HttpServletResponse response) {
-
-        // 判断BindingResult是否包含错误的验证信息, 如果有, 则直接return
-        if (result.hasErrors()) {
-            Map<String, String> errorMap = getErrors(result);
-            return JSONResult.errorMap(errorMap);
-        }
 
         CsUser userResult = centerUserService.updateUserInfo(userId, centerUserBO);
 
@@ -115,7 +109,6 @@ public class CenterUserController {
     @ApiOperation(value = "查看该用户所发布的动态", notes = "查看该用户的相关动态", httpMethod = "GET")
     @GetMapping("/activity")
     public JSONResult activity(
-            @ApiParam(name = "userId", value = "用户id", required = true)
             @RequestParam String userId) {
 
         CsUser user = centerUserService.queryUserInfo(userId);
@@ -125,20 +118,6 @@ public class CenterUserController {
 
 
         return JSONResult.ok();
-    }
-
-    private Map<String, String> getErrors(BindingResult result) {
-
-        Map<String, String> map = new HashMap<>();
-        List<FieldError> errorList = result.getFieldErrors();
-        for (FieldError error : errorList) {
-            // 发生验证错误所对应的某一个属性
-            String errorField = error.getField();
-            //  验证错误的信息
-            String errorMsg = error.getDefaultMessage();
-            map.put(errorField, errorMsg);
-        }
-        return map;
     }
 
 }
