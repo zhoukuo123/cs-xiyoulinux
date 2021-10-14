@@ -1,0 +1,16 @@
+server:
+  port: 8023
+  servlet:
+    context-path: /cs-auth
+spring:
+  application:
+    name: cs-auth-service
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: 127.0.0.1:8848 # Nacos 服务器地址
+        namespace: 2b1ec0ac-fd61-4aef-a32f-cd829bea9d97
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator

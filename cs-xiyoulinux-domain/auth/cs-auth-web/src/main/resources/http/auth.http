@@ -1,0 +1,17 @@
+### 登陆获取token
+GET 127.0.0.1:7002/cs-gateway/cs-auth/authority/token
+Content-Type: application/json
+
+{
+   "username": "qkm",
+   "password": "232131"
+}
+
+### 注册获取token
+GET 127.0.0.1:7002/cs-gateway/cs-auth/authority/register
+Content-Type: application/json
+
+{
+   "username": "qkm",
+   "password": "232131"
+}
