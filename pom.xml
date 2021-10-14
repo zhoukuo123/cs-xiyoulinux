@@ -24,6 +24,14 @@
         <module>cs-xiyoulinux-domain/comment/cs-activity-comment-pojo</module>
         <module>cs-xiyoulinux-domain/comment/cs-activity-comment-mapper</module>
         <module>cs-xiyoulinux-domain/comment/cs-activity-comment-service</module>
+        <module>cs-xiyoulinux-domain/file/cs-file-api</module>
+        <module>cs-xiyoulinux-domain/file/cs-file-service</module>
+        <module>cs-xiyoulinux-domain/file/cs-file-pojo</module>
+        <module>cs-xiyoulinux-domain/file/cs-file-mapper</module>
+        <module>cs-xiyoulinux-domain/file/cs-file-web</module>
+        <module>cs-xiyoulinux-domain/auth/cs-auth-web</module>
+        <module>cs-xiyoulinux-domain/auth/cs-auth-service</module>
+        <module>cs-xiyoulinux-domain/auth/cs-auth-pojo</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -34,6 +42,7 @@
         <spring-boot.version>2.3.2.RELEASE</spring-boot.version>
         <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
         <spring-cloud-alibaba.version>2.2.3.RELEASE</spring-cloud-alibaba.version>
+        <dubbo.version>2.7.5</dubbo.version>
     </properties>
 
     <dependencyManagement>
@@ -59,10 +68,20 @@
                 <type>pom</type>
                 <scope>import</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.dubbo</groupId>
+                <artifactId>dubbo-spring-boot-starter</artifactId>
+                <version>${dubbo.version}</version>
+            </dependency>
         </dependencies>
     </dependencyManagement>
 
     <dependencies>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
+        </dependency>
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
