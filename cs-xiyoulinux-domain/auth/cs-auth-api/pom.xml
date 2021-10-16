@@ -19,8 +19,9 @@
 
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cs-xiyoulinux-shared-pojo</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 
