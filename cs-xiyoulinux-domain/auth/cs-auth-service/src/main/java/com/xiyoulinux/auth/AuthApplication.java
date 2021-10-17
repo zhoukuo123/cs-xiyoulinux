@@ -1,18 +1,16 @@
 package com.xiyoulinux.auth;
 
-import org.apache.dubbo.config.spring.context.annotation.EnableDubbo;
+import org.apache.dubbo.config.spring.context.annotation.DubboComponentScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
 
 /**
- * @author CoderZk
+ * @author qkm
  */
-@SpringBootApplication
-@EnableDiscoveryClient
-@EnableDubbo(scanBasePackages = "com.xiyoulinux.auth.service.impl")
+@SpringBootApplication(scanBasePackages = {"com.xiyoulinux"}, exclude = {DataSourceAutoConfiguration.class})
+@DubboComponentScan(basePackages = {"com.xiyoulinux.auth.intelImpl"})
 public class AuthApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(AuthApplication.class, args);
     }
