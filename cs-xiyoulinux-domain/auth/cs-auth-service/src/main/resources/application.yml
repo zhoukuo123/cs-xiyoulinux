@@ -1,0 +1,29 @@
+server:
+  port: 8023
+  servlet:
+    context-path: /cs-auth
+spring:
+  application:
+    name: cs-auth-service
+    address: 127.0.0.1
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: ${spring.application.address}:8848 # Nacos 服务器地址
+        namespace: 2b1ec0ac-fd61-4aef-a32f-cd829bea9d97
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
+####################################
+# dubbo
+#####################################
+dubbo:
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: spring-cloud://localhost
+  # dubbo订阅的服务，如果是提供者填写本服务的名称
+  cloud:
+    subscribed-services: cs-auth-service
