@@ -106,4 +106,11 @@ public class UserServiceImpl implements UserService {
 
         return csUserMapper.selectByPrimaryKey(uid);
     }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public String queryUserNameByUid(String uid) {
+        CsUser csUser = csUserMapper.selectByPrimaryKey(uid);
+        return csUser.getName();
+    }
 }

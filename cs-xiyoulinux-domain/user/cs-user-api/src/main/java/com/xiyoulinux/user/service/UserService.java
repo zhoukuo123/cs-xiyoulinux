@@ -31,4 +31,9 @@ public interface UserService {
      * 根据uid查询user
      */
     CsUser queryUserByUid(String uid);
+
+    /**
+     * 根据uid查询userName
+     */
+    String queryUserNameByUid(String uid);
 }

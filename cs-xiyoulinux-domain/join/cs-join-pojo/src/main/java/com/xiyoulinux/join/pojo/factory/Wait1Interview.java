@@ -6,6 +6,6 @@ package com.xiyoulinux.join.pojo.factory;
 public class Wait1Interview implements InterviewStatus {
     @Override
     public String getInterviewStatus() {
-        return "等待1面";
+        return "报名成功, 等待1面";
     }
 }
