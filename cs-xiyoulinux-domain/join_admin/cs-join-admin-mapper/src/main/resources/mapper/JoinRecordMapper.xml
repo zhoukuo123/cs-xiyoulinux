@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiyoulinux.joinadmin.mapper.JoinRecordMapper">
+  <resultMap id="BaseResultMap" type="com.xiyoulinux.joinadmin.pojo.JoinRecord">
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="rid" jdbcType="VARCHAR" property="rid" />
+    <result column="uid" jdbcType="VARCHAR" property="uid" />
+    <result column="grade" jdbcType="INTEGER" property="grade" />
+    <result column="round" jdbcType="INTEGER" property="round" />
+    <result column="interviewer" jdbcType="VARCHAR" property="interviewer" />
+    <result column="created_time" jdbcType="TIMESTAMP" property="createdTime" />
+    <result column="updated_time" jdbcType="TIMESTAMP" property="updatedTime" />
+    <result column="basic_skill" jdbcType="LONGVARCHAR" property="basicSkill" />
+    <result column="extra_skill" jdbcType="LONGVARCHAR" property="extraSkill" />
+    <result column="overall" jdbcType="LONGVARCHAR" property="overall" />
+  </resultMap>
+</mapper>

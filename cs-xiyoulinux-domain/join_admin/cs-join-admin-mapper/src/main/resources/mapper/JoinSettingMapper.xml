@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xiyoulinux.joinadmin.mapper.JoinSettingMapper" >
+  <resultMap id="BaseResultMap" type="com.xiyoulinux.joinadmin.pojo.JoinSetting" >
+    <!--
+      WARNING - @mbg.generated
+    -->
+    <id column="id" property="id" jdbcType="VARCHAR" />
+    <result column="join_start_time" property="joinStartTime" jdbcType="TIMESTAMP" />
+    <result column="join_end_time" property="joinEndTime" jdbcType="TIMESTAMP" />
+    <result column="round" property="round" jdbcType="INTEGER" />
+    <result column="created_time" property="createdTime" jdbcType="TIMESTAMP" />
+    <result column="updated_time" property="updatedTime" jdbcType="TIMESTAMP" />
+  </resultMap>
+</mapper>
