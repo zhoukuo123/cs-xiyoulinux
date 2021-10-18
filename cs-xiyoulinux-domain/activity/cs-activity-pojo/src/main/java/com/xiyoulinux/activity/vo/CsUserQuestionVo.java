@@ -3,7 +3,7 @@ package com.xiyoulinux.activity.vo;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xiyoulinux.activity.entity.CsUserQuestion;
 import com.xiyoulinux.common.CsUserInfo;
-import com.xiyoulinux.constant.CommonConstant;
+import com.xiyoulinux.constant.AuthCommonConstant;
 import com.xiyoulinux.enums.ActivityStatus;
 import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
@@ -85,7 +85,7 @@ public class CsUserQuestionVo implements Serializable {
          * 创建时间
          */
         @ApiModelProperty(value = "创建时间",example = "2021-02-03 12:00:00")
-        @JsonFormat(pattern = CommonConstant.DATE_FORMAT)
+        @JsonFormat(pattern = AuthCommonConstant.DATE_FORMAT)
         private Date questionCreateTime;
 
         /**

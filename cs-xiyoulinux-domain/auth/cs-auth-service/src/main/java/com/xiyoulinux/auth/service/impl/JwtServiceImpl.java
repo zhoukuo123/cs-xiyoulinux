@@ -6,7 +6,7 @@ import com.xiyoulinux.auth.service.JwtService;
 import com.xiyoulinux.common.JwtToken;
 import com.xiyoulinux.common.LoginUserInfo;
 import com.xiyoulinux.common.UsernameAndPassword;
-import com.xiyoulinux.constant.CommonConstant;
+import com.xiyoulinux.constant.AuthCommonConstant;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import lombok.extern.slf4j.Slf4j;
@@ -34,7 +34,7 @@ public class JwtServiceImpl implements JwtService {
         Date now = new Date();
         return Jwts.builder()
                 // jwt payload --> KV
-                .claim(CommonConstant.JWT_USER_INFO_KEY, JSON.toJSONString(loginUserInfo))
+                .claim(AuthCommonConstant.JWT_USER_INFO_KEY, JSON.toJSONString(loginUserInfo))
                 // jwt id
                 .setId(UUID.randomUUID().toString())
                 // jwt 过期时间
