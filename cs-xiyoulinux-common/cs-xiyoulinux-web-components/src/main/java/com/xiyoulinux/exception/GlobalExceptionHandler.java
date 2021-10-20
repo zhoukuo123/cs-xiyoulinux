@@ -1,9 +1,8 @@
 package com.xiyoulinux.exception;
 
+import com.xiyoulinux.enums.InterviewStatus;
 import com.xiyoulinux.enums.ReturnCode;
-import com.xiyoulinux.exception.business.AuthenticationException;
-import com.xiyoulinux.exception.business.PassportException;
-import com.xiyoulinux.exception.business.UserJoinException;
+import com.xiyoulinux.exception.business.*;
 import com.xiyoulinux.pojo.JSONResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
@@ -52,6 +51,14 @@ public class GlobalExceptionHandler {
         } else if (e instanceof UserJoinException) {
 
             return JSONResult.errorMsg(((UserJoinException) e).getCode(), e.getMessage());
+
+        } else if (e instanceof SignUpException) {
+
+            return JSONResult.errorMsg(((SignUpException) e).getCode(), e.getMessage());
+
+        } else if (e instanceof InterviewException) {
+
+            return JSONResult.errorMsg(((InterviewException) e).getCode(), e.getMessage());
 
         } else {
             // 系统异常
