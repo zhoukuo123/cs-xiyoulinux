@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xiyoulinux.activity.comment.mapper.CsUserLikesMapper">
+
+    <resultMap id="BaseResultMap" type="com.xiyoulinux.activity.comment.entity.CsUserLikes">
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="csCommentId" column="cs_comment_id" jdbcType="VARCHAR"/>
+        <result property="csUserId" column="cs_user_id" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <sql id="Base_Column_List">
+        id
+        ,cs_comment_id,cs_user_id
+    </sql>
+
+    <delete id="deleteByCsUserIdAndCsCommentId">
+        delete
+        from cs_user_likes
+        where cs_user_id = #{csUserId,jdbcType=VARCHAR}
+          AND cs_comment_id = #{csCommentId,jdbcType=VARCHAR}
+    </delete>
+</mapper>
