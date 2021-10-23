@@ -1,11 +1,11 @@
 package com.xiyoulinux.joinadmin.service;
 
 import com.xiyoulinux.joinadmin.pojo.bo.InterviewEvaluationBO;
-import com.xiyoulinux.joinadmin.pojo.vo.InterviewEvaluationRecordVO;
-import com.xiyoulinux.joinadmin.pojo.vo.InterviewQueueVO;
-import com.xiyoulinux.joinadmin.pojo.vo.InterviewRecordVO;
-import com.xiyoulinux.joinadmin.pojo.vo.IntervieweeInfoVO;
+import com.xiyoulinux.joinadmin.pojo.vo.*;
+import com.xiyoulinux.pojo.PagedGridResult;
 
+import javax.print.attribute.standard.PagesPerMinute;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -71,9 +71,31 @@ public interface InterviewService {
     List<InterviewRecordVO> queryPreviousInterviewRecords(String sno);
 
     /**
-     * 查询当前登录用户的评价记录
+     * 查询当前登录用户的评价记录 分页
      *
      * @param uid 面试官uid
+     * @return
      */
-    List<InterviewEvaluationRecordVO> queryInterviewEvaluationRecords(String uid);
+    PagedGridResult queryInterviewEvaluationRecords(String uid, Integer page, Integer pageSize);
+
+    /**
+     * 查询一面二面三面面试人数统计
+     */
+    List<Integer> queryInterviewNumberStatistics();
+
+    /**
+     * 查询面试信息和被面试人信息用于决策 分页
+     */
+    PagedGridResult queryInterviewInfoAndIntervieweeInfo(Integer round, Integer status, Integer status2,
+                                                                         Integer page, Integer pageSize);
+
+    /**
+     * 决策 修改 round 和 status 在 join_info 和 join_queue 上
+     */
+    void makeDecision(String uid, Integer round, boolean pass);
+
+    /**
+     * 设置面试 开始时间和截止时间
+     */
+    void setJoinStartEndTime(Date startTime, Date endTime);
 }
