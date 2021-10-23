@@ -29,4 +29,29 @@
     </select>
 
 
+    <resultMap id="IntervieweeInfoAndGradeVO" type="com.xiyoulinux.joinadmin.pojo.vo.IntervieweeInfoAndGradeVO">
+        <result column="uid" property="uid"/>
+        <result column="sno" property="sno"/>
+        <result column="name" property="name"/>
+        <result column="class_name" property="className"/>
+        <result column="mobile" property="mobile"/>
+        <result column="grade" property="grade"/>
+    </resultMap>
+
+    <select id="queryInterviewInfoAndIntervieweeInfo" parameterType="Map" resultMap="IntervieweeInfoAndGradeVO">
+        <!-- TODO 这段sql有待检查(本地检查过, 应该没问题) -->
+        select ji.uid        as uid,
+               ji.sno        as sno,
+               ji.name       as name,
+               ji.class_name as class_name,
+               ji.mobile     as mobile,
+               jr.grade      as grade
+        from cs_join_admin.join_info ji
+                 left join cs_join_admin.join_record jr on ji.uid = jr.uid and ji.round = jr.round
+        where ji.round = #{paramMap.round}
+            and ji.status = #{paramsMap.status}
+           or ji.status = #{paramsMap.status2}
+        order by jr.grade desc
+    </select>
+
 </mapper>
