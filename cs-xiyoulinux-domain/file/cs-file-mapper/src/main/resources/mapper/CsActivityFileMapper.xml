@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.xiyoulinux.file.mapper.CsActivityFileMapper">
+
+    <resultMap id="BaseMap" type="com.xiyoulinux.file.entity.CsActivityFile">
+        <id property="id" column="id" jdbcType="VARCHAR"/>
+        <result property="activityId" column="activity_id" jdbcType="VARCHAR"/>
+        <result property="activityFileUrl" column="activity_file_url" jdbcType="VARCHAR"/>
+    </resultMap>
+
+    <select id="selectAllByActivityIdList" resultMap="BaseMap">
+        select activity_id,activity_file_url from cs_activity_file where activity_id in
+        <foreach collection="activityIdList" item="activityId" open="(" close=")" separator=",">
+            #{activityId}
+        </foreach>
+    </select>
+    <delete id="delActivityFileByActivityId">
+        delete
+        from cs_activity_file
+        where activity_id = #{activityId,jdbcType=VARCHAR}
+    </delete>
+
+</mapper>
