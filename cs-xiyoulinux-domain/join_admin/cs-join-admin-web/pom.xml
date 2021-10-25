@@ -33,7 +33,7 @@
         <!-- cs-search -->
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>elasticsearch</artifactId>
+            <artifactId>cs-search-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 

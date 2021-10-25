@@ -43,6 +43,7 @@
         <module>cs-xiyoulinux-domain/user/cs-user-web</module>
         <module>cs-xiyoulinux-domain/search/cs-search-api</module>
         <module>cs-xiyoulinux-domain/search/cs-search-service</module>
+        <module>cs-xiyoulinux-domain/search/cs-search-web</module>
     </modules>
 
     <packaging>pom</packaging>
