@@ -309,6 +309,24 @@ public class InterviewServiceImpl extends BaseService implements InterviewServic
         joinQueueMapper.delete(deleteJoinQueue);
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public List<String> queryBatchDecisionUid(Integer round, Integer grade) {
+
+        Example joinRecordExp = new Example(JoinRecord.class);
+        Example.Criteria criteria = joinRecordExp.createCriteria();
+        criteria.andEqualTo("round", round);
+        criteria.andEqualTo("grade", grade);
+
+        List<JoinRecord> joinRecords = joinRecordMapper.selectByExample(joinRecordExp);
+
+        List<String> uids = new ArrayList<>();
+        for (JoinRecord joinRecord : joinRecords) {
+            uids.add(joinRecord.getUid());
+        }
+        return uids;
+    }
+
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
     public void setJoinStartEndTime(Date startTime, Date endTime) {
