@@ -26,6 +26,32 @@ spring:
     port: 6379
     password: zhoukuo
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+####################################################################################
+# Stream配置
+####################################################################################
+  cloud:
+    stream:
+      bindings:
+        batch-decision-consumer:
+          destination: batch-decision-topic
+          group: batch-decision-group
+          consumer:
+            max-attempts: 2
+        batch-decision-producer:
+          destination: batch-decision-topic
+      ## 延迟消息配置  设置某个交换机支持延迟消息推送
+      rabbit:
+        bindings:
+          batch-decision-producer:
+            producer:
+              delayed-exchanged: true
+
+
 management:
   endpoints:
     web:
