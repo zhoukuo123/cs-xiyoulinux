@@ -10,10 +10,25 @@
     <modules>
         <module>cs-xiyoulinux-common/cs-xiyoulinux-common</module>
         <module>cs-xiyoulinux-common/cs-xiyoulinux-shared-pojo</module>
-        <module>cs-xiyoulinux-common/cs-xiyoulinux-web-componets</module>
+        <module>cs-xiyoulinux-common/cs-xiyoulinux-web-components</module>
         <module>cs-xiyoulinux-platform/gateway</module>
         <module>cs-xiyoulinux-domain/auth/cs-auth-api</module>
         <module>cs-xiyoulinux-platform/zipkin-server</module>
+        <module>cs-xiyoulinux-domain/activity/cs-activity-pojo</module>
+        <module>cs-xiyoulinux-domain/activity/cs-activity-web</module>
+        <module>cs-xiyoulinux-domain/activity/cs-activity-mapper</module>
+        <module>cs-xiyoulinux-domain/activity/cs-activity-service</module>
+        <module>cs-xiyoulinux-domain/comment/cs-activity-comment-api</module>
+        <module>cs-xiyoulinux-domain/comment/cs-activity-comment-web</module>
+        <module>cs-xiyoulinux-domain/comment/cs-activity-comment-pojo</module>
+        <module>cs-xiyoulinux-domain/comment/cs-activity-comment-mapper</module>
+        <module>cs-xiyoulinux-domain/comment/cs-activity-comment-service</module>
+        <module>cs-xiyoulinux-domain/file/cs-file-api</module>
+        <module>cs-xiyoulinux-domain/file/cs-file-service</module>
+        <module>cs-xiyoulinux-domain/file/cs-file-pojo</module>
+        <module>cs-xiyoulinux-domain/file/cs-file-mapper</module>
+        <module>cs-xiyoulinux-domain/auth/cs-auth-service</module>
+
     </modules>
 
     <packaging>pom</packaging>
@@ -23,7 +38,7 @@
         <maven.compiler.target>8</maven.compiler.target>
         <spring-boot.version>2.3.2.RELEASE</spring-boot.version>
         <spring-cloud.version>Hoxton.SR8</spring-cloud.version>
-        <spring-cloud-alibaba.version>2.2.3.RELEASE</spring-cloud-alibaba.version>
+        <spring-cloud-alibaba.version>2.1.3.RELEASE</spring-cloud-alibaba.version>
     </properties>
 
     <dependencyManagement>
@@ -102,6 +117,11 @@
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
             <version>1.7.21</version>
+        </dependency>
+        <dependency>
+            <groupId>com.alibaba</groupId>
+            <artifactId>fastjson</artifactId>
+            <version>1.2.47</version>
         </dependency>
     </dependencies>
 
