@@ -1,0 +1,77 @@
+server:
+  port: 8089
+  servlet:
+    context-path: /cs-activity-comment
+#####################################
+# 文件大小限制
+####################################
+spring:
+  servlet:
+    multipart:
+      enabled: true
+      max-file-size: 20MB
+      max-request-size: 100MB
+  application:
+    name: cs-activity-comment-service
+    address: 127.0.0.1
+  # 数据库
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${spring.application.address}:3306/cs_comment?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+    username: root
+    password: 13468724917qkm,
+  # nacos
+  cloud:
+    nacos:
+      group: SEATA_GROUP
+      discovery:
+        enabled: true
+        server-addr: ${spring.application.address}:8848 # Nacos 服务器地址
+        namespace: 2b1ec0ac-fd61-4aef-a32f-cd829bea9d97
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
+######################################
+# dubbo
+#########################################
+dubbo:
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: spring-cloud://localhost
+  # 要订阅的服务，如果是提供者则填写服务名称
+  cloud:
+    subscribed-services: cs-file-service
+####################################
+# mybaits-plus 设置为null的列
+################################
+mybatis-plus:
+  configuration:
+    jdbc-type-for-null: null
+
+####################################
+# seata
+##################################
+seata:
+  tx-service-group: cs_xiyoulinux_test
+  registry:
+    type: nacos
+    nacos:
+      application: seata-server
+      server-addr: ${spring.application.address}:8848
+      group: ${spring.cloud.nacos.group}
+      namespace: ${spring.cloud.nacos.discovery.namespace}
+      username: nacos
+      password: nacos
+  config:
+    type: nacos
+    nacos:
+      server-addr: ${spring.application.address}:8848
+      group: ${spring.cloud.nacos.group}
+      namespace: ${spring.cloud.nacos.discovery.namespace}
+      dataId: seata-config
+      username: nacos
+      password: nacos
+  enable-auto-data-source-proxy: false
