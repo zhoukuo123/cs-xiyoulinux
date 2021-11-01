@@ -10,7 +10,7 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 /**
  * @author qkm
  */
-@SpringBootApplication(scanBasePackages = {"com.xiyoulinux"})
+@SpringBootApplication(scanBasePackages = {"com.xiyoulinux","org.n3r.idworker"})
 @MapperScan(basePackages = "com.xiyoulinux.activity.mapper")
 @EnableDiscoveryClient
 @EnableSwagger2
