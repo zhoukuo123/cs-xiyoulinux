@@ -15,7 +15,7 @@ import java.util.Date;
 public interface CsUserActivityMapper extends BaseMapper<CsUserActivity> {
 
     /**
-     * 查询从50条开始的动态,之后以分页的形式展示，每页10条
+     * 以分页的形式查找数据，每页20条
      *
      * @param page 分页
      * @return 动态集合
