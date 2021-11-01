@@ -4,7 +4,7 @@ import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.xiyoulinux.activity.comment.service.CommentService;
 import com.xiyoulinux.common.CsUserInfo;
 import com.xiyoulinux.file.service.GetFileService;
-import org.apache.dubbo.config.annotation.Reference;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,10 +15,10 @@ import java.util.*;
 @Service
 public class InterService {
 
-    @Reference
+    @DubboReference
     private GetFileService getFileService;
 
-    @Reference
+    @DubboReference
     private CommentService commentService;
 
 
