@@ -8,6 +8,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -58,6 +59,16 @@ public class RedisOperator {
     }
 
     /**
+     * 实现命令：decr key，减少key一次
+     *
+     * @param key
+     * @return
+     */
+    public long decr(String key, long delta) {
+        return stringRedisTemplate.opsForValue().decrement(key, delta);
+    }
+
+    /**
      * 实现命令：KEYS pattern，查找所有符合给定模式 pattern的 key
      */
     public Set<String> keys(String pattern) {
@@ -69,9 +80,19 @@ public class RedisOperator {
      *
      * @param key
      */
-    public void del(String key) {
+    public void delOne(String key) {
         stringRedisTemplate.delete(key);
     }
+
+    /**
+     * 实现命令：DEL some key，删除多个key
+     *
+     * @param key
+     */
+    public void delCollect(Collection<String> key) {
+        stringRedisTemplate.delete(key);
+    }
+
 
     // String（字符串）
 
@@ -220,5 +241,6 @@ public class RedisOperator {
     public long rpush(String key, String value) {
         return stringRedisTemplate.opsForList().rightPush(key, value);
     }
+
 
 }
