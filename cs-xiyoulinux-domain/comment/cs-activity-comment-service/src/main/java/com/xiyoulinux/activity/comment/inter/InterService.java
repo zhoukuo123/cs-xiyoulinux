@@ -3,7 +3,7 @@ package com.xiyoulinux.activity.comment.inter;
 import com.xiyoulinux.common.CsUserInfo;
 import com.xiyoulinux.file.service.GetFileService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -15,7 +15,7 @@ import java.util.*;
 @Service
 public class InterService {
 
-    @Reference
+    @DubboReference
     private GetFileService getFileService;
 
     //用户服务加降级

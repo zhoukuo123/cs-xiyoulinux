@@ -19,10 +19,10 @@ import com.xiyoulinux.common.CsUserInfo;
 import com.xiyoulinux.file.service.GetFileService;
 import com.xiyoulinux.file.service.UploadFileService;
 import com.xiyoulinux.utils.RedisOperator;
-import com.xiyoulinux.idworker.Sid;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
+import org.apache.dubbo.config.annotation.DubboReference;
+import org.n3r.idworker.Sid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -48,10 +48,10 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
 
     private final InterService interService;
 
-    @Reference
+    @DubboReference
     private GetFileService getFileService;
 
-    @Reference
+    @DubboReference
     private UploadFileService uploadFileService;
 
 
