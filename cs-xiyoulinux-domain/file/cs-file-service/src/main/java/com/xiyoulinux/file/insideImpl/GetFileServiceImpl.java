@@ -8,14 +8,14 @@ import com.xiyoulinux.file.entity.CsActivityCommentFile;
 import com.xiyoulinux.file.entity.CsActivityFile;
 import com.xiyoulinux.file.service.GetFileService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Service;
+import org.apache.dubbo.config.annotation.DubboService;
 
 import java.util.*;
 
 /**
  * @author qkm
  */
-@Service
+@DubboService
 @Slf4j
 public class GetFileServiceImpl implements GetFileService {
 

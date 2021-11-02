@@ -8,9 +8,9 @@ import com.xiyoulinux.file.entity.CsActivityCommentFile;
 import com.xiyoulinux.file.entity.CsActivityFile;
 import com.xiyoulinux.file.entity.CsUserFile;
 import com.xiyoulinux.file.service.UploadFileService;
-import com.xiyoulinux.idworker.Sid;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Service;
+import org.apache.dubbo.config.annotation.DubboService;
+import org.n3r.idworker.Sid;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.Arrays;
@@ -19,7 +19,7 @@ import java.util.List;
 /**
  * @author qkm
  */
-@Service
+@DubboService
 @Slf4j
 public class UploadFileServiceImpl implements UploadFileService {
 

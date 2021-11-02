@@ -4,13 +4,12 @@ import com.xiyoulinux.file.mapper.CsActivityCommentFileMapper;
 import com.xiyoulinux.file.mapper.CsActivityFileMapper;
 import com.xiyoulinux.file.service.DeleteFileService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Service;
-
+import org.apache.dubbo.config.annotation.DubboService;
 
 /**
  * @author qkm
  */
-@Service
+@DubboService
 @Slf4j
 public class DeleteFileServiceImpl implements DeleteFileService {
 
