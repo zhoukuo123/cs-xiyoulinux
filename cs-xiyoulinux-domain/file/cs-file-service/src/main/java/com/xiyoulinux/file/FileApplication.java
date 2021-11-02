@@ -9,7 +9,7 @@ import org.springframework.cloud.netflix.hystrix.EnableHystrix;
 /**
  * @author qkm
  */
-@SpringBootApplication(scanBasePackages = {"com.xiyoulinux"})
+@SpringBootApplication(scanBasePackages = {"com.xiyoulinux","org.n3r.idworker"})
 @MapperScan(basePackages = "com.xiyoulinux.file.mapper")
 @EnableDiscoveryClient
 @EnableHystrix
