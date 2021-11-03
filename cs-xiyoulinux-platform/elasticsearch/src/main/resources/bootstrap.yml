@@ -1,0 +1,46 @@
+server:
+  port: 8004
+  servlet:
+    context-path: /cs-elasticsearch
+spring:
+  data:
+    elasticsearch:
+      repositories:
+        enabled: false
+  application:
+    name: cs-elasticsearch-service
+    address: 127.0.0.1
+  elasticsearch:
+    rest:
+      uris: http://localhost:9200
+  # 数据库连接池
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://${spring.application.address}:3306/cs_dynamic?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
+    username: root
+    password: 13468724917qkm,
+#  # nacos注册
+  cloud:
+    nacos:
+      discovery:
+        enabled: true
+        server-addr: ${spring.application.address}:8848 # Nacos 服务器地址
+        namespace: 2b1ec0ac-fd61-4aef-a32f-cd829bea9d97
+        metadata:
+          management:
+            context-path: ${server.servlet.context-path}/actuator
+############################################
+# dubbo配置
+############################################
+dubbo:
+  protocol:
+    name: dubbo
+    port: -1
+  registry:
+    address: spring-cloud://${spring.application.address}
+  # dubbo订阅的服务，如果是提供者填写本服务的名称
+  cloud:
+    subscribed-services: cs-activity-comment-service
+  consumer:
+    check: false
