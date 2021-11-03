@@ -14,6 +14,7 @@
         <module>cs-xiyoulinux-platform/gateway</module>
         <module>cs-xiyoulinux-domain/auth/cs-auth-api</module>
         <module>cs-xiyoulinux-platform/zipkin-server</module>
+        <module>cs-xiyoulinux-domain/activity/cs-activity-api</module>
         <module>cs-xiyoulinux-domain/activity/cs-activity-pojo</module>
         <module>cs-xiyoulinux-domain/activity/cs-activity-web</module>
         <module>cs-xiyoulinux-domain/activity/cs-activity-mapper</module>
@@ -25,8 +26,6 @@
         <module>cs-xiyoulinux-domain/comment/cs-activity-comment-service</module>
         <module>cs-xiyoulinux-domain/file/cs-file-api</module>
         <module>cs-xiyoulinux-domain/file/cs-file-service</module>
-        <module>cs-xiyoulinux-domain/file/cs-file-pojo</module>
-        <module>cs-xiyoulinux-domain/file/cs-file-mapper</module>
         <module>cs-xiyoulinux-domain/auth/cs-auth-service</module>
         <module>cs-xiyoulinux-domain/join/cs-join-service</module>
         <module>cs-xiyoulinux-domain/join/cs-join-mapper</module>
@@ -42,6 +41,7 @@
         <module>cs-xiyoulinux-domain/user/cs-user-pojo</module>
         <module>cs-xiyoulinux-domain/user/cs-user-service</module>
         <module>cs-xiyoulinux-domain/user/cs-user-web</module>
+        <module>cs-xiyoulinux-platform/elasticsearch</module>
     </modules>
 
     <packaging>pom</packaging>
@@ -152,5 +152,5 @@
             </plugin>
         </plugins>
     </build>
-    
+
 </project>
