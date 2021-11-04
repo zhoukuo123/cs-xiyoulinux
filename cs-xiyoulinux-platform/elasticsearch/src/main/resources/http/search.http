@@ -1,0 +1,12 @@
+###
+GET 127.0.0.1:8004/cs-elasticsearch/search/key/1
+Content-Type: application/json
+
+{
+  "page": 1,
+  "size": 20,
+  "key": "发起任务"
+}
+
+### 搜索框自动补全
+GET 127.0.0.1:8004/cs-elasticsearch/search/completion/ls
