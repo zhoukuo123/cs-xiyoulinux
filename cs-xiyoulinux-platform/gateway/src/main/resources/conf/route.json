@@ -1,0 +1,82 @@
+[
+  {
+    "id":"cs-activity",
+    "predicates":[
+      {
+        "args":{
+          "pattern":"/cs-gateway/cs-activity/activity/**"
+        },
+        "name":"Path"
+      }
+    ],
+    "filters": [
+      {
+        "name": "StripPrefix",
+        "args": {
+          "parts": "1"
+        }
+      }
+    ],
+    "uri":"lb://cs-activity-service"
+  },
+  {
+    "id":"cs-activity-comment",
+    "predicates":[
+      {
+        "args":{
+          "pattern":"/cs-gateway/cs-activity-comment/activity-comment/**"
+        },
+        "name":"Path"
+      }
+    ],
+    "filters": [
+      {
+        "name": "StripPrefix",
+        "args": {
+          "parts": "1"
+        }
+      }
+    ],
+    "uri":"lb://cs-activity-comment-service"
+  },
+  {
+    "id":"cs-auth",
+    "predicates":[
+      {
+        "args":{
+          "pattern":"/cs-gateway/cs-auth/authority/**"
+        },
+        "name":"Path"
+      }
+    ],
+    "filters": [
+      {
+        "name": "StripPrefix",
+        "args": {
+          "parts": "1"
+        }
+      }
+    ],
+    "uri":"lb://cs-auth-service"
+  },
+  {
+    "id":" cs-elasticsearch",
+    "predicates":[
+      {
+        "args":{
+          "pattern":"/cs-gateway/cs-elasticsearch/search/**"
+        },
+        "name":"Path"
+      }
+    ],
+    "filters": [
+      {
+        "name": "StripPrefix",
+        "args": {
+          "parts": "1"
+        }
+      }
+    ],
+    "uri":"lb://cs-elasticsearch-service"
+  }
+]

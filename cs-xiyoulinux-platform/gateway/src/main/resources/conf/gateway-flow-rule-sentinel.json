@@ -1,0 +1,32 @@
+[
+  {
+    "resource": "activity-api-get",
+    "resourceMode": 1,
+    "count": 15,
+    "intervalSec": 60
+  },
+  {
+    "resource": "activity-api-modify",
+    "resourceMode": 1,
+    "count": 5,
+    "intervalSec": 60
+  }
+,{
+  "resource": "activity-comment-api-get",
+  "resourceMode": 1,
+  "count": 20,
+  "intervalSec": 60
+},
+  {
+    "resource": "activity-comment-api-add",
+    "resourceMode": 1,
+    "count": 15,
+    "intervalSec": 60
+  },
+  {
+    "resource": "activity-comment-api-like",
+    "resourceMode": 1,
+    "count": 20,
+    "intervalSec": 60
+  }
+]

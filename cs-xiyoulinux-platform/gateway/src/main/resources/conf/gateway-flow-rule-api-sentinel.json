@@ -1,0 +1,60 @@
+[
+  {
+    "apiName": "activity-api-get",
+    "predicateItems": [
+      {
+        "pattern": "/cs-gateway/cs-activity/activity/home/**"
+      },
+      {
+        "pattern": "/cs-gateway/cs-activity/activity/issues/**"
+      },
+      {
+        "pattern": "/cs-gateway/cs-activity/activity/task/**"
+      },
+      {
+        "pattern": "/cs-gateway/cs-activity/activity/number/**"
+      }
+    ]
+  },
+  {
+    "apiName": "activity-api-modify",
+    "predicateItems": [
+      {
+        "pattern": "/cs-gateway/cs-activity/activity/add/"
+      },
+      {
+        "pattern": "/cs-gateway/cs-activity/activity/delete/**"
+      },
+      {
+        "pattern": "/cs-gateway/cs-activity/activity/modify/**"
+      }
+    ]
+  },
+  {
+    "apiName": "activity-comment-api-get",
+    "predicateItems": [
+      {
+        "pattern": "/cs-gateway/cs-activity-comment/activity-comment/get/**"
+      }
+    ]
+  },
+  {
+    "apiName": "activity-comment-api-add",
+    "predicateItems": [
+      {
+        "pattern": "/cs-gateway/cs-activity-comment/activity-comment/add/"
+      }
+    ]
+  },
+  {
+    "apiName": "activity-comment-api-like",
+    "predicateItems": [
+      {
+        "pattern": "/cs-gateway/cs-activity-comment/activity-comment/like/**"
+      },
+      {
+        "pattern": "/cs-gateway/cs-activity-comment/activity-comment/dislike/**"
+      }
+    ]
+  }
+]

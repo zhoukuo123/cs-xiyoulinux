@@ -15,21 +15,38 @@ spring:
         metadata:
           management:
             context-path: ${server.servlet.context-path}/actuator
+    # gateway 集成 sentinel
+    sentinel:
+      eager: true
+      transport:
+        port: 8720   # 随意的一个未被访问的端口与控制台进行访问
+        dashboard: 127.0.0.1:7777  # 控制台端口
+      datasource:
+        # 配置api分组或者以微服务
+        ds-flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            namespace: ${spring.cloud.nacos.discovery.namespace}
+            data-id: gateway-flow-rule-sentinel
+            group-id: GATEWAY_SENTINEL_GROUP
+            data-type: json
+            rule-type: gw-flow
+        # 配置api 分组的具体
+        ds-api-flow:
+          nacos:
+            server-addr: ${spring.cloud.nacos.discovery.server-addr}
+            namespace: ${spring.cloud.nacos.discovery.namespace}
+            data-id: gateway-flow-rule-api-sentinel
+            group-id: GATEWAY_SENTINEL_GROUP
+            data-type: json
+            rule-type: gw-api-group
+
 nacos:
   gateway:
     route:
       config:
         data-id: cs-gateway
         group: cs
-# 暴露端点
-management:
-  endpoints:
-    web:
-      exposure:
-        include: '*'
-  endpoint:
-    health:
-      show-details: always
 #################################
 # dubbo
 ################################
@@ -38,7 +55,9 @@ dubbo:
     name: dubbo
     port: -1
   registry:
-    address: spring-cloud://localhost
+    address: spring-cloud://${spring.application.address}
   # 需要订阅的服务，如果是提供者则填写本服务的名称
   cloud:
     subscribed-services: cs-gateway-service
+  consumer:
+    check: false
