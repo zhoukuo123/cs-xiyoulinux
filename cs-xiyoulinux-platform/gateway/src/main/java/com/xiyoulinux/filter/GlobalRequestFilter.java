@@ -5,8 +5,10 @@ import com.xiyoulinux.auth.service.IAuthService;
 import com.xiyoulinux.common.*;
 import com.xiyoulinux.constant.AuthCommonConstant;
 import com.xiyoulinux.constant.GlobalConstant;
+import com.xiyoulinux.enums.ReturnCode;
+import com.xiyoulinux.pojo.JSONResult;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.Reference;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
 import org.springframework.core.Ordered;
@@ -33,11 +35,12 @@ import java.util.concurrent.atomic.AtomicReference;
 @Service
 public class GlobalRequestFilter implements GlobalFilter, Ordered {
 
-    @Reference
+    @DubboReference
     private IAuthService iauthService;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        System.out.println(exchange.getRequest().getURI().getPath());
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
         UsernameAndPassword usernameAndPassword = JSON.parseObject(
@@ -47,15 +50,16 @@ public class GlobalRequestFilter implements GlobalFilter, Ordered {
         if (request.getURI().getPath().contains(GlobalConstant.USER_LOGIN_PATH)) {
             // 去授权中心拿 token
 
-            GlobalResponseEntity<JwtToken> jwtTokenGlobalResponseEntity = null;
+            JSONResult jsonResult = null;
             try {
                 JwtToken token = iauthService.login(usernameAndPassword);
-                jwtTokenGlobalResponseEntity = new GlobalResponseEntity<>(token);
+                jsonResult = JSONResult.ok(token);
             } catch (Exception e) {
+                e.printStackTrace();
                 log.error("user [{}] login get token error", usernameAndPassword.getUsername());
-                jwtTokenGlobalResponseEntity = new GlobalResponseEntity<>(500, "user login get token error");
+                jsonResult = JSONResult.errorMsg(ReturnCode.ERROR.code, "user login get token error");
             }
-            byte[] bytes = JSON.toJSONBytes(jwtTokenGlobalResponseEntity);
+            byte[] bytes = JSON.toJSONBytes(jsonResult);
             DataBuffer buffer = response.bufferFactory().wrap(bytes);
             return response.writeWith(Flux.just(buffer));
         }
@@ -63,15 +67,15 @@ public class GlobalRequestFilter implements GlobalFilter, Ordered {
         // 2. 如果是注册
         if (request.getURI().getPath().contains(GlobalConstant.USER_REGISTER_PATH)) {
             // 去授权中心拿 token: 先创建用户, 再返回 Token
-            GlobalResponseEntity<JwtToken> jwtTokenGlobalResponseEntity = null;
+            JSONResult jsonResult = null;
             try {
                 JwtToken token = iauthService.register(usernameAndPassword);
-                jwtTokenGlobalResponseEntity = new GlobalResponseEntity<>(token);
+                jsonResult = JSONResult.ok(token);
             } catch (Exception e) {
                 log.error("user [{}] register get token error", usernameAndPassword.getUsername());
-                jwtTokenGlobalResponseEntity = new GlobalResponseEntity<>(500, "user register get token error");
+                jsonResult = JSONResult.errorMsg(ReturnCode.ERROR.code, "user register get token error");
             }
-            byte[] bytes = JSON.toJSONBytes(jwtTokenGlobalResponseEntity);
+            byte[] bytes = JSON.toJSONBytes(jsonResult);
             DataBuffer buffer = response.bufferFactory().wrap(bytes);
             return response.writeWith(Flux.just(buffer));
         }
@@ -90,7 +94,8 @@ public class GlobalRequestFilter implements GlobalFilter, Ordered {
 
         // 获取不到登录用户信息, 返回 401
         if (null == loginUserInfo) {
-            byte[] result = JSON.toJSONBytes(new GlobalResponseEntity<>(401, "not has auth !!"));
+            byte[] result = JSON.toJSONBytes(JSONResult.errorMsg(ReturnCode.UNAUTHORIZED.code,
+                    "not has auth !!"));
             DataBuffer buffer = response.bufferFactory().wrap(result);
             return response.writeWith(Flux.just(buffer));
         }
