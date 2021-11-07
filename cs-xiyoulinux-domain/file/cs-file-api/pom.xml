@@ -16,10 +16,12 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
+
     <dependencies>
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-web</artifactId>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cs-xiyoulinux-web-components</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

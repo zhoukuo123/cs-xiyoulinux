@@ -3,17 +3,12 @@ server:
   servlet:
     context-path: /cs-file
 spring:
-  # 数据库
-  datasource:
-    type: com.alibaba.druid.pool.DruidDataSource
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://${spring.application.address}:3306/cs_pictures?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
-    username: root
-    password: 13468724917qkm,
+  application:
+    name: cs-file-service
+    address: 127.0.0.1
   # nacos
   cloud:
     nacos:
-      group: SEATA_GROUP
       discovery:
         enabled: true
         server-addr: ${spring.application.address}:8848 # Nacos 服务器地址
@@ -21,9 +16,7 @@ spring:
         metadata:
           management:
             context-path: ${server.servlet.context-path}/actuator
-  application:
-    name: cs-file-service
-    address: 127.0.0.1
+
 #################################
 # dubbo
 ################################
@@ -32,28 +25,16 @@ dubbo:
     name: dubbo
     port: -1
   registry:
-    address: spring-cloud://localhost
+    address: spring-cloud://${spring.application.address}
   # 需要订阅的服务，如果是提供者则填写本服务的名称
   cloud:
     subscribed-services: cs-file-service
-seata:
-  tx-service-group: cs_xiyoulinux_test
-  registry:
-    type: nacos
-    nacos:
-      application: seata-server
-      server-addr: ${spring.application.address}:8848
-      group: ${spring.cloud.nacos.group}
-      namespace: ${spring.cloud.nacos.discovery.namespace}
-      username: nacos
-      password: nacos
-  config:
-    type: nacos
-    nacos:
-      server-addr: ${spring.application.address}:8848
-      group: ${spring.cloud.nacos.group}
-      namespace: ${spring.cloud.nacos.discovery.namespace}
-      dataId: seata-config
-      username: nacos
-      password: nacos
-  enable-auto-data-source-proxy: false
+# 暴露端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
