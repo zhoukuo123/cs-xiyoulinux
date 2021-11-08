@@ -57,6 +57,15 @@ public interface CsUserCommentMapper extends BaseMapper<CsUserActivityComment> {
      * @param activityId 动态id
      */
     void deleteByActivityId(@Param("activityId") String activityId);
+
+    /**
+     * 根据动态id获取动态的所有评论然后根据likes排序
+     * @param activityId
+     * @param csUserActivityCommentPage
+     * @return
+     */
+    IPage<CsUserActivityComment> selectPageByActivityIdOrderByLikes(@Param("activityId") String activityId,
+                                                                    @Param("csUserActivityCommentPage") IPage<CsUserActivityComment> csUserActivityCommentPage);
 }
 
 

@@ -17,6 +17,11 @@ public interface CsUserLikesMapper extends BaseMapper<CsUserLikes> {
      */
     void deleteByCsUserIdAndCsCommentId(@Param("csUserId") String csUserId, @Param("csCommentId") String csCommentId);
 
+
+    /** 删除点赞信息 byActivityId
+     * @param csActivityId 动态id
+     */
+    void deleteLikesByCsActivityId(@Param("csActivityId") String csActivityId);
 }
 
 

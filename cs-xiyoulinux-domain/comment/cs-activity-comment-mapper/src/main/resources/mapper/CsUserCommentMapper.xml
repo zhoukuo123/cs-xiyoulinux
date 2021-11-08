@@ -56,6 +56,13 @@
         group by activity_id
 
     </select>
+    <select id="selectPageByActivityIdOrderByLikes"
+            resultType="com.xiyoulinux.activity.comment.entity.CsUserActivityComment">
+        select *
+        from cs_user_activity_comment
+        where activity_id = #{activityId}
+        order by comment_likes DESC
+    </select>
 
     <delete id="deleteByActivityId">
         delete

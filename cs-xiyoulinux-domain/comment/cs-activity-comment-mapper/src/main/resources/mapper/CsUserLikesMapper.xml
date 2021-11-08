@@ -21,4 +21,10 @@
         where cs_user_id = #{csUserId,jdbcType=VARCHAR}
           AND cs_comment_id = #{csCommentId,jdbcType=VARCHAR}
     </delete>
+
+    <delete id="deleteLikesByCsActivityId">
+        delete
+        from cs_user_likes
+        where cs_activity_id = #{csActivityId}
+    </delete>
 </mapper>
