@@ -6,7 +6,7 @@ import java.util.Map;
 /**
  * @author qkm
  */
-public interface CommentService {
+public interface ICommentService {
     /**
      * 获取当前动态的评论数
      *

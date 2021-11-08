@@ -1,7 +1,7 @@
 package com.xiyoulinux.activity.comment.insideImpl;
 
 import com.xiyoulinux.activity.comment.service.ICsUserActivityCommentService;
-import com.xiyoulinux.activity.comment.service.CommentService;
+import com.xiyoulinux.activity.comment.service.ICommentService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboService;
 
@@ -13,11 +13,11 @@ import java.util.Map;
  */
 @Slf4j
 @DubboService
-public class CommentServiceImpl implements CommentService {
+public class ICommentServiceImpl implements ICommentService {
 
     private final ICsUserActivityCommentService iCsUserActivityCommentService;
 
-    public CommentServiceImpl(ICsUserActivityCommentService iCsUserActivityCommentService) {
+    public ICommentServiceImpl(ICsUserActivityCommentService iCsUserActivityCommentService) {
         this.iCsUserActivityCommentService = iCsUserActivityCommentService;
     }
 
