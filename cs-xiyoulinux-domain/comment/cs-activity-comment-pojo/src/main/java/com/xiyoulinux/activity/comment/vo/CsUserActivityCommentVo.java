@@ -1,5 +1,6 @@
 package com.xiyoulinux.activity.comment.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xiyoulinux.activity.comment.entity.CsUserActivityComment;
 import com.xiyoulinux.common.CsUserInfo;
@@ -36,12 +37,6 @@ public class CsUserActivityCommentVo implements Serializable {
     private CsUserInfo csUserInfo;
 
     /**
-     * 评论内容包含的文件url
-     */
-    @ApiModelProperty(value = "评论内容包含的文件url")
-    List<String> activityPicturesUrl;
-
-    /**
      * 用户是否点赞
      */
     @ApiModelProperty(value = "用户是否点赞")
@@ -74,14 +69,21 @@ public class CsUserActivityCommentVo implements Serializable {
         /**
          * 评论创建时间
          */
-        @ApiModelProperty(value = "评论的创建时间",example = "2021-02-03 12:00:00")
+        @ApiModelProperty(value = "评论的创建时间", example = "2021-02-03 12:00:00")
         @JsonFormat(pattern = AuthCommonConstant.DATE_FORMAT)
         private Date commentCreateTime;
+
+        /**
+         * 评论对应的文件信息
+         */
+        @TableField(value = "comment_files")
+        private List<String> commentFiles;
 
         public static ActivityComment to(CsUserActivityComment comment) {
             return new ActivityComment(comment.getId(),
                     comment.getCommentContent(), comment.getCommentLikes()
-                    , comment.getCommentCreateTime());
+                    , comment.getCommentCreateTime(),
+                    comment.getCommentFiles());
         }
     }
 

@@ -25,7 +25,7 @@ public class CsUserInfoAndIdAndFileInfo {
     private CsUserInfo csUserInfo;
 
     /**
-     * 评论id
+     * 动态/评论id
      */
     @ApiModelProperty(value = "动态/评论id")
     private String id;

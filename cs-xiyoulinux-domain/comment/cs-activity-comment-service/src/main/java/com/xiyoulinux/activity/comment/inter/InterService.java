@@ -1,9 +1,7 @@
 package com.xiyoulinux.activity.comment.inter;
 
 import com.xiyoulinux.common.CsUserInfo;
-import com.xiyoulinux.file.service.GetFileService;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -14,9 +12,6 @@ import java.util.*;
 @Slf4j
 @Service
 public class InterService {
-
-    @DubboReference
-    private GetFileService getFileService;
 
     //用户服务加降级
     /**
@@ -54,14 +49,4 @@ public class InterService {
         return new CsUserInfo();
     }
 
-    /**
-     * 调用文件服务获取评论的文件信息
-     *
-     * @param commentIdList 动态idList
-     * @return commentId-fileUrlsList
-     */
-    public Map<String, List<String>> interCallFile(List<String> commentIdList) {
-        //调用文件服务获取文件,返回（动态id，文件集合）
-        return getFileService.getFileUrlByCommentId(commentIdList);
-    }
 }

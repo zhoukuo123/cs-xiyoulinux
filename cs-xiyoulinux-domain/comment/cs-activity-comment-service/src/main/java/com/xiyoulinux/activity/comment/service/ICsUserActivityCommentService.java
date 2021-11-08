@@ -1,8 +1,10 @@
 package com.xiyoulinux.activity.comment.service;
 
 import com.xiyoulinux.activity.comment.bo.CsUserActivityCommentBo;
+import com.xiyoulinux.activity.comment.bo.CsUserLikesBo;
 import com.xiyoulinux.activity.comment.vo.CsUserInfoAndIdAndFileInfo;
 import com.xiyoulinux.activity.comment.vo.PageCommentInfo;
+import com.xiyoulinux.common.PageInfo;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
@@ -16,19 +18,27 @@ public interface ICsUserActivityCommentService {
      * 根据动态id获取动态的所有评论
      *
      * @param activityId 动态id
-     * @param page       分页
+     * @param pageInfo   分页对象
      * @param userId     用户id
      * @return 评论集合
      */
-    PageCommentInfo getPageCommentsByActivityIdAndUserId(String activityId, int page, String userId);
+    PageCommentInfo getPageCommentsByActivityIdAndUserId(PageInfo pageInfo, String activityId, String userId);/**
+
+     * 根据动态id获取动态的所有评论根据likes降序
+     *
+     * @param activityId 动态id
+     * @param pageInfo   分页对象
+     * @param userId     用户id
+     * @return 评论集合
+     */
+    PageCommentInfo getPageCommentsByActivityIdAndUserIdOrderByLikes(PageInfo pageInfo, String activityId, String userId);
 
     /**
      * 给评论点赞
      *
-     * @param commentId 评论id
-     * @param userId    用户id
+     * @param csUserLikesBo {@link CsUserLikesBo}
      */
-    String likesComment(String commentId, String userId);
+    String likesComment(CsUserLikesBo csUserLikesBo);
 
     /**
      * 给评论取消点赞
@@ -45,7 +55,6 @@ public interface ICsUserActivityCommentService {
      * @param files   文件
      * @return 用户信息和动态id
      */
-//    CsUserInfoAndId addComment(CsUserActivityCommentBo comment, MultipartFile[] files);
     CsUserInfoAndIdAndFileInfo addComment(CsUserActivityCommentBo comment, MultipartFile[] files);
 
     /**
@@ -62,4 +71,12 @@ public interface ICsUserActivityCommentService {
      * @param activityId 动态id
      */
     void deleteComments(String activityId);
+
+
+    /**
+     * 删除点赞信息
+     */
+    void deleteLikesByCsActivityId(String activityId);
+
+
 }

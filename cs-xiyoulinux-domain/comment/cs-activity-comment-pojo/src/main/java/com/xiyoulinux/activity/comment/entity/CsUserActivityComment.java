@@ -1,5 +1,6 @@
 package com.xiyoulinux.activity.comment.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.AllArgsConstructor;
@@ -7,6 +8,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户评论动态
@@ -28,30 +30,36 @@ public class CsUserActivityComment {
     /**
      * 用户id
      */
-    @TableId(value = "user_id")
+    @TableField(value = "user_id")
     private String userId;
 
     /**
      * 动态id
      */
-    @TableId(value = "activity_id")
+    @TableField(value = "activity_id")
     private String activityId;
 
     /**
      * 评论内容
      */
-    @TableId(value = "comment_content")
+    @TableField(value = "comment_content")
     private String commentContent;
 
     /**
      * 评论点赞数目
      */
-    @TableId(value = "comment_likes")
+    @TableField(value = "comment_likes")
     private int commentLikes;
 
     /**
      * 评论创建时间
      */
-    @TableId(value = "comment_create_time")
+    @TableField(value = "comment_create_time")
     private Date commentCreateTime;
+
+    /**
+     * 评论对应的文件信息
+     */
+    @TableField(value = "comment_files")
+    private List<String> commentFiles;
 }
