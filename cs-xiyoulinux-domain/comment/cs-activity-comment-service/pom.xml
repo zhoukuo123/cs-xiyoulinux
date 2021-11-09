@@ -47,6 +47,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!--stream集成rabbitmq-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
+        </dependency>
+
         <!--dubbo-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
