@@ -1,0 +1,8 @@
+###
+POST http://127.0.0.1:7002/cs-gateway/cs-auth/authority/token
+Content-Type: application/json
+
+{
+  "username": "123",
+  "password": "1234"
+}

@@ -23,7 +23,16 @@ dubbo:
     name: dubbo
     port: -1
   registry:
-    address: spring-cloud://localhost
+    address: spring-cloud://${spring.application.address}
   # dubbo订阅的服务，如果是提供者填写本服务的名称
   cloud:
     subscribed-services: cs-auth-service
+# 暴露端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
