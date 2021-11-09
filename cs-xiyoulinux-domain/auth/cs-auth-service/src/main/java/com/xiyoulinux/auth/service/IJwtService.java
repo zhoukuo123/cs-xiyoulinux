@@ -10,7 +10,7 @@ import java.security.spec.InvalidKeySpecException;
 /**
  * @author qkm
  */
-public interface JwtService {
+public interface IJwtService {
     /**
      * 生成JWT Token, 使用默认的超时时间
      *

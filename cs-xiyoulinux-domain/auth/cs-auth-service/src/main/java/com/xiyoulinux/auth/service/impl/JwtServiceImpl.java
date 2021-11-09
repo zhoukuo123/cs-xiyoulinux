@@ -2,7 +2,7 @@ package com.xiyoulinux.auth.service.impl;
 
 import com.alibaba.fastjson.JSON;
 import com.xiyoulinux.auth.constant.AuthorityConstant;
-import com.xiyoulinux.auth.service.JwtService;
+import com.xiyoulinux.auth.service.IJwtService;
 import com.xiyoulinux.common.JwtToken;
 import com.xiyoulinux.common.LoginUserInfo;
 import com.xiyoulinux.common.UsernameAndPassword;
@@ -27,7 +27,7 @@ import java.util.UUID;
  */
 @Slf4j
 @Service
-public class JwtServiceImpl implements JwtService {
+public class JwtServiceImpl implements IJwtService {
 
     @Override
     public String getToken(LoginUserInfo loginUserInfo) throws NoSuchAlgorithmException, InvalidKeySpecException {
