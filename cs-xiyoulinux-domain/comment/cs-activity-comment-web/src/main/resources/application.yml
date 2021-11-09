@@ -6,14 +6,20 @@ server:
 # 文件大小限制
 ####################################
 spring:
+  application:
+    name: cs-activity-comment-service
+    address: 127.0.0.1
+  rabbitmq:
+    host: ${spring.application.address}
+    port: 5672
+    username: qkm
+    password: qkm
+    virtual-host: /
   servlet:
     multipart:
       enabled: true
       max-file-size: 20MB
       max-request-size: 100MB
-  application:
-    name: cs-activity-comment-service
-    address: 127.0.0.1
   # 数据库
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -32,6 +38,29 @@ spring:
         metadata:
           management:
             context-path: ${server.servlet.context-path}/actuator
+    # 配置 rabbitmq 消费者
+    stream:
+      bindings:
+        commentInput:
+          destination: activity-exchange #对应 rabbitmq的 exchange
+          group: comment #配置分组 点对点消费，防止多实例消费同一条消息,同时会生成队列 activity-exchange.comment 绑定 activity-exchange exchange
+          binder: rabbit
+          consumer:
+            maxAttempts: 3  # 消费失败重试3次
+            concurrency: 1 # 开始时消费者的数量
+            backOffInitialInterval: 5000 # 第二次和第一次重试相隔时间
+
+      rabbit:
+        bindings:
+          commentInput:
+            consumer:
+              autoBindDlq: true #是否自动生成死信交换机
+              republishToDlq: true #有详细信息
+              prefetch: 5 # 限制consumer在消费消息时，一次能同时获取的消息数量，默认：1
+              durable-subscription: true # 是否启用持久化订阅
+              maxConcurrency: 5 # 动态增加消费者的数量，当前消费者数量不足以及时消费消息时, 会动态增加消费者数量, 直到到达最大数量, 即该配置的值
+              deadLetterQueueName: activity-exchange.comment.dlq
+              deadLetterExchange: activity-exchange.dlx
 ######################################
 # dubbo
 #########################################
@@ -40,10 +69,12 @@ dubbo:
     name: dubbo
     port: -1
   registry:
-    address: spring-cloud://localhost
+    address: spring-cloud://${spring.application.address}
   # 要订阅的服务，如果是提供者则填写服务名称
   cloud:
-    subscribed-services: cs-file-service
+    subscribed-services: cs-activity-comment-service
+  consumer:
+    check: false
 ####################################
 # mybaits-plus 设置为null的列
 ################################
@@ -75,3 +106,12 @@ seata:
       username: nacos
       password: nacos
   enable-auto-data-source-proxy: false
+# 暴露端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always

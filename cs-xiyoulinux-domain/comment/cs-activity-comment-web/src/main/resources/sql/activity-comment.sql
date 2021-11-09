@@ -4,9 +4,10 @@ create table cs_user_activity_comment
         primary key,
     user_id             varchar(20) null comment '用户id',
     activity_id         varchar(20) not null comment '动态id',
-    comment_content     text null comment '评论内容',
+    comment_content     varchar(1000) null comment '评论内容',
     comment_likes       int default 0 null comment '评论点赞数目',
     comment_create_time datetime null comment '评论创建时间'
+    comment_files varchar(300) null comment '评论文件信息'
 ) comment '用户评论表'  charset = utf8;
 
 create table cs_user_likes
