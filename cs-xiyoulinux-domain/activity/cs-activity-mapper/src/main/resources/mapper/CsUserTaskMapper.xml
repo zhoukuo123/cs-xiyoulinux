@@ -24,9 +24,10 @@
 
     <update id="updateEndTimeAndStatusByTaskId">
         update cs_user_task
-        set task_end_time = #{taskEndTime},
-            task_status   = #{taskStatus}
-        where task_id = #{id}
+        set task_end_time   = #{taskEndTime},
+            task_create_time = #{taskStartTime},
+            task_status     = #{taskStatus}
+        where task_id = #{taskId}
     </update>
 
     <delete id="deleteByTaskId">

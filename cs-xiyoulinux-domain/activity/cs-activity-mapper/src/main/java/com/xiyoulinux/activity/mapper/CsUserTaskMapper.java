@@ -43,11 +43,12 @@ public interface CsUserTaskMapper extends BaseMapper<CsUserTask> {
     /**
      * 更新任务的结束时间
      *
-     * @param id          任务id
-     * @param taskEndTime 要更新的任务结束时间
-     * @param taskStatus  要更新的任务的状态
+     * @param taskId             id
+     * @param taskStartTime      要更新的开始时间
+     * @param taskEndTime        要更新的结束时间
+     * @param taskStatus 要更新的状态
      */
-    void updateEndTimeAndStatusByTaskId(@Param("id") String id, @Param("taskEndTime") Date taskEndTime,
+    void updateEndTimeAndStatusByTaskId(@Param("taskId") String taskId, @Param("taskStartTime") Date taskStartTime,@Param("taskEndTime") Date taskEndTime,
                                         @Param("taskStatus") ActivityStatus taskStatus);
 
     /**

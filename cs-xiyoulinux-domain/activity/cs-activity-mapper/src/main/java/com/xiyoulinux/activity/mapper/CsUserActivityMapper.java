@@ -35,10 +35,11 @@ public interface CsUserActivityMapper extends BaseMapper<CsUserActivity> {
      * 更新结束时间
      *
      * @param id             id
+     * @param startTime      要更新的开始时间
      * @param endTime        要更新的结束时间
      * @param activityStatus 要更新的状态
      */
-    void updateEndTimeAndStatusById(@Param("id") String id, @Param("endTime") Date endTime,
+    void updateEndTimeAndStatusById(@Param("id") String id,@Param("startTime") Date startTime,@Param("endTime") Date endTime,
                                     @Param("activityStatus") ActivityStatus activityStatus);
 
     /**

@@ -24,6 +24,7 @@
     <update id="updateEndTimeAndStatusById">
         update cs_user_activity
         set activity_end_time = #{endTime},
+            activity_create_time = #{startTime},
             activity_status   = #{activityStatus}
         where id = #{id}
     </update>
@@ -52,6 +53,9 @@
         from cs_user_activity
         where user_id = #{userId}
         order by activity_create_time DESC
+    </select>
+    <select id="searchAll" resultType="com.xiyoulinux.activity.entity.CsUserActivity">
+        select * from cs_dynamic
     </select>
 
 
