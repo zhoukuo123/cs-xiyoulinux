@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.List;
 
 /**
@@ -17,8 +18,9 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class PageTaskInfo {
+public class PageTaskInfo implements Serializable {
 
+    private static final long serialVersionUID = -3462646296682085418L;
     @ApiModelProperty(value = "分页任务信息")
     private List<CsUserTaskVo> taskInfos;
 

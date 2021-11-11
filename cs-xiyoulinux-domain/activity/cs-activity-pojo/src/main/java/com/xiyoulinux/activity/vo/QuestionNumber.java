@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * @author qkm
  */
@@ -13,7 +15,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @ApiModel(description = "各个问题个数")
-public class QuestionNumber {
+public class QuestionNumber implements Serializable {
+    private static final long serialVersionUID = -8366400262069198256L;
     @ApiModelProperty(value = "未解决问题的个数")
     private int unResolved;
 
