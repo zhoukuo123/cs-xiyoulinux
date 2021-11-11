@@ -1,5 +1,6 @@
 package com.xiyoulinux.activity.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xiyoulinux.activity.entity.CsUserQuestion;
 import com.xiyoulinux.common.CsUserInfo;
@@ -30,13 +31,6 @@ public class CsUserQuestionVo implements Serializable {
      */
     @ApiModelProperty(value = "用户信息")
     private CsUserInfo csUserInfo;
-
-
-    /**
-     * 动态内容包含的文件url
-     */
-    @ApiModelProperty(value = "问题内容所包含的文件信息")
-    private List<String> questionPicturesUrl;
 
     /**
      * 评论的数目
@@ -95,12 +89,19 @@ public class CsUserQuestionVo implements Serializable {
         @ApiModelProperty(value = "问题状态--未解决/已解决",example = "已解决")
         private ActivityStatus questionStatus;
 
+        /**
+         * 问题的文件信息
+         */
+        @TableField(value = "question_files")
+        private List<String> questionFiles;
+
         public static Question to(CsUserQuestion csUserQuestion) {
             return new Question(csUserQuestion.getQuestionId()
                     ,csUserQuestion.getQuestionTitle(),
                     csUserQuestion.getQuestionContent(),
                     csUserQuestion.getQuestionCreateTime(),
-                    csUserQuestion.getQuestionStatus());
+                    csUserQuestion.getQuestionStatus(),
+                    csUserQuestion.getQuestionFiles());
         }
     }
 

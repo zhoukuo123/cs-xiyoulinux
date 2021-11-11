@@ -1,5 +1,6 @@
 package com.xiyoulinux.activity.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xiyoulinux.activity.entity.CsUserTask;
 import com.xiyoulinux.common.CsUserInfo;
@@ -32,12 +33,6 @@ public class CsUserTaskVo implements Serializable {
     @ApiModelProperty(value = "用户信息")
     private CsUserInfo csUserInfo;
 
-
-    /**
-     * 动态内容包含的文件url
-     */
-    @ApiModelProperty(value = "任务内容所包含的文件信息")
-    private List<String> taskPicturesUrl;
 
     /**
      * 评论的数目
@@ -85,14 +80,14 @@ public class CsUserTaskVo implements Serializable {
         /**
          * 创建时间
          */
-        @ApiModelProperty(value = "任务的创建时间",example = "2021-02-03 12:00:00")
+        @ApiModelProperty(value = "任务的创建时间", example = "2021-02-03 12:00:00")
         @JsonFormat(pattern = AuthCommonConstant.DATE_FORMAT)
         private Date taskCreateTime;
 
         /**
          * 任务的结束时间
          */
-        @ApiModelProperty(value = "任务的截止时间",example = "2021-02-03 12:00:00")
+        @ApiModelProperty(value = "任务的截止时间", example = "2021-02-03 12:00:00")
         @JsonFormat(pattern = AuthCommonConstant.DATE_FORMAT)
         private Date taskEndTime;
 
@@ -100,8 +95,14 @@ public class CsUserTaskVo implements Serializable {
          * 任务状态
          * {@link ActivityStatus}
          */
-        @ApiModelProperty(value = "任务的状态--进行中/待进行/已完成",example = "进行中")
+        @ApiModelProperty(value = "任务的状态--进行中/待进行/已完成", example = "进行中")
         private ActivityStatus taskStatus;
+
+        /**
+         * 任务的文件信息
+         */
+        @TableField(value = "task_files")
+        private List<String> taskFiles;
 
         public static Task to(CsUserTask csUserTask) {
             return new Task(csUserTask.getTaskId(),
@@ -109,7 +110,8 @@ public class CsUserTaskVo implements Serializable {
                     csUserTask.getTaskContent(),
                     csUserTask.getTaskCreateTime(),
                     csUserTask.getTaskEndTime(),
-                    csUserTask.getTaskStatus());
+                    csUserTask.getTaskStatus(),
+                    csUserTask.getTaskFiles());
         }
 
     }

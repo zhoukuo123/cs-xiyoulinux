@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 
 /**
@@ -30,7 +31,7 @@ public class CsUserTask {
     /**
      * 任务id
      */
-    @TableId(value = "task_id")
+    @TableField(value = "task_id")
     private String taskId;
 
     /**
@@ -69,5 +70,11 @@ public class CsUserTask {
      */
     @TableField(value = "task_status")
     private ActivityStatus taskStatus;
+
+    /**
+     * 任务的文件信息
+     */
+    @TableField(value = "task_files")
+    private List<String> taskFiles;
 
 }

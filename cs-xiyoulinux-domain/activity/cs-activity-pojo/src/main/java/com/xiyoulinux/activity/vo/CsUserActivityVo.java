@@ -1,5 +1,6 @@
 package com.xiyoulinux.activity.vo;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.xiyoulinux.activity.entity.CsUserActivity;
 import com.xiyoulinux.common.CsUserInfo;
@@ -31,13 +32,6 @@ public class CsUserActivityVo implements Serializable {
      */
     @ApiModelProperty(value = "用户信息")
     private CsUserInfo csUserInfo;
-
-
-    /**
-     * 动态内容包含的文件url
-     */
-    @ApiModelProperty(value = "动态内容的文件内容")
-    private List<String> activityFilesUrl;
 
     /**
      * 用户是否可以修改
@@ -110,6 +104,12 @@ public class CsUserActivityVo implements Serializable {
         @ApiModelProperty(value = "动态状态（问题状态--未解决/已解决、讲座/任务的状态--进行中/待进行/已完成）")
         private ActivityStatus activityStatus;
 
+        /**
+         * 动态的文件信息
+         */
+        @TableField(value = "activity_files")
+        private List<String> activityFiles;
+
         public static Activity to(CsUserActivity csUserActivity) {
             return new Activity(csUserActivity.getId(),
                     csUserActivity.getActivityTitle(),
@@ -117,7 +117,8 @@ public class CsUserActivityVo implements Serializable {
                     csUserActivity.getActivityCreateTime(),
                     csUserActivity.getActivityEndTime(),
                     csUserActivity.getActivityType(),
-                    csUserActivity.getActivityStatus());
+                    csUserActivity.getActivityStatus(),
+                    csUserActivity.getActivityFiles());
         }
     }
 

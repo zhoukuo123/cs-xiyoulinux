@@ -9,6 +9,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * 用户问题表
@@ -31,7 +32,7 @@ public class CsUserQuestion {
     /**
      * 问题id
      */
-    @TableId(value = "question_id")
+    @TableField(value = "question_id")
     private String questionId;
 
     /**
@@ -64,5 +65,11 @@ public class CsUserQuestion {
      */
     @TableField(value = "question_status")
     private ActivityStatus questionStatus;
+
+    /**
+     * 问题的文件信息
+     */
+    @TableField(value = "question_files")
+    private List<String> questionFiles;
 
 }
