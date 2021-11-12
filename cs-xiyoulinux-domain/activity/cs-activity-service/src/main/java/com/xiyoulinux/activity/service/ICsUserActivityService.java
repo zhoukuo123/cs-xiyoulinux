@@ -1,10 +1,10 @@
 package com.xiyoulinux.activity.service;
 
 import com.xiyoulinux.activity.bo.CsUserActivityBo;
+import com.xiyoulinux.activity.bo.CsUserActivityDeleteBo;
 import com.xiyoulinux.activity.vo.CsUserInfoAndIdAndFileInfo;
 import com.xiyoulinux.activity.vo.PageActivityInfo;
-import com.xiyoulinux.enums.ActivityStatus;
-import com.xiyoulinux.enums.ActivityType;
+import com.xiyoulinux.common.PageInfo;
 import org.springframework.web.multipart.MultipartFile;
 
 /**
@@ -19,26 +19,23 @@ public interface ICsUserActivityService {
      * @param csUserActivityBo object
      * @return 用户信息
      */
-//    CsUserInfoAndId addActivity(CsUserActivityBo csUserActivityBo, MultipartFile[] files);
     CsUserInfoAndIdAndFileInfo addActivity(CsUserActivityBo csUserActivityBo, MultipartFile[] files);
 
     /**
      * 根据动态id删除动态
      *
-     * @param id     id
-     * @param type   动态的类型
-     * @param status 动态的状态
+     * @param csUserActivityDeleteBo {@link CsUserActivityDeleteBo}
      */
-    void deleteActivity(String id, ActivityType type, ActivityStatus status);
+    void deleteActivity(CsUserActivityDeleteBo csUserActivityDeleteBo);
 
     /**
      * 分页获取动态
      *
-     * @param page   第几页
-     * @param userId 用户id
+     * @param pageInfo 第几页
+     * @param userId   用户id
      * @return 动态集合
      */
-    PageActivityInfo getPageActivity(int page, String userId);
+    PageActivityInfo getPageActivity(PageInfo pageInfo, String userId);
 
 
     /**

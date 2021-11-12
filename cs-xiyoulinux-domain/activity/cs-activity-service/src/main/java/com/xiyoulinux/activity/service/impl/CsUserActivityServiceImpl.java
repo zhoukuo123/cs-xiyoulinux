@@ -6,11 +6,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
 import com.xiyoulinux.activity.bo.CsUserActivityBo;
+import com.xiyoulinux.activity.bo.CsUserActivityDeleteBo;
 import com.xiyoulinux.activity.constant.ActivityConstant;
+import com.xiyoulinux.activity.service.ActivitySource;
 import com.xiyoulinux.activity.vo.CsUserInfoAndIdAndFileInfo;
 import com.xiyoulinux.activity.vo.PageActivityInfo;
-import com.xiyoulinux.activity.comment.service.CommentService;
-import com.xiyoulinux.activity.inter.InterService;
+import com.xiyoulinux.activity.inter.IntelService;
 import com.xiyoulinux.activity.mapper.CsUserActivityMapper;
 import com.xiyoulinux.activity.mapper.CsUserQuestionMapper;
 import com.xiyoulinux.activity.mapper.CsUserTaskMapper;
@@ -20,16 +21,20 @@ import com.xiyoulinux.activity.entity.CsUserTask;
 import com.xiyoulinux.activity.service.ICsUserActivityService;
 import com.xiyoulinux.activity.vo.CsUserActivityVo;
 import com.xiyoulinux.common.CsUserInfo;
+import com.xiyoulinux.common.PageInfo;
 import com.xiyoulinux.enums.ActivityStatus;
 import com.xiyoulinux.enums.ActivityType;
-import com.xiyoulinux.file.service.DeleteFileService;
-import com.xiyoulinux.file.service.UploadFileService;
+import com.xiyoulinux.file.service.IUploadFileService;
+import com.xiyoulinux.pojo.ActivityMessage;
+import com.xiyoulinux.utils.DateUtil;
 import com.xiyoulinux.utils.RedisOperator;
 import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.BeanUtils;
+import org.springframework.cloud.stream.annotation.EnableBinding;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -41,6 +46,7 @@ import java.util.stream.Collectors;
  */
 @Service
 @Slf4j
+@EnableBinding(ActivitySource.class)
 public class CsUserActivityServiceImpl implements ICsUserActivityService {
 
     private final CsUserActivityMapper csUserActivityMapper;
@@ -51,46 +57,51 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
 
     private final RedisOperator redisOperator;
 
-    private final InterService interService;
+    private final IntelService intelService;
 
     private final Sid sid;
 
-    @DubboReference
-    private UploadFileService uploadFileService;
+    private final ActivitySource activitySource;
 
     @DubboReference
-    private CommentService commentService;
+    private IUploadFileService iUploadFileService;
 
-    @DubboReference
-    private DeleteFileService deleteFileService;
 
     public CsUserActivityServiceImpl(CsUserActivityMapper csUserActivityMapper,
                                      CsUserQuestionMapper csUserQuestionMapper,
                                      CsUserTaskMapper csUserTaskMapper,
+                                     ActivitySource activitySource,
                                      RedisOperator redisOperator,
-                                     InterService interService,
+                                     IntelService intelService,
                                      Sid sid) {
         this.csUserActivityMapper = csUserActivityMapper;
         this.csUserQuestionMapper = csUserQuestionMapper;
+        this.activitySource = activitySource;
         this.csUserTaskMapper = csUserTaskMapper;
         this.redisOperator = redisOperator;
-        this.interService = interService;
+        this.intelService = intelService;
         this.sid = sid;
     }
 
 
     @Override
     @GlobalTransactional
-//    public CsUserInfoAndId addActivity(CsUserActivityBo csUserActivityBo, MultipartFile[] files) {
     public CsUserInfoAndIdAndFileInfo addActivity(CsUserActivityBo csUserActivityBo, MultipartFile[] files) {
         CsUserActivity csUserActivity = new CsUserActivity();
         BeanUtils.copyProperties(csUserActivityBo, csUserActivity);
         //分布式id
         csUserActivity.setId(sid.nextShort());
 
+        List<String> fileUrl = null;
+        if (files != null) {
+            //调用图片服务将图片上传到云服务器
+            fileUrl = iUploadFileService.uploadOSS(files);
+        }
+        csUserActivity.setActivityFiles(fileUrl);
+
         //插入总表
         csUserActivityMapper.insert(csUserActivity);
-        log.info("Insert activity --- [{}]", JSON.toJSONString(csUserActivity));
+        log.info("Insert activity success --- [{}] to summary table", JSON.toJSONString(csUserActivity));
 
         //插入问题表
         if (Objects.equals(csUserActivity.getActivityType().code, ActivityType.QUESTION.code)) {
@@ -99,10 +110,11 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
                     csUserActivity.getActivityTitle(),
                     csUserActivity.getActivityContent(),
                     csUserActivity.getActivityCreateTime(),
-                    csUserActivity.getActivityStatus());
+                    csUserActivity.getActivityStatus(),
+                    csUserActivity.getActivityFiles());
 
             csUserQuestionMapper.insert(csUserQuestion);
-            log.info("Insert question to db --- [{}]", JSON.toJSONString(csUserActivity));
+            log.info("Insert question success  --- [{}] to question table", JSON.toJSONString(csUserActivity));
             //插入任务表
         } else if (Objects.equals(csUserActivity.getActivityType().code, ActivityType.TASK.code)) {
             CsUserTask csUserTask = new CsUserTask(sid.nextShort(), csUserActivity.getId(),
@@ -110,31 +122,29 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
                     csUserActivity.getActivityTitle(),
                     csUserActivity.getActivityContent(),
                     csUserActivity.getActivityCreateTime(),
-                    csUserActivity.getActivityEndTime(), csUserActivity.getActivityStatus());
-            /**
-             *  TODO 第二次删除缓存
-             */
-            //先删除缓存，等数据库操作结束之后延迟一段时间（根据从数据库中查询然后放到缓存中的时间）在删除缓存一遍，保证数据库和缓存的一致性。
-            //获取redis中存储任务的key
-            String deleteKey = judgeType(csUserActivity.getActivityStatus().code);
+                    csUserActivity.getActivityEndTime(),
+                    csUserActivity.getActivityStatus(),
+                    csUserActivity.getActivityFiles());
 
+            //插入数据库
+            csUserTaskMapper.insert(csUserTask);
+            log.info("Insert task success  --- [{}] to task table", JSON.toJSONString(csUserActivity));
+
+            //删除缓存
+            String deleteKey = judgeType(csUserActivity.getActivityStatus().code);
             //根据deleteKey先删除redis中存储的任务
             Set<String> keys = redisOperator.keys(deleteKey);
             if (keys != null && keys.size() != 0) {
                 redisOperator.delCollect(keys);
-                log.info("delete [{}] from redis", deleteKey);
+                log.info("delete [{}] from redis success", deleteKey);
             }
-            //在传插入数据库
-            csUserTaskMapper.insert(csUserTask);
-            log.info("Insert task to db --- [{}]", JSON.toJSONString(csUserActivity));
-        }
 
-        //调用图片服务将图片上传到云服务器以及保存到文件数据库中
-        List<String> fileUrl = uploadFileService.uploadActivityFile(files, csUserActivity.getId());
+        }
 
         //用户服务增加降级---如果前面出现异常则回滾，否则执行到此处，如果调用用户服务有问题，则降级就是说用户服务获取信息使用降级后的，然后返回，
         //也不需要回滾
-        CsUserInfo csUserInfo = interService.interCallPeople(csUserActivity.getUserId());
+        CsUserInfo csUserInfo = intelService.interCallPeople(csUserActivity.getUserId());
+
         CsUserInfoAndIdAndFileInfo userAndActivityIdAndFile = new CsUserInfoAndIdAndFileInfo();
         userAndActivityIdAndFile.setCsUserInfo(csUserInfo);
         userAndActivityIdAndFile.setId(csUserActivity.getId());
@@ -144,44 +154,46 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
 
     @Override
     @GlobalTransactional
-    public void deleteActivity(String id, ActivityType type, ActivityStatus status) {
+    public void deleteActivity(CsUserActivityDeleteBo csUserActivityDeleteBo) {
         //删除总表根据三个索引字段删除,防止截包修改内容
-        int index = csUserActivityMapper.deleteByIdAndTypeAndStatus(id, type.code, status.code);
-        log.info("Delete activity --- [{}] from summary table", id);
+        int index = csUserActivityMapper.deleteByIdAndTypeAndStatus(csUserActivityDeleteBo.getActivityId(),
+                csUserActivityDeleteBo.getActivityType().code, csUserActivityDeleteBo.getActivityStatus().code);
+        log.info("Delete activity success --- [{}] from summary table", csUserActivityDeleteBo.getActivityId());
 
         //总表删除记录为1
         if (index == 1) {
             //删除的是问题
-            if (Objects.equals(type.getCode(), ActivityType.QUESTION.code)) {
+            if (Objects.equals(csUserActivityDeleteBo.getActivityType().code, ActivityType.QUESTION.code)) {
 
                 //删除问题表
-                csUserQuestionMapper.deleteByQuestionId(id);
-                log.info("Delete question --- [{}] from question table", id);
+                csUserQuestionMapper.deleteByQuestionId(csUserActivityDeleteBo.getActivityId());
+                log.info("Delete question success --- [{}] from question table", csUserActivityDeleteBo.getActivityId());
 
                 //删除的是任务
-            } else if (Objects.equals(type.getCode(), ActivityType.TASK.code)) {
+            } else if (Objects.equals(csUserActivityDeleteBo.getActivityType().code, ActivityType.TASK.code)) {
 
-                /**
-                 * TODO 第二次删除缓存
-                 */
-                //先删除缓存中存储的任务
-                String deleteKey = judgeType(status.code);
+                //更新数据库
+                csUserTaskMapper.deleteByTaskId(csUserActivityDeleteBo.getActivityId());
+                log.info("Delete task success --- [{}] from task table", csUserActivityDeleteBo.getActivityId());
+
+                //删除缓存
+                String deleteKey = judgeType(csUserActivityDeleteBo.getActivityStatus().code);
                 Set<String> keys = redisOperator.keys(deleteKey);
                 if (keys != null && keys.size() != 0) {
                     redisOperator.delCollect(keys);
-                    log.info("delete [{}] from redis", deleteKey);
+                    log.info("delete [{}] from redis success", deleteKey);
                 }
-
-                //在更新数据库
-                csUserTaskMapper.deleteByTaskId(id);
-                log.info("Delete task --- [{}] from task table", id);
             }
 
-            //删除动态底下的所有评论
-            commentService.deleteComments(id);
-
-            //删除动态的文件信息以及所有评论的文件信息
-            deleteFileService.deleteActivityAndCommentFile(id);
+            ActivityMessage activityMessage = new ActivityMessage(csUserActivityDeleteBo.getActivityId(),
+                    csUserActivityDeleteBo.getUserId(), DateUtil.dateToString(new Date()));
+            //发送消息
+            if (!activitySource.activityOutput().send(
+                    MessageBuilder.withPayload(JSON.toJSONString(activityMessage)).build()
+            )) {
+                throw new RuntimeException("send activity message failure");
+            }
+            log.info("send activity message success");
         }
     }
 
@@ -209,23 +221,23 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
 
     )
     @Override
-    public PageActivityInfo getPageActivity(int page, String userId) {
-        Page<CsUserActivity> activityPage = new Page<>(page, 20);
+    public PageActivityInfo getPageActivity(PageInfo pageInfo, String userId) {
+        Page<CsUserActivity> activityPage = new Page<>(pageInfo.getPage(), pageInfo.getSize());
 
         IPage<CsUserActivity> csUserActivityPage = csUserActivityMapper.selectPageActivity(activityPage);
 
         List<CsUserActivity> activities = csUserActivityPage.getRecords();
-        log.info("Get all activity -- page [{}] -- [{}]", page, activities);
+        log.info("Get all activity -- page [{}] -- [{}]", pageInfo.getPage(), activities);
 
         PageActivityInfo pageActivityInfo = new PageActivityInfo();
 
         pageActivityInfo.setActivityInfos(getCsActivityVo(activities, userId));
-        pageActivityInfo.setHasMore(csUserActivityPage.getPages() > page);
+        pageActivityInfo.setHasMore(csUserActivityPage.getPages() > pageInfo.getPage());
         return pageActivityInfo;
     }
 
-    public PageActivityInfo getPageActivityFallBack(int page, String userId) {
-        log.error("user [{}] get page [{}] activity into fallBack method", userId, page);
+    public PageActivityInfo getPageActivityFallBack(PageInfo pageInfo, String userId) {
+        log.error("user [{}] get page [{}] activity into fallBack method", userId, pageInfo.getPage());
         return null;
     }
 
@@ -271,24 +283,19 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
         Set<String> idList = activityList.stream().map(CsUserActivity::getUserId).collect(Collectors.toSet());
         log.info("Get activity --- get userId [{}]", JSON.toJSONString(idList));
 
-        //动态id为了获取文件信息
+        //动态id为了获取评论信息
         List<String> activityIdList = activityList.stream().map(CsUserActivity::getId).collect(Collectors.toList());
         log.info("Get activity --- get activityId [{}]", JSON.toJSONString(activityIdList));
 
 
-        log.info("Get activity --- get userInfo....");
         //调用用户服务
-        Map<String, CsUserInfo> userMap = interService.interCallPeopleList(idList);
-
-        log.info("Get activity --- get files....");
-        //调用文件服务
-        Map<String, List<String>> fileUrlByActivityIdMap = interService.interCallFile(activityIdList);
+        Map<String, CsUserInfo> userMap = intelService.interCallPeopleList(idList);
+        log.info("Get activity --- get userInfo success");
 
 
-        log.info("Get activity --- get comment....");
         //调用评论服务//记得让前端搞一下降级的 -1L
-        Map<String, Long> commentMap = interService.interCallComment(activityIdList);
-
+        Map<String, Long> commentMap = intelService.interCallComment(activityIdList);
+        log.info("Get activity --- get comment success");
 
         List<CsUserActivityVo> csActivityVos = new ArrayList<>();
 
@@ -296,7 +303,6 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
             CsUserActivityVo csActivityVo = new CsUserActivityVo();
             CsUserActivityVo.Activity simpleActivity = CsUserActivityVo.Activity.to(csActivity);
             csActivityVo.setCsUserActivity(simpleActivity);
-            csActivityVo.setActivityFilesUrl(fileUrlByActivityIdMap.get(csActivity.getId()));
             csActivityVo.setCommentNumber(commentMap.get(csActivity.getId()));
             csActivityVo.setCsUserInfo(userMap.get(csActivity.getUserId()));
             csActivityVo.setIsModify(userId.equals(csActivity.getUserId()));

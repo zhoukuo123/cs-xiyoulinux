@@ -5,15 +5,17 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixProperty;
+import com.xiyoulinux.activity.bo.CsUserQuestionUpdateBo;
 import com.xiyoulinux.activity.mapper.CsUserActivityMapper;
 import com.xiyoulinux.activity.vo.PageQuestionInfo;
 import com.xiyoulinux.activity.vo.QuestionNumber;
-import com.xiyoulinux.activity.inter.InterService;
+import com.xiyoulinux.activity.inter.IntelService;
 import com.xiyoulinux.activity.mapper.CsUserQuestionMapper;
 import com.xiyoulinux.activity.entity.CsUserQuestion;
 import com.xiyoulinux.activity.service.ICsUserQuestionService;
 import com.xiyoulinux.activity.vo.CsUserQuestionVo;
 import com.xiyoulinux.common.CsUserInfo;
+import com.xiyoulinux.common.PageInfo;
 import com.xiyoulinux.enums.ActivityStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -34,31 +36,35 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
 
     private final CsUserActivityMapper csUserActivityMapper;
 
-    private final InterService interService;
+    private final IntelService interService;
 
     public CsUserQuestionServiceImpl(CsUserQuestionMapper csUserQuestionMapper,
                                      CsUserActivityMapper csUserActivityMapper,
-                                     InterService interService) {
+                                     IntelService interService) {
         this.csUserQuestionMapper = csUserQuestionMapper;
         this.csUserActivityMapper = csUserActivityMapper;
         this.interService = interService;
     }
 
     @Override
-    public PageQuestionInfo getPageUnresolvedIssues(int page, String userId) {
-        return getPageQuestionInfo(page, ActivityStatus.UNRESOLVED, userId);
+    public PageQuestionInfo getPageUnresolvedIssues(PageInfo pageInfo, String userId) {
+        return getPageQuestionInfo(pageInfo, ActivityStatus.UNRESOLVED, userId);
     }
 
     @Override
-    public PageQuestionInfo getPageResolvedIssues(int page, String userId) {
-        return getPageQuestionInfo(page, ActivityStatus.RESOLVED, userId);
+    public PageQuestionInfo getPageResolvedIssues(PageInfo pageInfo, String userId) {
+        return getPageQuestionInfo(pageInfo, ActivityStatus.RESOLVED, userId);
     }
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    public void updateQuestionStatus(String id, ActivityStatus questionStatus) {
-        csUserActivityMapper.updateQuestionStatus(id, questionStatus);
-        csUserQuestionMapper.updateQuestionStatus(id, questionStatus);
+    public void updateQuestionStatus(CsUserQuestionUpdateBo csUserQuestionUpdateBo) {
+        csUserActivityMapper.updateQuestionStatus(
+                csUserQuestionUpdateBo.getQuestionId(),
+                csUserQuestionUpdateBo.getQuestionStatus());
+        csUserQuestionMapper.updateQuestionStatus(
+                csUserQuestionUpdateBo.getQuestionId(),
+                csUserQuestionUpdateBo.getQuestionStatus());
     }
 
     @HystrixCommand(
@@ -101,14 +107,13 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
         List<String> questionIdList = questionList.stream().map(CsUserQuestion::getQuestionId).collect(Collectors.toList());
         log.info("Get question --- get questionId [{}]", questionIdList);
 
-        log.info("Get question --- get userInfo....");
+
         Map<String, CsUserInfo> userMap = interService.interCallPeopleList(idList);
+        log.info("Get question --- get userInfo success");
 
-        log.info("Get question --- get files....");
-        Map<String, List<String>> fileUrlByActivityIdMap = interService.interCallFile(questionIdList);
 
-        log.info("Get question --- get comment....");
         Map<String, Long> commentMap = interService.interCallComment(questionIdList);
+        log.info("Get question --- get comment success");
 
         List<CsUserQuestionVo> csUserQuestionVos = new ArrayList<>();
         questionList.forEach(csUserQuestion -> {
@@ -116,7 +121,6 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
             CsUserQuestionVo.Question simpleQuestion = CsUserQuestionVo.Question.to(csUserQuestion);
             csUserQuestionVo.setCsUserQuestion(simpleQuestion);
             csUserQuestionVo.setCsUserInfo(userMap.get(csUserQuestion.getUserId()));
-            csUserQuestionVo.setQuestionPicturesUrl(fileUrlByActivityIdMap.get(csUserQuestion.getQuestionId()));
             csUserQuestionVo.setCommentNumber(commentMap.get(csUserQuestion.getId()));
             csUserQuestionVo.setIsModify(userId.equals(csUserQuestion.getUserId()));
             csUserQuestionVos.add(csUserQuestionVo);
@@ -139,8 +143,8 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
             }
 
     )
-    private PageQuestionInfo getPageQuestionInfo(int page, ActivityStatus activityStatus, String userId) {
-        Page<CsUserQuestion> questionPage = new Page<>(page, 20);
+    private PageQuestionInfo getPageQuestionInfo(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
+        Page<CsUserQuestion> questionPage = new Page<>(pageInfo.getPage(), pageInfo.getSize());
         IPage<CsUserQuestion> pageIssues = null;
         if (activityStatus.code.equals(ActivityStatus.RESOLVED.code)) {
             pageIssues = csUserQuestionMapper.getPageResolvedIssues(questionPage);
@@ -148,15 +152,16 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
             pageIssues = csUserQuestionMapper.getPageUnresolvedIssues(questionPage);
         }
         List<CsUserQuestion> questions = pageIssues.getRecords();
-        log.info("Get {} question -- page [{}] -- [{}]", activityStatus.description, page, questions);
+        log.info("Get {} question -- page [{}] -- [{}]", activityStatus.description, pageInfo.getPage(), questions);
         PageQuestionInfo pageQuestionInfo = new PageQuestionInfo();
         pageQuestionInfo.setQuestionInfos(getCsQuestionVo(questions, userId));
-        pageQuestionInfo.setHasMore(pageIssues.getPages() > page);
+        pageQuestionInfo.setHasMore(pageIssues.getPages() > pageInfo.getPage());
         return pageQuestionInfo;
     }
 
-    private PageQuestionInfo getPageQuestionInfoFallBack(int page, ActivityStatus activityStatus, String userId) {
-        log.error("user [{}] get page [{}] [{}] question into fallback method", userId, page, activityStatus.description);
+    private PageQuestionInfo getPageQuestionInfoFallBack(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
+        log.error("user [{}] get page [{}] [{}] question into fallback method", userId, pageInfo.getPage(),
+                activityStatus.description);
         return null;
     }
 }

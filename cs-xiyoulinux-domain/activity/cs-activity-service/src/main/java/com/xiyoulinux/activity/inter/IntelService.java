@@ -1,9 +1,8 @@
 package com.xiyoulinux.activity.inter;
 
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
-import com.xiyoulinux.activity.comment.service.CommentService;
+import com.xiyoulinux.activity.comment.service.ICommentService;
 import com.xiyoulinux.common.CsUserInfo;
-import com.xiyoulinux.file.service.GetFileService;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.stereotype.Service;
 
@@ -13,13 +12,10 @@ import java.util.*;
  * @author qkm
  */
 @Service
-public class InterService {
+public class IntelService {
 
     @DubboReference
-    private GetFileService getFileService;
-
-    @DubboReference
-    private CommentService commentService;
+    private ICommentService iCommentService;
 
 
     //用户服务增加降级
@@ -57,16 +53,6 @@ public class InterService {
         return new CsUserInfo();
     }
 
-    /**
-     * 调用文件服务获取文件信息
-     *
-     * @param activityIdList 动态idList
-     * @return activityId-fileUrlsList
-     */
-    public Map<String, List<String>> interCallFile(List<String> activityIdList) {
-        //调用文件服务获取文件,返回（动态id，文件集合）
-        return getFileService.getFileUrlByActivityId(activityIdList);
-    }
 
     /**
      * 调用动态评论服务获取评论数目
@@ -76,6 +62,6 @@ public class InterService {
      */
     public Map<String, Long> interCallComment(List<String> activityIdList) {
         //调用评论服务获取评论数目
-        return commentService.getCommentNumber(activityIdList);
+        return iCommentService.getCommentNumber(activityIdList);
     }
 }
