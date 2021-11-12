@@ -1,7 +1,8 @@
 package com.xiyoulinux.advice;
 
-import com.xiyoulinux.common.GlobalResponseEntity;
+import com.xiyoulinux.enums.ReturnCode;
 import com.xiyoulinux.exception.UnauthorizedException;
+import com.xiyoulinux.pojo.JSONResult;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,6 +16,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
  * @author qkm
  */
 @Slf4j
+@SuppressWarnings("all")
 @RestControllerAdvice(value = "com.xiyoulinux")
 public class GlobalExceptionAdvice {
 
@@ -26,7 +28,7 @@ public class GlobalExceptionAdvice {
     public ResponseEntity<Object> parseException(HttpMessageNotReadableException e) {
         log.info("parse exception [{}]", e.getMessage());
         return new ResponseEntity<>(
-                new GlobalResponseEntity<>(500, "字段转变异常--字段不符合要求哦"), HttpStatus.INTERNAL_SERVER_ERROR);
+                JSONResult.errorMsg(ReturnCode.ERROR.code, "字段转变异常--字段不符合要求哦"), HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
 
@@ -47,7 +49,7 @@ public class GlobalExceptionAdvice {
     public ResponseEntity<Object> handleRuntimeException(RuntimeException e) {
         log.error("handleRuntimeException:", e);
         return new ResponseEntity<>(
-                new GlobalResponseEntity<>(500, e.getMessage()),
+                JSONResult.errorMsg(ReturnCode.ERROR.code,  e.getMessage()),
                 HttpStatus.INTERNAL_SERVER_ERROR);
     }
 
@@ -56,8 +58,8 @@ public class GlobalExceptionAdvice {
      * 没有权限异常
      */
     @ExceptionHandler(UnauthorizedException.class)
-    public GlobalResponseEntity<Object> unAuthException(UnauthorizedException e) {
-        return new GlobalResponseEntity<>(401, e.getMessage());
+    public JSONResult unAuthException(UnauthorizedException e) {
+        return JSONResult.errorMsg(ReturnCode.UNAUTHORIZED.code , e.getMessage());
     }
 
 }
