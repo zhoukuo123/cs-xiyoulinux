@@ -40,11 +40,24 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!--动态api-->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cs-activity-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!--文件微服务-->
         <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>cs-file-api</artifactId>
             <version>${project.version}</version>
+        </dependency>
+
+        <!--stream集成rabbitmq-->
+        <dependency>
+            <groupId>org.springframework.cloud</groupId>
+            <artifactId>spring-cloud-stream-binder-rabbit</artifactId>
         </dependency>
 
         <!--评论微服务-->
@@ -92,6 +105,7 @@
             <groupId>org.springframework.cloud</groupId>
             <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
         </dependency>
+
     </dependencies>
 
 </project>

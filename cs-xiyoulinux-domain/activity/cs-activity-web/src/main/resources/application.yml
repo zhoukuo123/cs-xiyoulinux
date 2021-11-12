@@ -6,15 +6,23 @@ server:
 #  文件上传大小限制
 #########################################
 spring:
+  # 服务名称
+  application:
+    name: cs-activity-service
+    address: 127.0.0.1
+  rabbitmq:
+    host: ${spring.application.address}
+    port: 5672
+    username: qkm
+    password: qkm
+    publisher-confirm-type: correlated # 确保消息发送成功
+    publisher-returns: true # 开启发布者发送失败退回
+    virtual-host: /
   servlet:
     multipart:
       enabled: true
       max-file-size: 20MB
       max-request-size: 100MB
-  # 服务名称
-  application:
-    name: cs-activity-service
-    address: 127.0.0.1
   # 数据库连接池
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
@@ -33,6 +41,16 @@ spring:
         metadata:
           management:
             context-path: ${server.servlet.context-path}/actuator
+    # rabbitmq 生产者配置
+    stream:
+      bindings:
+        activityOutput:
+          destination: activity-exchange #对应 rabbitmq的 exchange
+          content-type: application/json
+          binder: rabbit
+#          # 没有生效
+#          producer:
+#            confirm-ack-channel: testAck
 
 ############################################
 # dubbo配置
@@ -42,10 +60,12 @@ dubbo:
     name: dubbo
     port: -1
   registry:
-    address: spring-cloud://localhost
+    address: spring-cloud://${spring.application.address}
   # dubbo订阅的服务，如果是提供者填写本服务的名称
   cloud:
-    subscribed-services: cs-activity-comment-service,cs-file-service
+    subscribed-services: cs-activity-comment-service
+  consumer:
+    check: false
 
 ############################################
 # seata配置
@@ -76,3 +96,12 @@ seata:
       password: nacos
   # 关闭自动生成代理数据源
   enable-auto-data-source-proxy: false
+# 暴露端点
+management:
+  endpoints:
+    web:
+      exposure:
+        include: '*'
+  endpoint:
+    health:
+      show-details: always
