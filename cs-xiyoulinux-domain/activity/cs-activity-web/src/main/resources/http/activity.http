@@ -1,5 +1,5 @@
 ###
-POST http://127.0.0.1:8001/cs-activity/activity/
+POST http://127.0.0.1:8001/cs-activity/activity/add
 Content-Type: application/json
 Accept: application/json
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
@@ -13,7 +13,7 @@ cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXC
 }
 
 ###
-POST http://127.0.0.1:8001/cs-activity/activity/
+POST http://127.0.0.1:8001/cs-activity/activity/add
 Content-Type: application/json
 Accept: application/json
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJmNGYxNTQ4MC1hYzMyLTQ1OTgtOGYwOC0wYjZkZTkxMGIyNmEiLCJleHAiOjE2NDEzMTIwMDB9.kHekgxedbe75kO8S-BrYVbh3FzeKZ7TJdxWvnZUR7F637urVenrrbnSRe1ipXJ41RvZZoqUgr0nkeZ2zrOcsgMbWyEyV6xyY-i2gq0o0uYpPYGplLte34neJemYoelTPgxOPaQRYj5Kf65ivWBIA-ia3huC2ThgM4ZSBuJrh1ogxwZ1_wvrvIemmRSpOqs_CZEInUtdwMALXXLUq3wbcSqQOHODCDK0jlboFNc_9qzNwb20LRE7lRIt99EzU8xvil1JfbPGBUTpBSoqkqr8-8Y87dTR8Sjed2awFKnhpGB3xKc19fTCAlLomjO2chNJec4HGORRau5PvjuW3ySNz7A
@@ -28,7 +28,7 @@ cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXC
 }
 
 ###
-POST http://127.0.0.1:8001/cs-activity/activity/
+POST http://127.0.0.1:8001/cs-activity/activity/add
 Content-Type: application/json
 Accept: application/json
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJmNGYxNTQ4MC1hYzMyLTQ1OTgtOGYwOC0wYjZkZTkxMGIyNmEiLCJleHAiOjE2NDEzMTIwMDB9.kHekgxedbe75kO8S-BrYVbh3FzeKZ7TJdxWvnZUR7F637urVenrrbnSRe1ipXJ41RvZZoqUgr0nkeZ2zrOcsgMbWyEyV6xyY-i2gq0o0uYpPYGplLte34neJemYoelTPgxOPaQRYj5Kf65ivWBIA-ia3huC2ThgM4ZSBuJrh1ogxwZ1_wvrvIemmRSpOqs_CZEInUtdwMALXXLUq3wbcSqQOHODCDK0jlboFNc_9qzNwb20LRE7lRIt99EzU8xvil1JfbPGBUTpBSoqkqr8-8Y87dTR8Sjed2awFKnhpGB3xKc19fTCAlLomjO2chNJec4HGORRau5PvjuW3ySNz7A
@@ -43,7 +43,7 @@ cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXC
 }
 
 ###
-POST http://127.0.0.1:8001/cs-activity/activity/
+POST http://127.0.0.1:8001/cs-activity/activity/add
 Content-Type: application/json
 Accept: application/json
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
@@ -51,7 +51,7 @@ cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXC
 {
   "userId": "1",
   "activityTitle": "任务",
-  "activityContent": "第666个任务",
+  "activityContent": "第10个任务",
   "activityCreateTime": "2021-12-24T16:00:00.000Z",
   "activityEndTime": "2021-12-28T16:00:00.000Z",
   "activityType": "发起任务",
@@ -59,7 +59,7 @@ cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXC
 }
 
 ###
-POST http://127.0.0.1:8001/cs-activity/activity/
+POST http://127.0.0.1:8001/cs-activity/activity/add
 Content-Type: application/json
 Accept: application/json
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJmNGYxNTQ4MC1hYzMyLTQ1OTgtOGYwOC0wYjZkZTkxMGIyNmEiLCJleHAiOjE2NDEzMTIwMDB9.kHekgxedbe75kO8S-BrYVbh3FzeKZ7TJdxWvnZUR7F637urVenrrbnSRe1ipXJ41RvZZoqUgr0nkeZ2zrOcsgMbWyEyV6xyY-i2gq0o0uYpPYGplLte34neJemYoelTPgxOPaQRYj5Kf65ivWBIA-ia3huC2ThgM4ZSBuJrh1ogxwZ1_wvrvIemmRSpOqs_CZEInUtdwMALXXLUq3wbcSqQOHODCDK0jlboFNc_9qzNwb20LRE7lRIt99EzU8xvil1JfbPGBUTpBSoqkqr8-8Y87dTR8Sjed2awFKnhpGB3xKc19fTCAlLomjO2chNJec4HGORRau5PvjuW3ySNz7A
@@ -75,7 +75,7 @@ cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXC
 }
 
 ###
-POST http://127.0.0.1:8001/cs-activity/activity/
+POST http://127.0.0.1:8001/cs-activity/activity/add
 Content-Type: application/json
 Accept: application/json
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJmNGYxNTQ4MC1hYzMyLTQ1OTgtOGYwOC0wYjZkZTkxMGIyNmEiLCJleHAiOjE2NDEzMTIwMDB9.kHekgxedbe75kO8S-BrYVbh3FzeKZ7TJdxWvnZUR7F637urVenrrbnSRe1ipXJ41RvZZoqUgr0nkeZ2zrOcsgMbWyEyV6xyY-i2gq0o0uYpPYGplLte34neJemYoelTPgxOPaQRYj5Kf65ivWBIA-ia3huC2ThgM4ZSBuJrh1ogxwZ1_wvrvIemmRSpOqs_CZEInUtdwMALXXLUq3wbcSqQOHODCDK0jlboFNc_9qzNwb20LRE7lRIt99EzU8xvil1JfbPGBUTpBSoqkqr8-8Y87dTR8Sjed2awFKnhpGB3xKc19fTCAlLomjO2chNJec4HGORRau5PvjuW3ySNz7A
@@ -91,7 +91,7 @@ cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXC
 }
 
 ###
-POST http://127.0.0.1:8001/cs-activity/activity/
+POST http://127.0.0.1:8001/cs-activity/activity/add
 Content-Type: application/json
 Accept: application/json
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJmNGYxNTQ4MC1hYzMyLTQ1OTgtOGYwOC0wYjZkZTkxMGIyNmEiLCJleHAiOjE2NDEzMTIwMDB9.kHekgxedbe75kO8S-BrYVbh3FzeKZ7TJdxWvnZUR7F637urVenrrbnSRe1ipXJ41RvZZoqUgr0nkeZ2zrOcsgMbWyEyV6xyY-i2gq0o0uYpPYGplLte34neJemYoelTPgxOPaQRYj5Kf65ivWBIA-ia3huC2ThgM4ZSBuJrh1ogxwZ1_wvrvIemmRSpOqs_CZEInUtdwMALXXLUq3wbcSqQOHODCDK0jlboFNc_9qzNwb20LRE7lRIt99EzU8xvil1JfbPGBUTpBSoqkqr8-8Y87dTR8Sjed2awFKnhpGB3xKc19fTCAlLomjO2chNJec4HGORRau5PvjuW3ySNz7A
@@ -108,42 +108,96 @@ cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXC
 
 
 ###
-GET http://127.0.0.1:8001/cs-activity/activity/home/1/1
+GET http://127.0.0.1:8001/cs-activity/activity/home/1
+cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
 Content-Type: application/json
-cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
+
+{
+  "page": 1
+}
+###
+DELETE http://127.0.0.1:8001/cs-activity/activity/delete
+#cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
+Content-Type: application/json
+
+{
+  "activityId": "2112260MW7A8S5P0",
+  "userId": "1",
+  "activityStatus": "待进行",
+  "activityType": "发起任务"
+}
 
 ###
-DELETE http://127.0.0.1:8001/cs-activity/activity/2112260S0GPBP0M8/发起问题/未解决
+GET http://127.0.0.1:8001/cs-activity/activity/issues/unsolved/1
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
+Content-Type: application/json
+
+{
+   "page": 1,
+  "size": 10
+}
 
 ###
-GET http://127.0.0.1:8001/cs-activity/activity/issues/unsolved/1/1
+GET http://127.0.0.1:8001/cs-activity/activity/issues/solved/1/
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
+Content-Type: application/json
+
+{
+   "page": 1,
+  "size": 10
+}
 
 ###
-GET http://127.0.0.1:8001/cs-activity/activity/issues/solved/1/1
+GET http://127.0.0.1:8001/cs-activity/activity/tasks/did/1
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
+Content-Type: application/json
+
+{
+  "page": 1,
+  "size": 10
+}
 
 ###
-GET http://127.0.0.1:8001/cs-activity/activity/did/tasks/1/1
-cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
-
-###
-GET http://127.0.0.1:8001/cs-activity/activity/doing/tasks/1/2
+GET http://127.0.0.1:8001/cs-activity/activity/tasks/doing/1
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJmNGYxNTQ4MC1hYzMyLTQ1OTgtOGYwOC0wYjZkZTkxMGIyNmEiLCJleHAiOjE2NDEzMTIwMDB9.kHekgxedbe75kO8S-BrYVbh3FzeKZ7TJdxWvnZUR7F637urVenrrbnSRe1ipXJ41RvZZoqUgr0nkeZ2zrOcsgMbWyEyV6xyY-i2gq0o0uYpPYGplLte34neJemYoelTPgxOPaQRYj5Kf65ivWBIA-ia3huC2ThgM4ZSBuJrh1ogxwZ1_wvrvIemmRSpOqs_CZEInUtdwMALXXLUq3wbcSqQOHODCDK0jlboFNc_9qzNwb20LRE7lRIt99EzU8xvil1JfbPGBUTpBSoqkqr8-8Y87dTR8Sjed2awFKnhpGB3xKc19fTCAlLomjO2chNJec4HGORRau5PvjuW3ySNz7A
+Content-Type: application/json
+
+{
+  "page": 1,
+  "size": 10
+}
 
 ###
-GET http://127.0.0.1:8001/cs-activity/activity/future/tasks/1/2
+GET http://127.0.0.1:8001/cs-activity/activity/tasks/future/1
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJmNGYxNTQ4MC1hYzMyLTQ1OTgtOGYwOC0wYjZkZTkxMGIyNmEiLCJleHAiOjE2NDEzMTIwMDB9.kHekgxedbe75kO8S-BrYVbh3FzeKZ7TJdxWvnZUR7F637urVenrrbnSRe1ipXJ41RvZZoqUgr0nkeZ2zrOcsgMbWyEyV6xyY-i2gq0o0uYpPYGplLte34neJemYoelTPgxOPaQRYj5Kf65ivWBIA-ia3huC2ThgM4ZSBuJrh1ogxwZ1_wvrvIemmRSpOqs_CZEInUtdwMALXXLUq3wbcSqQOHODCDK0jlboFNc_9qzNwb20LRE7lRIt99EzU8xvil1JfbPGBUTpBSoqkqr8-8Y87dTR8Sjed2awFKnhpGB3xKc19fTCAlLomjO2chNJec4HGORRau5PvjuW3ySNz7A
+Content-Type: application/json
+
+{
+  "page": 1,
+  "size": 10
+}
+
 
 ###
-GET http://127.0.0.1:8001/cs-activity/activity/1/1
-cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJmNGYxNTQ4MC1hYzMyLTQ1OTgtOGYwOC0wYjZkZTkxMGIyNmEiLCJleHAiOjE2NDEzMTIwMDB9.kHekgxedbe75kO8S-BrYVbh3FzeKZ7TJdxWvnZUR7F637urVenrrbnSRe1ipXJ41RvZZoqUgr0nkeZ2zrOcsgMbWyEyV6xyY-i2gq0o0uYpPYGplLte34neJemYoelTPgxOPaQRYj5Kf65ivWBIA-ia3huC2ThgM4ZSBuJrh1ogxwZ1_wvrvIemmRSpOqs_CZEInUtdwMALXXLUq3wbcSqQOHODCDK0jlboFNc_9qzNwb20LRE7lRIt99EzU8xvil1JfbPGBUTpBSoqkqr8-8Y87dTR8Sjed2awFKnhpGB3xKc19fTCAlLomjO2chNJec4HGORRau5PvjuW3ySNz7A
-
-###
-PUT http://127.0.0.1:8001/cs-activity/activity/revise/21122509STXDYH4H/Fri Feb 10 2017 10:06:45 GMT+0800 (CST)/进行中
+PUT http://127.0.0.1:8001/cs-activity/activity/modify/question
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
+Content-Type: application/json
+
+{
+  "questionId": "2112260S0XBBSHDP",
+  "questionStatus": "已解决"
+}
+
 
 ###
-PUT http://127.0.0.1:8001/cs-activity/activity/revise/21122509KK461BTC/已解决
+PUT http://127.0.0.1:8001/cs-activity/activity/modify/task
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJlZWE0YzBjZi02NzI3LTRmNGItOTZlNC04NWYxZWI3Zjc2MjEiLCJleHAiOjE2NDIyNjI0MDB9.GcMfpzLdWUP1A-IvTspZVIcBF-twgD84TzojaWmAZE05gp--SzBoW2bOtAWzgtJe7NCvw7pkKFF4_kzbgFlygWrNw9lD0ywH3GcFhiWKQTHDkQ8a1q1XtPaoeiZMqHoqAIV8gBqNoNre_n4LZ-r7JnqAf356Bjk40AZEI_fJ_V2CEMMfSMps30-10YDXFVmdaXceGjsfD79E5KQXgsa5a9gyDbhhJlI15YVuZKac0b9ryY2N7_noU3q8c1bkUihdh7dZ8suJxRoFZFAZtfFp-7fycYZZTmGDeUNwSgrCKWkCKIlsbU2q69cAeyBSNwYRawzZS4mwct3fvwfnMabooA
+Content-Type: application/json
+
+
+{
+  "taskId": "2112260R9ZF6K58H",
+  "taskStatus": "已解决",
+  "taskStartTimeDate":"2022-12-24T16:00:00.000Z",
+  "taskEndTimeDate": "2022-12-24T16:00:00.000Z"
+}
