@@ -17,13 +17,15 @@ public enum ReturnCode {
      *  501：bean验证错误，不管多少个错误都以map形式返回
      *  401：认证错误
      *  555: 系统异常抛出信息
+     *  505: 服务发生降级
      */
 
     SUCCESS(200, "成功"),
     ERROR(500, "错误"),
     INVALID_PARAM(501, "bean验证错误, BO参数有误"),
     SYSTEM_EXCEPTION(555, "系统异常"),
-    UNAUTHORIZED(401, "认证错误");
+    UNAUTHORIZED(401, "认证错误"),
+    DEGRADATION (505, "降级");
 
     public final Integer code;
     public final String value;
