@@ -1,10 +1,12 @@
 package com.xiyoulinux.exception;
 
-import com.xiyoulinux.enums.InterviewStatus;
 import com.xiyoulinux.enums.ReturnCode;
 import com.xiyoulinux.exception.business.*;
 import com.xiyoulinux.pojo.JSONResult;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
@@ -59,7 +61,8 @@ public class GlobalExceptionHandler {
         } else if (e instanceof InterviewException) {
 
             return JSONResult.errorMsg(((InterviewException) e).getCode(), e.getMessage());
-
+        } else if (e instanceof HttpMessageNotReadableException) {
+            return JSONResult.errorMsg(ReturnCode.ERROR.code, "字段转变异常--字段不符合要求!");
         } else {
             // 系统异常
             return JSONResult.errorMsg(ReturnCode.SYSTEM_EXCEPTION.code, e.getMessage());
