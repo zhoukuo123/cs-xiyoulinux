@@ -9,8 +9,9 @@ import com.xiyoulinux.activity.vo.PageActivityInfo;
 import com.xiyoulinux.common.CsUserInfo;
 import com.xiyoulinux.common.PageInfo;
 import com.xiyoulinux.search.service.ISearchFromEs;
-import com.xiyoulinux.search.inter.IntelService;
+import com.xiyoulinux.search.service.inter.IntelService;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.config.annotation.DubboService;
 import org.elasticsearch.action.search.SearchRequest;
 import org.elasticsearch.action.search.SearchResponse;
 import org.elasticsearch.client.RequestOptions;
@@ -24,7 +25,6 @@ import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilders;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
-import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
 import java.io.IOException;
@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 /**
  * @author qkm
  */
-@Service
+@DubboService
 @Slf4j
 public class SearchFromEsImpl implements ISearchFromEs {
 
@@ -59,7 +59,7 @@ public class SearchFromEsImpl implements ISearchFromEs {
                     // 超时时间, 单位毫秒, 超时进 fallback
                     @HystrixProperty(
                             name = "execution.isolation.thread.timeoutInMilliseconds",
-                            value = "1700")
+                            value = "2000")
             },
             // 舱壁模式
             threadPoolProperties = {
@@ -96,7 +96,7 @@ public class SearchFromEsImpl implements ISearchFromEs {
                     // 超时时间, 单位毫秒, 超时进 fallback
                     @HystrixProperty(
                             name = "execution.isolation.thread.timeoutInMilliseconds",
-                            value = "1900")
+                            value = "2000")
             }
 
     )

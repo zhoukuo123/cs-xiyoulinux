@@ -1,4 +1,4 @@
-package com.xiyoulinux.search;
+package search;
 
 import com.alibaba.fastjson.JSON;
 import com.xiyoulinux.activity.entity.CsUserActivity;

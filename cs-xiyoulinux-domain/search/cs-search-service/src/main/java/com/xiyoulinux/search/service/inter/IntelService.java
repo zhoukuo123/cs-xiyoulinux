@@ -1,4 +1,4 @@
-package com.xiyoulinux.search.inter;
+package com.xiyoulinux.search.service.inter;
 
 import com.xiyoulinux.activity.comment.service.ICommentService;
 import com.xiyoulinux.common.CsUserInfo;
