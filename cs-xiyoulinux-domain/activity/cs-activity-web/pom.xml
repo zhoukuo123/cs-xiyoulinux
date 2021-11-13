@@ -24,6 +24,12 @@
             <version>${project.version}</version>
         </dependency>
 
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cs-search-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!--dubbo依赖-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

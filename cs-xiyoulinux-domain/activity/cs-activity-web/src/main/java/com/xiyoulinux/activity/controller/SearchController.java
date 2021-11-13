@@ -1,11 +1,12 @@
-package com.xiyoulinux.search.controller;
+package com.xiyoulinux.activity.controller;
 
 import com.xiyoulinux.activity.vo.PageActivityInfo;
 import com.xiyoulinux.common.PageInfo;
 import com.xiyoulinux.enums.ReturnCode;
 import com.xiyoulinux.pojo.JSONResult;
-import com.xiyoulinux.search.service.ISearchFromEs;
+import com.xiyoulinux.search.service.ISearchService;
 import io.swagger.annotations.*;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.web.bind.annotation.*;
 
 
@@ -17,11 +18,8 @@ import org.springframework.web.bind.annotation.*;
 @SuppressWarnings("all")
 public class SearchController {
 
-    private final ISearchFromEs iSearchFromEs;
-
-    public SearchController(ISearchFromEs iSearchFromEs) {
-        this.iSearchFromEs = iSearchFromEs;
-    }
+    @DubboReference
+    private  ISearchService iSearchService;
 
     @ApiOperation(value = "根据key搜索", notes = "活动", httpMethod = "GET")
     @ApiImplicitParams({
@@ -32,7 +30,7 @@ public class SearchController {
     @GetMapping("/key/{userId}")
     public JSONResult searchByKey(@RequestBody PageInfo pageInfo,
                                   @PathVariable("userId") String userId) {
-        PageActivityInfo pageActivityInfo = iSearchFromEs.searchByKey(pageInfo, userId);
+        PageActivityInfo pageActivityInfo = iSearchService.searchByKey(pageInfo, userId);
         if (pageActivityInfo == null) {
             return JSONResult.errorMsg(ReturnCode.DEGRADATION.code,"正在搜索中...请稍候");
         }
@@ -48,7 +46,7 @@ public class SearchController {
     @GetMapping("/key/orderByTime/{userId}")
     public JSONResult searchByKeyOrderByCreateTime(@RequestBody PageInfo pageInfo,
                                                          @PathVariable("userId") String userId) {
-        PageActivityInfo pageActivityInfo = iSearchFromEs.searchByKeyOrderByCreateTime(pageInfo, userId);
+        PageActivityInfo pageActivityInfo = iSearchService.searchByKeyOrderByCreateTime(pageInfo, userId);
         if (pageActivityInfo == null) {
             return JSONResult.errorMsg(ReturnCode.DEGRADATION.code,"正在搜索中...请稍候");
         }
@@ -62,7 +60,7 @@ public class SearchController {
     @ApiResponses(@ApiResponse(code = 200, message = "与key同拼音或者字的标题"))
     @GetMapping("/completion/{key}")
     public JSONResult searchBoxAutoCompletion(@PathVariable("key") String key) {
-        return JSONResult.ok(iSearchFromEs.searchBoxAutoCompletion(key));
+        return JSONResult.ok(iSearchService.searchBoxAutoCompletion(key));
     }
 
 }
