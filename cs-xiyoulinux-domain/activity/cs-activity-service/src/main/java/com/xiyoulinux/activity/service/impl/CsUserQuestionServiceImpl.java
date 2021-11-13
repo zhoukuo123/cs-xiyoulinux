@@ -78,7 +78,7 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
                     // 超时时间, 单位毫秒, 超时进 fallback
                     @HystrixProperty(
                             name = "execution.isolation.thread.timeoutInMilliseconds",
-                            value = "1500"),
+                            value = "3000"),
             }
     )
     @Override
@@ -139,7 +139,7 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
                     // 超时时间, 单位毫秒, 超时进 fallback
                     @HystrixProperty(
                             name = "execution.isolation.thread.timeoutInMilliseconds",
-                            value = "1500")
+                            value = "3000")
             }
 
     )

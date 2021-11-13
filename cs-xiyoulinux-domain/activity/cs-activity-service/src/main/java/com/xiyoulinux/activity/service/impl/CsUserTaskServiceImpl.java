@@ -115,7 +115,7 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
                     // 超时时间, 单位毫秒, 超时进 fallback
                     @HystrixProperty(
                             name = "execution.isolation.thread.timeoutInMilliseconds",
-                            value = "1500")
+                            value = "3000")
             }
 
     )
@@ -177,7 +177,7 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
                     // 超时时间, 单位毫秒, 超时进 fallback
                     @HystrixProperty(
                             name = "execution.isolation.thread.timeoutInMilliseconds",
-                            value = "1500")
+                            value = "3000")
             }
     )
     private PageTaskInfo getPageTaskInfo(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
