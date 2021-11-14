@@ -8,7 +8,7 @@ import com.xiyoulinux.activity.vo.CsUserActivityVo;
 import com.xiyoulinux.activity.vo.PageActivityInfo;
 import com.xiyoulinux.common.CsUserInfo;
 import com.xiyoulinux.common.PageInfo;
-import com.xiyoulinux.search.service.ISearchFromEs;
+import com.xiyoulinux.search.service.ISearchService;
 import com.xiyoulinux.search.service.inter.IntelService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -39,7 +39,7 @@ import java.util.stream.Collectors;
  */
 @DubboService
 @Slf4j
-public class SearchFromEsImpl implements ISearchFromEs {
+public class SearchFromEsImpl implements ISearchService {
 
 
     @Resource
