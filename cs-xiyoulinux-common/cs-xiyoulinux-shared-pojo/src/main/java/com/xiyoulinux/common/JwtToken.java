@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
+import java.util.Date;
 
 /**
  * 授权中心鉴权之后给客户端的 Token
@@ -27,8 +28,13 @@ public class JwtToken implements Serializable {
     private String token;
 
     /**
-     * 用户id
+     * refresh token
      */
-    @ApiModelProperty(value = "用户id")
-    private String userId;
+    @ApiModelProperty(value = "刷新token")
+    private String refreshToken;
+
+    /**
+     * 过期时间
+     */
+    private Date time;
 }

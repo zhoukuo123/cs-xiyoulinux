@@ -51,7 +51,7 @@ public class JwtServiceImpl implements IJwtService {
         String userId = "1";
         LoginUserInfo loginUserInfo = new LoginUserInfo(userId, usernameAndPassword.getUsername());
 //        return new JwtToken(getToken(loginUserInfo),userId);
-        return new JwtToken(getToken(loginUserInfo),userId);
+        return new JwtToken(getToken(loginUserInfo),);
     }
 
     @Override
@@ -61,7 +61,7 @@ public class JwtServiceImpl implements IJwtService {
         String userId = "1";
         LoginUserInfo loginUserInfo = new LoginUserInfo(userId, usernameAndPassword.getUsername());
 //        return new JwtToken(getToken(loginUserInfo),userId);
-        return new JwtToken(getToken(loginUserInfo),userId);
+        return new JwtToken(getToken(loginUserInfo));
 
     }
 

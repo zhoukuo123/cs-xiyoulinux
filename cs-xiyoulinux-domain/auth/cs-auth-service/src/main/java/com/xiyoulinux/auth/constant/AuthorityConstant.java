@@ -35,5 +35,6 @@ public final class AuthorityConstant {
     /**
      * 默认的 Token 超时时间, 一天
      */
+
     public static final Integer DEFAULT_EXPIRE_DAY = 24 * 3600 * 1000;
 }
