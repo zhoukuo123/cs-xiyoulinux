@@ -80,8 +80,8 @@ public class SearchFromEsImpl implements ISearchService {
         return getResult(searchRequest, pageInfo, userId);
     }
 
-    public PageActivityInfo searchByKeyFallBack(PageInfo pageInfo, String userId) {
-        log.error("userId [{}] search from es page [{}] into fallback",userId,pageInfo.getPage());
+    public PageActivityInfo searchByKeyFallBack(PageInfo pageInfo, String userId, Throwable throwable) {
+        log.error("userId [{}] search from es page [{}] into fallback : [{}]", userId, pageInfo.getPage(), throwable.getMessage());
         return null;
     }
 
@@ -113,8 +113,9 @@ public class SearchFromEsImpl implements ISearchService {
         return getResult(searchRequest, pageInfo, userId);
     }
 
-    public PageActivityInfo searchByKeyOrderByCreateTimeFallback(PageInfo pageInfo, String userId) {
-        log.error("userId [{}] search orderby time from es page [{}] into fallback",userId,pageInfo.getPage());
+    public PageActivityInfo searchByKeyOrderByCreateTimeFallback(PageInfo pageInfo, String userId, Throwable throwable) {
+        log.error("userId [{}] search orderby time from es page [{}] into fallback : [{}]", userId, pageInfo.getPage()
+                , throwable.getMessage());
         return null;
     }
 
@@ -142,8 +143,8 @@ public class SearchFromEsImpl implements ISearchService {
         return getBoxResult(request);
     }
 
-    public List<String> searchBoxAutoCompletionFallback(String key) {
-        log.error("search box auto completion key [{}] into fallback",key);
+    public List<String> searchBoxAutoCompletionFallback(String key, Throwable throwable) {
+        log.error("search box auto completion key [{}] into fallback : [{}]", key, throwable.getMessage());
         return null;
     }
 
