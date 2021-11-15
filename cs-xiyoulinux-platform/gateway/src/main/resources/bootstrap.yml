@@ -58,6 +58,6 @@ dubbo:
     address: spring-cloud://${spring.application.address}
   # 需要订阅的服务，如果是提供者则填写本服务的名称
   cloud:
-    subscribed-services: cs-gateway-service
+    subscribed-services: cs-auth-service
   consumer:
     check: false
