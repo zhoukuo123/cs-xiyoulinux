@@ -6,6 +6,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 /**
  * 用户信息 存储在token中的
  *
@@ -15,8 +17,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel(description = "token中存储的用户对象")
-public class LoginUserInfo {
+public class LoginUserInfo implements Serializable {
 
+    private static final long serialVersionUID = -8688130033155509959L;
     /**
      * 用户 id
      */
