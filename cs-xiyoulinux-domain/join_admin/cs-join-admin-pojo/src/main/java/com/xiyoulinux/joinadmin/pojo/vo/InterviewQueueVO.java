@@ -1,6 +1,7 @@
 package com.xiyoulinux.joinadmin.pojo.vo;
 
 import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -25,6 +26,7 @@ public class InterviewQueueVO {
      * null: 待安排面试
      * 有值: 已被 interviewerName 面试
      */
+    @ApiModelProperty(value = "null: 待安排面试, 有值: 已被 interviewerName 面试", name = "interviewerName", example = "邓鹏", required = true)
     private String interviewerName;
     private Integer round;
 }

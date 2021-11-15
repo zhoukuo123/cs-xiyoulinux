@@ -1,16 +1,17 @@
 package com.xiyoulinux.joinadmin.service.impl;
 
+import com.github.pagehelper.PageHelper;
 import com.xiyoulinux.enums.InterviewStatus;
 import com.xiyoulinux.joinadmin.mapper.*;
 import com.xiyoulinux.joinadmin.pojo.JoinInfo;
 import com.xiyoulinux.joinadmin.pojo.JoinQueue;
 import com.xiyoulinux.joinadmin.pojo.JoinRecord;
+import com.xiyoulinux.joinadmin.pojo.JoinSetting;
 import com.xiyoulinux.joinadmin.pojo.bo.InterviewEvaluationBO;
-import com.xiyoulinux.joinadmin.pojo.vo.InterviewEvaluationRecordVO;
-import com.xiyoulinux.joinadmin.pojo.vo.InterviewQueueVO;
-import com.xiyoulinux.joinadmin.pojo.vo.InterviewRecordVO;
-import com.xiyoulinux.joinadmin.pojo.vo.IntervieweeInfoVO;
+import com.xiyoulinux.joinadmin.pojo.vo.*;
 import com.xiyoulinux.joinadmin.service.InterviewService;
+import com.xiyoulinux.pojo.PagedGridResult;
+import com.xiyoulinux.service.BaseService;
 import com.xiyoulinux.user.service.UserService;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.n3r.idworker.Sid;
@@ -20,15 +21,17 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import sun.java2d.loops.TransformHelper;
 import tk.mybatis.mapper.entity.Example;
 
+import java.sql.Time;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
 /**
  * @author CoderZk
  */
-public class InterviewServiceImpl implements InterviewService {
+public class InterviewServiceImpl extends BaseService implements InterviewService {
 
     @Autowired
     private Sid sid;
@@ -50,6 +53,9 @@ public class InterviewServiceImpl implements InterviewService {
 
     @Autowired
     private JoinRecordMapperCustom joinRecordMapperCustom;
+
+    @Autowired
+    private JoinSettingMapper joinSettingMapper;
 
     @DubboReference
     private UserService userService;
@@ -110,6 +116,7 @@ public class InterviewServiceImpl implements InterviewService {
          */
         RLock rLock = redissonClient.getLock("JOIN_QUEUE_UID_" + uid);
 
+        // 尝试拿锁, tryLock, 非阻塞, 如果获取不到锁, 就 return false
         if (rLock.tryLock()) {
             try {
                 rLock.lock(5, TimeUnit.SECONDS);
@@ -129,7 +136,7 @@ public class InterviewServiceImpl implements InterviewService {
                  * 不管业务是否操作正确, 随后都要释放掉分布式锁
                  * 如果不释放, 过了超时时间也会自动释放
                  */
-//                rLock.unlock();
+                rLock.unlock();
             }
         } else {
             return false;
@@ -211,13 +218,111 @@ public class InterviewServiceImpl implements InterviewService {
         return interviewRecordVOList;
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
-    public List<InterviewEvaluationRecordVO> queryInterviewEvaluationRecords(String uid) {
+    public PagedGridResult queryInterviewEvaluationRecords(String uid, Integer page, Integer pageSize) {
 
         Map<String, Object> map = new HashMap<>();
         map.put("interviewer", uid);
 
-        return joinRecordMapperCustom.queryInterviewEvaluationRecord(map);
+        PageHelper.startPage(page, pageSize);
+
+        List<InterviewEvaluationRecordVO> interviewEvaluationRecordVOList = joinRecordMapperCustom.queryInterviewEvaluationRecord(map);
+
+        return setterPagedGrid(interviewEvaluationRecordVOList, page);
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public List<Integer> queryInterviewNumberStatistics() {
+
+        Example joinInfoExp = new Example(JoinInfo.class);
+        Example.Criteria criteria = joinInfoExp.createCriteria();
+        criteria.andEqualTo("round", 1);
+
+        int oneRoundCount = joinInfoMapper.selectCountByExample(joinInfoExp);
+
+        Example joinInfoExp2 = new Example(JoinInfo.class);
+        Example.Criteria criteria2 = joinInfoExp2.createCriteria();
+        criteria2.andEqualTo("round", 2);
+
+        int twoRoundCount = joinInfoMapper.selectCountByExample(joinInfoExp2);
+
+        Example joinInfoExp3 = new Example(JoinInfo.class);
+        Example.Criteria criteria3 = joinInfoExp3.createCriteria();
+        criteria3.andEqualTo("round", 3);
+
+        int threeRoundCount = joinInfoMapper.selectCountByExample(joinInfoExp3);
+
+        List<Integer> list = new ArrayList<>();
+        list.add(oneRoundCount);
+        list.add(twoRoundCount);
+        list.add(threeRoundCount);
+
+        return list;
+    }
+
+    @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
+    @Override
+    public PagedGridResult queryInterviewInfoAndIntervieweeInfo(Integer round, Integer status, Integer status2,
+                                                                                Integer page, Integer pageSize) {
+
+        Map<String, Object> map = new HashMap<>();
+        map.put("round", round);
+        map.put("status", status);
+        map.put("status2", status2);
+
+        PageHelper.startPage(page, pageSize);
+
+        List<IntervieweeInfoAndGradeVO> intervieweeInfoAndGradeVOList = joinRecordMapperCustom.queryInterviewInfoAndIntervieweeInfo(map);
+
+        return setterPagedGrid(intervieweeInfoAndGradeVOList, page);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void makeDecision(String uid, Integer round, boolean pass) {
+
+        // 修改 round 和 status 在 join_info 上
+        // 修改 join_info 后, 用户即可在纳新报名页看到面试结果
+        JoinInfo updateJoinInfo = new JoinInfo();
+
+        if (pass) {
+            updateJoinInfo.setRound(round + 1);
+            updateJoinInfo.setStatus(0);
+        } else {
+            updateJoinInfo.setStatus(-1);
+        }
+
+        Example example = new Example(JoinInfo.class);
+        Example.Criteria criteria = example.createCriteria();
+        criteria.andEqualTo("uid", uid);
+        criteria.andEqualTo("round", round);
+
+        joinInfoMapper.updateByExampleSelective(updateJoinInfo, example);
+
+        // 在 join_queue 上 删除 该用户的签到记录
+        JoinQueue deleteJoinQueue = new JoinQueue();
+        deleteJoinQueue.setUid(uid);
+
+        // 删除该用户的签到记录, 防止和下次签到冲突
+        joinQueueMapper.delete(deleteJoinQueue);
+    }
+
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Override
+    public void setJoinStartEndTime(Date startTime, Date endTime) {
+        JoinSetting joinSetting = new JoinSetting();
+
+        String id = sid.nextShort();
+
+        joinSetting.setId(id);
+        joinSetting.setJoinStartTime(startTime);
+        joinSetting.setJoinEndTime(endTime);
+        joinSetting.setCreatedTime(new Date());
+        joinSetting.setUpdatedTime(new Date());
+
+        joinSettingMapper.insert(joinSetting);
     }
 
     private JoinInfo queryJoinInfoBySno(String sno) {

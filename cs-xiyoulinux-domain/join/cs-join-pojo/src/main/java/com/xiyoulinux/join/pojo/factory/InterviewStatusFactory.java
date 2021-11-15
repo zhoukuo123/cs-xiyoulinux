@@ -1,6 +1,5 @@
 package com.xiyoulinux.join.pojo.factory;
 
-import com.sun.xml.internal.bind.v2.runtime.unmarshaller.InterningXmlVisitor;
 import com.xiyoulinux.join.pojo.vo.InterviewStatusVO;
 
 import java.util.HashMap;

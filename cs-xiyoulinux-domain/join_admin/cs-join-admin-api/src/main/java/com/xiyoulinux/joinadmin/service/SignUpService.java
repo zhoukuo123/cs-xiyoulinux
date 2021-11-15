@@ -14,9 +14,9 @@ import java.util.List;
  */
 public interface SignUpService {
     /**
-     * 查询报名记录
+     * 查询报名记录 分页
      */
-    List<JoinInfo> querySignUpRecord();
+    PagedGridResult querySignUpRecord(Integer page, Integer pageSize);
 
     /**
      * 创建用户纳新信息

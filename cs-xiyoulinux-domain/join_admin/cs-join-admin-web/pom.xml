@@ -30,6 +30,13 @@
             <version>${project.version}</version>
         </dependency>
 
+        <!-- cs-search -->
+        <dependency>
+            <groupId>${project.groupId}</groupId>
+            <artifactId>cs-search-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- nacos 支持 -->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>

@@ -14,6 +14,7 @@ import com.xiyoulinux.joinadmin.pojo.JoinSetting;
 import com.xiyoulinux.joinadmin.pojo.dto.JoinSettingDTO;
 import com.xiyoulinux.joinadmin.pojo.dto.UserJoinDTO;
 import com.xiyoulinux.joinadmin.pojo.vo.InterviewQueueVO;
+import com.xiyoulinux.joinadmin.pojo.vo.SignUpRecordVO;
 import com.xiyoulinux.joinadmin.service.SignUpService;
 import com.xiyoulinux.pojo.PagedGridResult;
 import com.xiyoulinux.service.BaseService;
@@ -54,9 +55,34 @@ public class SignUpServiceImpl extends BaseService implements SignUpService {
 
     @Transactional(propagation = Propagation.SUPPORTS, rollbackFor = Exception.class)
     @Override
-    public List<JoinInfo> querySignUpRecord() {
+    public PagedGridResult querySignUpRecord(Integer page, Integer pageSize) {
 
-        return joinInfoMapper.selectAll();
+        PageHelper.startPage(page, pageSize);
+
+        List<JoinInfo> joinInfos = joinInfoMapper.selectAll();
+
+        List<SignUpRecordVO> signUpRecordVOList = new ArrayList<>();
+
+        for (JoinInfo joinInfo : joinInfos) {
+            SignUpRecordVO signUpRecordVO = new SignUpRecordVO();
+
+            signUpRecordVO.setSno(joinInfo.getSno());
+            signUpRecordVO.setName(joinInfo.getName());
+            signUpRecordVO.setClassName(joinInfo.getClassName());
+            signUpRecordVO.setMobile(joinInfo.getMobile());
+
+            Integer round = joinInfo.getRound();
+            Integer status = joinInfo.getStatus();
+            InterviewStatusVO interviewStatusVO = InterviewStatusVO.builder().round(round).status(status).build();
+
+            com.xiyoulinux.join.pojo.factory.InterviewStatus interviewStatus = InterviewStatusFactory.getInterviewStatus(interviewStatusVO);
+
+            signUpRecordVO.setInterviewStatus(interviewStatus.getInterviewStatus());
+
+            signUpRecordVOList.add(signUpRecordVO);
+        }
+
+        return setterPagedGrid(signUpRecordVOList, page);
     }
 
 
@@ -91,6 +117,10 @@ public class SignUpServiceImpl extends BaseService implements SignUpService {
     public JoinSettingDTO querySignUpStartEndTime() {
         List<JoinSetting> joinSettings = joinSettingMapper.selectAll();
 
+        if (joinSettings == null) {
+            return null;
+        }
+
         JoinSetting joinSetting = joinSettings.get(0);
         JoinSettingDTO joinSettingDTO = new JoinSettingDTO();
         BeanUtils.copyProperties(joinSetting, joinSettingDTO);
@@ -108,12 +138,6 @@ public class SignUpServiceImpl extends BaseService implements SignUpService {
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
     public boolean createUserToJoinQueue(JoinInfo joinInfo) {
-        JoinQueue joinQueue = new JoinQueue();
-        String qid = sid.nextShort();
-        joinQueue.setQid(qid);
-        joinQueue.setUid(joinInfo.getUid());
-        joinQueue.setStatus(InterviewStatus.WAIT_INTERVIEW.code);
-        joinQueue.setSigninTime(new Date());
 
         Integer round = joinInfo.getRound();
         Integer status = joinInfo.getStatus();
@@ -122,6 +146,13 @@ public class SignUpServiceImpl extends BaseService implements SignUpService {
             return false;
         }
 
+        JoinQueue joinQueue = new JoinQueue();
+
+        String qid = sid.nextShort();
+        joinQueue.setQid(qid);
+        joinQueue.setUid(joinInfo.getUid());
+        joinQueue.setStatus(InterviewStatus.WAIT_INTERVIEW.code);
+        joinQueue.setSigninTime(new Date());
         joinQueue.setRound(round);
         joinQueue.setCreatedTime(new Date());
         joinQueue.setUpdatedTime(new Date());

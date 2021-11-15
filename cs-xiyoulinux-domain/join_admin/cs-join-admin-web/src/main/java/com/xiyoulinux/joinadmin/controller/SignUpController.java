@@ -9,13 +9,17 @@ import com.xiyoulinux.join.pojo.vo.InterviewStatusVO;
 import com.xiyoulinux.joinadmin.pojo.JoinInfo;
 import com.xiyoulinux.joinadmin.pojo.vo.InterviewQueueVO;
 import com.xiyoulinux.joinadmin.pojo.vo.SignUpRecordVO;
+import com.xiyoulinux.joinadmin.service.InterviewService;
 import com.xiyoulinux.joinadmin.service.SignUpService;
 import com.xiyoulinux.pojo.JSONResult;
 import com.xiyoulinux.pojo.PagedGridResult;
+import com.xiyoulinux.search.service.SignUpEsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -36,32 +40,57 @@ public class SignUpController {
     @Autowired
     private SignUpService signUpService;
 
+    @Autowired
+    private InterviewService interviewService;
+
+    @DubboReference
+    private SignUpEsService signUpEsService;
+
+    @SuppressWarnings("unchecked")
     @ApiOperation(value = "查看报名记录", notes = "查看报名记录", httpMethod = "GET")
     @GetMapping("/signUpRecord")
-    public JSONResult signUpRecord() {
+    public JSONResult signUpRecord(
+            @ApiParam(name = "page", value = "第几页", required = false)
+            @RequestParam(required = false) Integer page,
+            @ApiParam(name = "pageSize", value = "每一页显示的条数", required = false)
+            @RequestParam(required = false) Integer pageSize) {
 
-        List<JoinInfo> joinInfos = signUpService.querySignUpRecord();
-        List<SignUpRecordVO> signUpRecordVOList = new ArrayList<>();
-
-        for (JoinInfo joinInfo : joinInfos) {
-            SignUpRecordVO signUpRecordVO = new SignUpRecordVO();
-
-            signUpRecordVO.setSno(joinInfo.getSno());
-            signUpRecordVO.setName(joinInfo.getName());
-            signUpRecordVO.setClassName(joinInfo.getClassName());
-            signUpRecordVO.setMobile(joinInfo.getMobile());
-
-            Integer round = joinInfo.getRound();
-            Integer status = joinInfo.getStatus();
-            InterviewStatusVO interviewStatusVO = InterviewStatusVO.builder().round(round).status(status).build();
-
-            InterviewStatus interviewStatus = InterviewStatusFactory.getInterviewStatus(interviewStatusVO);
-
-            signUpRecordVO.setInterviewStatus(interviewStatus.getInterviewStatus());
-
-            signUpRecordVOList.add(signUpRecordVO);
+        if (page == null) {
+            page = 1;
         }
-        return JSONResult.ok(signUpRecordVOList);
+        if (pageSize == null) {
+            pageSize = COMMON_PAGE_SIZE;
+        }
+
+        PagedGridResult grid = signUpService.querySignUpRecord(page, pageSize);
+
+        return JSONResult.ok(grid);
+    }
+
+    @ApiOperation(value = "搜索报名记录", notes = "搜索报名记录", httpMethod = "GET")
+    @GetMapping("/es/searchSignUpRecord")
+    public JSONResult searchSignUpRecord(
+            @RequestParam String keywords, @RequestParam String sort,
+            @ApiParam(name = "page", value = "第几页", required = false)
+            @RequestParam(required = false) Integer page,
+            @ApiParam(name = "pageSize", value = "每一页显示的条数", required = false)
+            @RequestParam(required = false) Integer pageSize) throws SignUpException {
+
+        if (StringUtils.isBlank(keywords)) {
+            throw new SignUpException(ReturnCode.INVALID_PARAM.code, "搜索内容为空, 请重新输入");
+        }
+
+        if (page == null) {
+            page = 1;
+        }
+        if (pageSize == null) {
+            pageSize = COMMON_PAGE_SIZE;
+        }
+
+        // RPC 调用 cs-search
+        PagedGridResult grid = signUpEsService.searchSignUpRecords(keywords, sort, page, pageSize);
+
+        return JSONResult.ok(grid);
     }
 
     @ApiOperation(value = "用户纳新签到", notes = "用户纳新签到", httpMethod = "POST")
@@ -74,7 +103,13 @@ public class SignUpController {
         if (joinInfo == null) {
             throw new SignUpException(ReturnCode.INVALID_PARAM.code, "该学号未报名纳新, 无法签到");
         }
-        // 2. 插入到db
+
+        // 2. 判断该用户是否已经被面试, 本轮面试尚待决策
+        if (joinInfo.getStatus().equals(com.xiyoulinux.enums.InterviewStatus.PENDING_DECISION.code)) {
+            throw new SignUpException(ReturnCode.INVALID_PARAM.code, "该学号对应用户已被面试, 面试尚待决策, 无法签到");
+        }
+
+        // 3. 插入到db
         boolean result = signUpService.createUserToJoinQueue(joinInfo);
         if (!result) {
             throw new SignUpException(ReturnCode.INVALID_PARAM.code, "该学号对应用户已被淘汰, 无法签到");
@@ -86,9 +121,9 @@ public class SignUpController {
     @ApiOperation(value = "查询待面试队列", notes = "查询待面试队列", httpMethod = "GET")
     @GetMapping("/pendingInterviewQueue")
     public JSONResult pendingInterviewQueue(
-            @ApiParam(name = "page", value = "查询下一页的第几页", required = false)
+            @ApiParam(name = "page", value = "第几页", required = false)
             @RequestParam(required = false) Integer page,
-            @ApiParam(name = "pageSize", value = "分页的每一页显示的条数", required = false)
+            @ApiParam(name = "pageSize", value = "每一页显示的条数", required = false)
             @RequestParam(required = false) Integer pageSize) {
 
         if (page == null) {
