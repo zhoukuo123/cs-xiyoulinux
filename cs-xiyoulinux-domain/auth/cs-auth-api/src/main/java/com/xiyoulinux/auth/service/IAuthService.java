@@ -1,6 +1,7 @@
 package com.xiyoulinux.auth.service;
 
 import com.xiyoulinux.common.JwtToken;
+import com.xiyoulinux.common.LoginUserInfo;
 import com.xiyoulinux.common.UsernameAndPassword;
 
 import java.security.NoSuchAlgorithmException;
@@ -21,5 +22,10 @@ public interface IAuthService {
      * 注册用户并返回当前注册用户的 Token, 即通过授权中心创建用户
      */
     JwtToken register(UsernameAndPassword usernameAndPassword) throws NoSuchAlgorithmException, InvalidKeySpecException;
+
+    /**
+     * 刷新token
+     */
+    JwtToken refresh(LoginUserInfo loginUserInfo) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
 }

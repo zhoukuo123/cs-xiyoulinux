@@ -40,7 +40,6 @@ public class GlobalRequestFilter implements GlobalFilter, Ordered {
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-        System.out.println(exchange.getRequest().getURI().getPath());
         ServerHttpRequest request = exchange.getRequest();
         ServerHttpResponse response = exchange.getResponse();
         UsernameAndPassword usernameAndPassword = JSON.parseObject(
@@ -55,8 +54,7 @@ public class GlobalRequestFilter implements GlobalFilter, Ordered {
                 JwtToken token = iauthService.login(usernameAndPassword);
                 jsonResult = JSONResult.ok(token);
             } catch (Exception e) {
-                e.printStackTrace();
-                log.error("user [{}] login get token error", usernameAndPassword.getUsername());
+                log.error("user [{}] login get token error [{}]", usernameAndPassword.getUsername(),e.getMessage(),e);
                 jsonResult = JSONResult.errorMsg(ReturnCode.ERROR.code, "user login get token error");
             }
             byte[] bytes = JSON.toJSONBytes(jsonResult);
@@ -72,7 +70,7 @@ public class GlobalRequestFilter implements GlobalFilter, Ordered {
                 JwtToken token = iauthService.register(usernameAndPassword);
                 jsonResult = JSONResult.ok(token);
             } catch (Exception e) {
-                log.error("user [{}] register get token error", usernameAndPassword.getUsername());
+                log.error("user [{}] register get token error [{}]", usernameAndPassword.getUsername(),e.getMessage(),e);
                 jsonResult = JSONResult.errorMsg(ReturnCode.ERROR.code, "user register get token error");
             }
             byte[] bytes = JSON.toJSONBytes(jsonResult);
@@ -80,8 +78,6 @@ public class GlobalRequestFilter implements GlobalFilter, Ordered {
             return response.writeWith(Flux.just(buffer));
         }
 
-
-        // 3. 访问其他的服务, 则鉴权, 校验是否能够从 Token 中解析出用户信息
         HttpHeaders headers = request.getHeaders();
         String token = headers.getFirst(AuthCommonConstant.JWT_USER_INFO_KEY);
         LoginUserInfo loginUserInfo = null;
@@ -95,12 +91,27 @@ public class GlobalRequestFilter implements GlobalFilter, Ordered {
         // 获取不到登录用户信息, 返回 401
         if (null == loginUserInfo) {
             byte[] result = JSON.toJSONBytes(JSONResult.errorMsg(ReturnCode.UNAUTHORIZED.code,
-                    "not has auth !!"));
+                    "login expired or not has auth !!"));
             DataBuffer buffer = response.bufferFactory().wrap(result);
             return response.writeWith(Flux.just(buffer));
         }
 
-        // 解析通过, 则放行
+        //3. 如果是刷新token
+        if (request.getURI().getPath().contains(GlobalConstant.USER_REFRESH_PATH)) {
+            JSONResult jsonResult = null;
+            try {
+                JwtToken newToken = iauthService.refresh(loginUserInfo);
+                jsonResult = JSONResult.ok(newToken);
+            } catch (Exception e) {
+                log.error("user [{}], refresh token error,[{}]",loginUserInfo.getUsername(),e.getMessage(),e);
+                jsonResult = JSONResult.errorMsg(ReturnCode.ERROR.code, "user refresh token error");
+            }
+            byte[] bytes = JSON.toJSONBytes(jsonResult);
+            DataBuffer buffer = response.bufferFactory().wrap(bytes);
+            return response.writeWith(Flux.just(buffer));
+        }
+
+        // 4.访问其他的服务,解析通过, 则放行
         return chain.filter(exchange);
     }
 

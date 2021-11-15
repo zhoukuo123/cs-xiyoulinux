@@ -33,8 +33,10 @@ public final class AuthorityConstant {
             "ZSdh3KLrwu4Ux8+/78rttnf/YQDhreLU6F87Wvn8SMiVZgYP6wq+tV89TkrijYdW5RY0zldfcOgazH";
 
     /**
-     * 默认的 Token 超时时间, 一天
+     * 默认的 refresh Token 超时时间, 一天
      */
+    public static final long DEFAULT_REFRESH_EXPIRE_DAY = 24 * 3600 * 1000;
 
-    public static final Integer DEFAULT_EXPIRE_DAY = 24 * 3600 * 1000;
+
+    public static final long DEFAULT_EXPIRE_DAY = 2 * 3600 * 1000;
 }

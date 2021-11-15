@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.xiyoulinux.auth.service.IAuthService;
 import com.xiyoulinux.auth.service.IJwtService;
 import com.xiyoulinux.common.JwtToken;
+import com.xiyoulinux.common.LoginUserInfo;
 import com.xiyoulinux.common.UsernameAndPassword;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboService;
@@ -20,7 +21,7 @@ import java.security.spec.InvalidKeySpecException;
 public class AuthServiceImpl implements IAuthService {
 
     @Autowired
-   private IJwtService iJwtService;
+    private IJwtService iJwtService;
 
 
     @Override
@@ -32,11 +33,14 @@ public class AuthServiceImpl implements IAuthService {
 
     @Override
     public JwtToken register(UsernameAndPassword usernameAndPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        log.info("register user with param: [{}]", JSON.toJSONString(
-                usernameAndPassword
-        ));
-        return iJwtService.registerUserAndGetToken(
-                usernameAndPassword
-        );
+        log.info("register user with param: [{}]", JSON.toJSONString(usernameAndPassword));
+        return iJwtService.registerUserAndGetToken(usernameAndPassword);
+    }
+
+    @Override
+    public JwtToken refresh(LoginUserInfo loginUserInfo) throws NoSuchAlgorithmException, InvalidKeySpecException {
+        System.out.println(1);
+        log.info("user [{}] refresh token", JSON.toJSONString(loginUserInfo));
+        return iJwtService.refresh(loginUserInfo);
     }
 }

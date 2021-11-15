@@ -1,8 +1,11 @@
 ###
-POST http://127.0.0.1:7002/cs-gateway/cs-auth/authority/token
+POST http://127.0.0.1:7002/cs-gateway/cs-auth/authority/refresh
 Content-Type: application/json
+cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIiqcInVzZXJuYW1lXCI6XCIxMjNcIn0iLCJqdGkiOiIyMzk1NGY2OS1kMjljLTRjZDMtYTE1Zi01ZTBjOGU0Y2JlZDEiLCJleHAiOjE2NDQyMzYxOTF9.I2it1RmRn_0nYI1lKwSJYuNaxPKGD7zKdG-Ma5RdpKyFYcFmHBxhRQI-YyQPba3oCKXB6l00z54h8dNRsnMSkruH_dWyxHppt_Lj37z0aIfzst5kVQJkxSTf0-I737haL6Nu1zTOjaavt7g_QqVl38NRUIVbSmGsFBscwxlJM-lsCCe8Lt3cOZTv83sa6RHw7HpnvNvuwAU6FfLLc-lCwjflhQay63NVPcrGmWjUHLExRaeUi-QqxmSB7Daqu9O9duL6kfoAlXacl2Gsk660n4gLjI7hrB-nAIjcrBI76rgS-iSZOCN32smkWDi-lpTpTtHoBOMaLEMtexCbWpy4zA
+###
+#{
+#  "username": "123",
+#  "password": "123"
+#}
+### Accept: application/json
 
-{
-  "username": "123",
-  "password": "1234"
-}

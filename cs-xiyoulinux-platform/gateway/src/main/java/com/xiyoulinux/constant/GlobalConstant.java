@@ -8,11 +8,17 @@ public class GlobalConstant {
     /**
      * 登录 uri
      */
-    public static final String USER_LOGIN_PATH = "/cs-auth/authority/token";
+    public static final String USER_LOGIN_PATH = "/token";
 
     /**
      * 注册 uri
      */
-    public static final String USER_REGISTER_PATH = "/cs-auth/authority/register";
+    public static final String USER_REGISTER_PATH = "/register";
+
+    /**
+     * 刷新token
+     */
+    public static final String USER_REFRESH_PATH = "/refresh";
+
 
 }

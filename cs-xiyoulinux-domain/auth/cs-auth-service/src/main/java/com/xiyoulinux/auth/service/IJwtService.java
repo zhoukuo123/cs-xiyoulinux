@@ -6,6 +6,7 @@ import com.xiyoulinux.common.UsernameAndPassword;
 
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
+import java.util.List;
 
 /**
  * @author qkm
@@ -18,7 +19,7 @@ public interface IJwtService {
      * @return jwt token
      * @throws Exception 转变私钥的异常
      */
-    String getToken(LoginUserInfo loginUserInfo) throws NoSuchAlgorithmException, InvalidKeySpecException;
+    List<Object> builderToken(LoginUserInfo loginUserInfo, long time) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
     /**
      * 登陆并返回 token
@@ -38,5 +39,12 @@ public interface IJwtService {
      */
     JwtToken registerUserAndGetToken(UsernameAndPassword usernameAndPassword)
             throws NoSuchAlgorithmException, InvalidKeySpecException;
+
+
+    /**
+     * 刷新token
+     * @param  loginUserInfo
+     */
+    JwtToken refresh(LoginUserInfo loginUserInfo) throws NoSuchAlgorithmException, InvalidKeySpecException;
 
 }
