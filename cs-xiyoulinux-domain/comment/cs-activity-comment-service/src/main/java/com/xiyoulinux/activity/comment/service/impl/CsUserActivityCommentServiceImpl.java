@@ -101,13 +101,14 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
 
     public PageCommentInfo getPageCommentsByActivityIdAndUserIdFallBack(PageInfo pageInfo,
                                                                         String activityId,
-                                                                        String userId) {
-        log.error("user [{}] get activity [{}] page [{}] comments into fallback",
-                userId, activityId, pageInfo.getPage());
+                                                                        String userId,
+                                                                        Throwable throwable) {
+        log.error("user [{}] get activity [{}] page [{}] comments into fallback : [{}]",
+                userId, activityId, pageInfo.getPage(), throwable.getMessage());
         return null;
     }
 
-     @HystrixCommand(
+    @HystrixCommand(
             groupKey = "comment",
             // 舱壁模式
             threadPoolKey = "comment",
@@ -132,8 +133,8 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
     @Override
     @SuppressWarnings("all")
     public PageCommentInfo getPageCommentsByActivityIdAndUserIdOrderByLikes(PageInfo pageInfo,
-                                                                String activityId,
-                                                                String userId) {
+                                                                            String activityId,
+                                                                            String userId) {
         IPage<CsUserActivityComment> csUserActivityCommentPage = new Page<>(pageInfo.getPage(), pageInfo.getSize());
         IPage<CsUserActivityComment> csUserActivityCommentIPage =
                 csUserCommentMapper.selectPageByActivityIdOrderByLikes(activityId, csUserActivityCommentPage);
@@ -142,10 +143,11 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
 
 
     public PageCommentInfo getPageCommentsByActivityIdAndUserIdOrderByLikesFallback(PageInfo pageInfo,
-                                                                String activityId,
-                                                                String userId) {
-        log.error("user [{}] get activity [{}]  page [{}] comments orderBy likes into fallback",
-                userId, activityId, pageInfo.getPage());
+                                                                                    String activityId,
+                                                                                    String userId,
+                                                                                    Throwable throwable) {
+        log.error("user [{}] get activity [{}]  page [{}] comments orderBy likes into fallback : [{}]",
+                userId, activityId, pageInfo.getPage(),throwable.getMessage());
         return null;
     }
 
@@ -174,7 +176,6 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
 
         return pageCommentInfo;
     }
-
 
 
     @HystrixCommand(
@@ -208,9 +209,10 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
         return "点赞成功";
     }
 
-    public String likesCommentFallBack(CsUserLikesBo csUserLikesBo) {
-        log.error("user [{}] like comment [{}] into fallback", csUserLikesBo.getCsUserId()
-                , csUserLikesBo.getCsCommentId());
+    public String likesCommentFallBack(CsUserLikesBo csUserLikesBo,
+                                       Throwable throwable) {
+        log.error("user [{}] like comment [{}] into fallback : [{}]", csUserLikesBo.getCsUserId()
+                , csUserLikesBo.getCsCommentId(),throwable.getMessage());
         return "努力发射中";
     }
 
@@ -240,8 +242,8 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
         return "取消成功";
     }
 
-    public String dislikeCommentFallBack(String commentId, String userId) {
-        log.error("user [{}] disLike comment [{}] into fallback", userId, commentId);
+    public String dislikeCommentFallBack(String commentId, String userId,Throwable throwable) {
+        log.error("user [{}] disLike comment [{}] into fallback : [{}]", userId, commentId,throwable.getMessage());
         return "努力发射中";
     }
 
@@ -305,8 +307,8 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
         return commentMap;
     }
 
-    public Map<String, Long> getCommentNumberFallback(List<String> activityIdList) {
-        log.error("get comment number into fallback method");
+    public Map<String, Long> getCommentNumberFallback(List<String> activityIdList,Throwable throwable) {
+        log.error("get comment number into fallback method : [{}]",throwable.getMessage());
         HashMap<String, Long> commentMap = new HashMap<>(16);
         for (String activityId : activityIdList) {
             commentMap.put(activityId, -1L);
