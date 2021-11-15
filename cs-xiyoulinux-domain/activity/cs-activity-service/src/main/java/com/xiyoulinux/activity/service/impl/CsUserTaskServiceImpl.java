@@ -129,8 +129,8 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
     }
 
     //前端搞一下降级的显示
-    public TaskNumber getTaskNumberFallBack() {
-        log.error("get task number into fallback method");
+    public TaskNumber getTaskNumberFallBack(Throwable throwable) {
+        log.error("get task number into fallback method : [{}]",throwable.getMessage());
         return new TaskNumber(-1, -1, -1);
     }
 
@@ -236,9 +236,10 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
         return pageTaskInfo;
     }
 
-    private PageTaskInfo getPageTaskInfoFallBack(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
-        log.error("user [{}] get page [{}] [{}] task fallBack method", userId,
-                pageInfo.getPage(), activityStatus.description);
+    private PageTaskInfo getPageTaskInfoFallBack(PageInfo pageInfo, ActivityStatus activityStatus, String userId, Throwable throwable) {
+        log.error("user [{}] get page [{}] [{}] task fallBack method : [{}]", userId,
+                pageInfo.getPage(), activityStatus.description, throwable.getMessage()
+        );
         return null;
     }
 }

@@ -236,8 +236,8 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
         return pageActivityInfo;
     }
 
-    public PageActivityInfo getPageActivityFallBack(PageInfo pageInfo, String userId) {
-        log.error("user [{}] get page [{}] activity into fallBack method", userId, pageInfo.getPage());
+    public PageActivityInfo getPageActivityFallBack(PageInfo pageInfo, String userId,Throwable throwable) {
+        log.error("user [{}] get page [{}] activity into fallBack method : [{}]", userId, pageInfo.getPage(),throwable.getMessage());
         return null;
     }
 
@@ -269,8 +269,8 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
         return pageActivityInfo;
     }
 
-    public PageActivityInfo getPageActivityByUserIdFallBack(String userId, int page) {
-        log.error("get page [{}] user [{}] activity into fallBack method", page, userId);
+    public PageActivityInfo getPageActivityByUserIdFallBack(String userId, int page,Throwable throwable) {
+        log.error("get page [{}] user [{}] activity into fallBack method : [{}]", page, userId,throwable.getMessage());
         return null;
     }
 

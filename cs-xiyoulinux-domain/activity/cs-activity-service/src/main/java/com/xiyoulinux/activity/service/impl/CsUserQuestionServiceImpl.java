@@ -91,8 +91,8 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
     }
 
     //前端搞一下降级显示
-    public QuestionNumber getQuestionNumberFallback() {
-        log.error("get question number into fallback method");
+    public QuestionNumber getQuestionNumberFallback(Throwable throwable) {
+        log.error("get question number into fallback method : [{}]",throwable.getMessage());
         return new QuestionNumber(-1, -1);
     }
 
@@ -159,9 +159,10 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
         return pageQuestionInfo;
     }
 
-    private PageQuestionInfo getPageQuestionInfoFallBack(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
-        log.error("user [{}] get page [{}] [{}] question into fallback method", userId, pageInfo.getPage(),
-                activityStatus.description);
+    private PageQuestionInfo getPageQuestionInfoFallBack(PageInfo pageInfo, ActivityStatus activityStatus, String userId
+    ,Throwable throwable) {
+        log.error("user [{}] get page [{}] [{}] question into fallback method : [{}]", userId, pageInfo.getPage(),
+                activityStatus.description,throwable.getMessage());
         return null;
     }
 }
