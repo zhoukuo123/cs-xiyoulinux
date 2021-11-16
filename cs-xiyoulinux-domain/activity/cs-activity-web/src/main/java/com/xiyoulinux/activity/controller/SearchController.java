@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.*;
  * @author qkm
  */
 @RestController
-@RequestMapping("/search")
+@RequestMapping("/activity/search")
 @SuppressWarnings("all")
 public class SearchController {
 
