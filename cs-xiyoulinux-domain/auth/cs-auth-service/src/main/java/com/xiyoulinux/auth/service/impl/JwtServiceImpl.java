@@ -50,26 +50,48 @@ public class JwtServiceImpl implements IJwtService {
     }
 
     @Override
-    public JwtToken loginAndGetToken(UsernameAndPassword usernameAndPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
+    public JwtToken loginAndGetToken(UsernameAndPassword usernameAndPassword) {
 
         //调用用户中心验证用户，同时返回用户id
         String userId = "1";
         LoginUserInfo loginUserInfo = new LoginUserInfo(userId, usernameAndPassword.getUsername());
-        return getJwtToken(loginUserInfo);
+        try {
+            return getJwtToken(loginUserInfo);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            log.error("get token error :[{}]", e.getMessage());
+        }
+        return null;
     }
 
     @Override
-    public JwtToken registerUserAndGetToken(UsernameAndPassword usernameAndPassword) throws NoSuchAlgorithmException, InvalidKeySpecException {
-
+    public JwtToken registerUserAndGetToken(UsernameAndPassword usernameAndPassword) {
         //调用用户中心注册用户，返回注册的用户id
         String userId = "1";
         LoginUserInfo loginUserInfo = new LoginUserInfo(userId, usernameAndPassword.getUsername());
-        return getJwtToken(loginUserInfo);
+        try {
+            return getJwtToken(loginUserInfo);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            log.error("get token error :[{}]", e.getMessage());
+        }
+        return null;
     }
 
     @Override
-    public JwtToken refresh(LoginUserInfo loginUserInfo) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        return getJwtToken(loginUserInfo);
+    public JwtToken refresh(String token) {
+        LoginUserInfo loginUserInfo = null;
+        try {
+            loginUserInfo = TokenParseUtil.parseUserInfoFromToken(token);
+        } catch (Exception ex) {
+            log.error("parse user info from token error: [{}]", ex.getMessage(), ex);
+            return null;
+        }
+        try {
+            return getJwtToken(loginUserInfo);
+        } catch (NoSuchAlgorithmException | InvalidKeySpecException e) {
+            log.error("get token error :[{}]",e.getMessage());
+        }
+        //表示获取token出问题
+        return new JwtToken(null,token,null);
     }
 
     private JwtToken getJwtToken(LoginUserInfo loginUserInfo) throws NoSuchAlgorithmException, InvalidKeySpecException {
@@ -90,4 +112,5 @@ public class JwtServiceImpl implements IJwtService {
         KeyFactory keyFactory = KeyFactory.getInstance("RSA");
         return keyFactory.generatePrivate(priPICS8);
     }
+
 }

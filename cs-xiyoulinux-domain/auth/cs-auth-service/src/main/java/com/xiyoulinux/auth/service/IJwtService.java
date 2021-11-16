@@ -28,7 +28,7 @@ public interface IJwtService {
      * @return jwt token
      * @throws Exception 转变私钥的异常
      */
-    JwtToken loginAndGetToken(UsernameAndPassword usernameAndPassword) throws NoSuchAlgorithmException, InvalidKeySpecException;
+    JwtToken loginAndGetToken(UsernameAndPassword usernameAndPassword);
 
     /**
      * 注册用户并生成 Token 返回
@@ -37,14 +37,13 @@ public interface IJwtService {
      * @return jwt token
      * @throws Exception 转变私钥的异常
      */
-    JwtToken registerUserAndGetToken(UsernameAndPassword usernameAndPassword)
-            throws NoSuchAlgorithmException, InvalidKeySpecException;
+    JwtToken registerUserAndGetToken(UsernameAndPassword usernameAndPassword);
 
 
     /**
      * 刷新token
-     * @param  loginUserInfo
+     * @param  token
      */
-    JwtToken refresh(LoginUserInfo loginUserInfo) throws NoSuchAlgorithmException, InvalidKeySpecException;
+    JwtToken refresh(String token);
 
 }
