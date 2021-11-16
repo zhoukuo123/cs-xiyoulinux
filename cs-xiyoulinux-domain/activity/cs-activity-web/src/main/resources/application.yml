@@ -48,9 +48,7 @@ spring:
           destination: activity-exchange #对应 rabbitmq的 exchange
           content-type: application/json
           binder: rabbit
-#          # 没有生效
-#          producer:
-#            confirm-ack-channel: testAck
+
 
 ############################################
 # dubbo配置
@@ -63,10 +61,10 @@ dubbo:
     address: spring-cloud://${spring.application.address}
   # dubbo订阅的服务，如果是提供者填写本服务的名称
   cloud:
-    subscribed-services: cs-activity-comment-service
+    subscribed-services: cs-activity-comment-service,cs-search-service
   consumer:
+    loadbalance: leastactive
     check: false
-
 ############################################
 # seata配置
 ############################################

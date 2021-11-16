@@ -1,6 +1,5 @@
 package com.xiyoulinux.activity.service;
 
-import org.springframework.cloud.stream.annotation.Input;
 import org.springframework.cloud.stream.annotation.Output;
 import org.springframework.messaging.MessageChannel;
 
@@ -21,11 +20,4 @@ public interface ActivitySource {
      */
     @Output(ActivitySource.OUTPUT)
     MessageChannel activityOutput();
-
-    /**
-     * 发送成功监听的通道
-     * @return
-     */
-    @Input("testAck")
-    MessageChannel testAck();
 }
