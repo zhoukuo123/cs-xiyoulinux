@@ -96,7 +96,7 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
         } else if (csUserTaskUpdateBo.getTaskStatus().code.equals(ActivityStatus.ACHIEVE.code)) {
             deleteKey = ActivityConstant.PAGE_TASK_DID + "*";
         }
-        Set<String> keys = redisOperator.keys(deleteKey);
+        Set<String> keys = redisOperator.scan(deleteKey);
         if (keys != null && keys.size() != 0) {
             redisOperator.delCollect(keys);
             log.info("delete [{}] from redis", deleteKey);

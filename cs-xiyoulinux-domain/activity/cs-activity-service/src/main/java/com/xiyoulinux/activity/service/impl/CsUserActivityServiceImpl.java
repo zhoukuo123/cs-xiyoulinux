@@ -133,7 +133,7 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
             //删除缓存
             String deleteKey = judgeType(csUserActivity.getActivityStatus().code);
             //根据deleteKey先删除redis中存储的任务
-            Set<String> keys = redisOperator.keys(deleteKey);
+            Set<String> keys = redisOperator.scan(deleteKey);
             if (keys != null && keys.size() != 0) {
                 redisOperator.delCollect(keys);
                 log.info("delete [{}] from redis success", deleteKey);
@@ -178,7 +178,7 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
 
                 //删除缓存
                 String deleteKey = judgeType(csUserActivityDeleteBo.getActivityStatus().code);
-                Set<String> keys = redisOperator.keys(deleteKey);
+                Set<String> keys = redisOperator.scan(deleteKey);
                 if (keys != null && keys.size() != 0) {
                     redisOperator.delCollect(keys);
                     log.info("delete [{}] from redis success", deleteKey);
@@ -190,6 +190,7 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
             //发送消息
             if (!activitySource.activityOutput().send(
                     MessageBuilder.withPayload(JSON.toJSONString(activityMessage)).build()
+
             )) {
                 throw new RuntimeException("send activity message failure");
             }
@@ -236,8 +237,8 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
         return pageActivityInfo;
     }
 
-    public PageActivityInfo getPageActivityFallBack(PageInfo pageInfo, String userId,Throwable throwable) {
-        log.error("user [{}] get page [{}] activity into fallBack method : [{}]", userId, pageInfo.getPage(),throwable.getMessage());
+    public PageActivityInfo getPageActivityFallBack(PageInfo pageInfo, String userId, Throwable throwable) {
+        log.error("user [{}] get page [{}] activity into fallBack method : [{}]", userId, pageInfo.getPage(), throwable.getMessage());
         return null;
     }
 
@@ -269,8 +270,8 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
         return pageActivityInfo;
     }
 
-    public PageActivityInfo getPageActivityByUserIdFallBack(String userId, int page,Throwable throwable) {
-        log.error("get page [{}] user [{}] activity into fallBack method : [{}]", page, userId,throwable.getMessage());
+    public PageActivityInfo getPageActivityByUserIdFallBack(String userId, int page, Throwable throwable) {
+        log.error("get page [{}] user [{}] activity into fallBack method : [{}]", page, userId, throwable.getMessage());
         return null;
     }
 
