@@ -78,5 +78,10 @@ public interface ICsUserActivityCommentService {
      */
     void deleteLikesByCsActivityId(String activityId);
 
+    /**
+     * 同步redis 点赞数目到数据库
+     * @param likes
+     */
+    void mergeLikes(Map<String,Integer> likes);
 
 }

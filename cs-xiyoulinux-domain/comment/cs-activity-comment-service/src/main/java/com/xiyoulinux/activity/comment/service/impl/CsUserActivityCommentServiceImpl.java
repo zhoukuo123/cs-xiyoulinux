@@ -147,7 +147,7 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
                                                                                     String userId,
                                                                                     Throwable throwable) {
         log.error("user [{}] get activity [{}]  page [{}] comments orderBy likes into fallback : [{}]",
-                userId, activityId, pageInfo.getPage(),throwable.getMessage());
+                userId, activityId, pageInfo.getPage(), throwable.getMessage());
         return null;
     }
 
@@ -159,12 +159,14 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
 
         PageCommentInfo pageCommentInfo = new PageCommentInfo();
 
-        //从缓存里面获取评论的点赞数目，只有点赞了该评论,才会被放进缓存，缓存只记录点赞的数目
+        //从缓存里面获取2个小时内的点赞和数据库相加得到总评论的点赞数目，只有点赞了该评论,才会被放进缓存，缓存只记录点赞的数目
         commentList.forEach(comment -> {
-            String commentLikesNumber = redisOperator.get(comment.getId());
+            String commentLikesNumber = redisOperator.get("LIKE:" + comment.getId());
             if (commentLikesNumber != null) {
-                comment.setCommentLikes(Integer.parseInt(commentLikesNumber) + comment.getCommentLikes());
+                comment.setCommentLikes(Integer.parseInt(commentLikesNumber)
+                        + comment.getCommentLikes());
             }
+            System.out.println(comment.getCommentLikes() + "result");
         });
 
         //是否还有下一页
@@ -212,7 +214,7 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
     public String likesCommentFallBack(CsUserLikesBo csUserLikesBo,
                                        Throwable throwable) {
         log.error("user [{}] like comment [{}] into fallback : [{}]", csUserLikesBo.getCsUserId()
-                , csUserLikesBo.getCsCommentId(),throwable.getMessage());
+                , csUserLikesBo.getCsCommentId(), throwable.getMessage());
         return "努力发射中";
     }
 
@@ -238,12 +240,12 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
         } catch (Exception e) {
             throw new RuntimeException(e.getMessage());
         }
-        log.info("commentId [{}] add likes number [{}]", commentId, redisOperator.decr("DISLIKE:" + commentId, 1));
+        log.info("commentId [{}] add likes number [{}]", commentId, redisOperator.decr("LIKE:" + commentId, 1));
         return "取消成功";
     }
 
-    public String dislikeCommentFallBack(String commentId, String userId,Throwable throwable) {
-        log.error("user [{}] disLike comment [{}] into fallback : [{}]", userId, commentId,throwable.getMessage());
+    public String dislikeCommentFallBack(String commentId, String userId, Throwable throwable) {
+        log.error("user [{}] disLike comment [{}] into fallback : [{}]", userId, commentId, throwable.getMessage());
         return "努力发射中";
     }
 
@@ -307,8 +309,8 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
         return commentMap;
     }
 
-    public Map<String, Long> getCommentNumberFallback(List<String> activityIdList,Throwable throwable) {
-        log.error("get comment number into fallback method : [{}]",throwable.getMessage());
+    public Map<String, Long> getCommentNumberFallback(List<String> activityIdList, Throwable throwable) {
+        log.error("get comment number into fallback method : [{}]", throwable.getMessage());
         HashMap<String, Long> commentMap = new HashMap<>(16);
         for (String activityId : activityIdList) {
             commentMap.put(activityId, -1L);
@@ -325,6 +327,11 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
     @Override
     public void deleteLikesByCsActivityId(String activityId) {
         csUserLikesMapper.deleteLikesByCsActivityId(activityId);
+    }
+
+    @Override
+    public void mergeLikes(Map<String, Integer> likes) {
+        csUserCommentMapper.mergeLikes(likes);
     }
 
     /**

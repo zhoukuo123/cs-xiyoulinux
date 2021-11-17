@@ -7,6 +7,7 @@ import com.xiyoulinux.activity.comment.service.ActivityCommentSink;
 import com.xiyoulinux.activity.comment.service.ICsUserActivityCommentService;
 import com.xiyoulinux.pojo.ActivityMessage;
 import com.xiyoulinux.utils.DateUtil;
+import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.amqp.support.AmqpHeaders;
 import org.springframework.cloud.stream.annotation.EnableBinding;
@@ -39,7 +40,10 @@ public class ActivityCommentSinkImpl {
      * 监听动态删除消息
      */
     @StreamListener("commentInput")
-    public void consumeActivityMessage(@Payload Object payload){
+    @GlobalTransactional
+    public void consumeActivityMessage(@Payload Object payload,
+                                       @Header(AmqpHeaders.CHANNEL) Channel channel,
+                                       @Header(AmqpHeaders.DELIVERY_TAG) Long deliveryTag) {
 
         log.info("receive and consume activity message: [{}]", payload.toString());
         ActivityMessage activityMessage = JSON.parseObject(
@@ -48,12 +52,13 @@ public class ActivityCommentSinkImpl {
         try {
             iCsUserActivityCommentService.deleteComments(activityMessage.getActivityId());
             iCsUserActivityCommentService.deleteLikesByCsActivityId(activityMessage.getActivityId());
+            channel.basicAck(deliveryTag, true);
             log.info("consume activity message success: activityId [{}],userId [{}]，createTime [{}]",
                     activityMessage.getActivityId()
                     , activityMessage.getUserId(),
                     activityMessage.getCreateTime());
         } catch (Exception e) {
-            log.error("consume activity message: [{}] error [{}]", activityMessage,e.getMessage());
+            log.error("consume activity message: [{}] error [{}]", activityMessage, e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
     }
