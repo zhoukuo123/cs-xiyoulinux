@@ -54,6 +54,7 @@ spring:
         bindings:
           commentInput:
             consumer:
+              acknowledge-mode: manual
               autoBindDlq: true #是否自动生成死信交换机
               republishToDlq: true #有详细信息
               prefetch: 5 # 限制consumer在消费消息时，一次能同时获取的消息数量，默认：1
@@ -72,9 +73,10 @@ dubbo:
     address: spring-cloud://${spring.application.address}
   # 要订阅的服务，如果是提供者则填写服务名称
   cloud:
-    subscribed-services: cs-activity-comment-service
+    subscribed-services: cs-file-service
   consumer:
     check: false
+    loadbalance: leastactive
 ####################################
 # mybaits-plus 设置为null的列
 ################################
