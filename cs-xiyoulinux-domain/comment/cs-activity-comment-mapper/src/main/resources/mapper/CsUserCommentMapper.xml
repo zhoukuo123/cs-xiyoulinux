@@ -26,16 +26,11 @@
         comment_content,comment_likes,comment_create_time
     </sql>
 
-    <update id="likesComment">
-        update cs_user_activity_comment
-        set comment_likes = comment_likes + 1
-        where id = #{id}
-    </update>
-
-    <update id="dislikeComment">
-        update cs_user_activity_comment
-        set comment_likes = comment_likes - 1
-        where id = #{id}
+    <update id="mergeLikes" parameterType="java.util.Map">
+        <foreach collection="likes.entrySet()" index="key" item="value" separator=";">
+            UPDATE cs_user_activity_comment SET comment_likes =
+            comment_likes + #{value} where id = #{key}
+        </foreach>
     </update>
 
     <select id="selectPageByActivityId" resultMap="BaseResultMap">

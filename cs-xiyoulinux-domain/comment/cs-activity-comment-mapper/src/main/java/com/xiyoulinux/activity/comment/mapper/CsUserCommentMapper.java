@@ -9,6 +9,7 @@ import org.apache.ibatis.annotations.Param;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author qkm
@@ -26,22 +27,6 @@ public interface CsUserCommentMapper extends BaseMapper<CsUserActivityComment> {
      */
     IPage<CsUserActivityComment> selectPageByActivityId(@Param("activityId") String activityId,
                                                         @Param("page") IPage<CsUserActivityComment> page);
-
-    /**
-     * 给评论点赞
-     *
-     * @param id      评论id
-     * @return 更新的行数
-     */
-    int likesComment(@Param("id") String id);
-
-    /**
-     * 给评论取消点赞
-     *
-     * @param id      评论id
-     * @return 更新的行数
-     */
-    Integer dislikeComment(@Param("id") String id);
 
     /**
      * 获取动态的评论数目
@@ -66,6 +51,12 @@ public interface CsUserCommentMapper extends BaseMapper<CsUserActivityComment> {
      */
     IPage<CsUserActivityComment> selectPageByActivityIdOrderByLikes(@Param("activityId") String activityId,
                                                                     @Param("csUserActivityCommentPage") IPage<CsUserActivityComment> csUserActivityCommentPage);
+
+    /**
+     * 同步redis 点赞数目到数据库
+     * @param likes
+     */
+    void mergeLikes(@Param("likes") Map<String, Integer> likes);
 }
 
 
