@@ -1,14 +1,14 @@
 server:
   port: 8004
   servlet:
-    context-path: /cs-elasticsearch
+    context-path: /cs-search
 spring:
   data:
     elasticsearch:
       repositories:
         enabled: false
   application:
-    name: cs-elasticsearch-service
+    name: cs-search-service
     address: 127.0.0.1
   elasticsearch:
     rest:
@@ -20,7 +20,7 @@ spring:
     url: jdbc:mysql://${spring.application.address}:3306/cs_dynamic?characterEncoding=UTF-8&useSSL=false&useUnicode=true&serverTimezone=UTC
     username: root
     password: 13468724917qkm,
-#  # nacos注册
+  #  # nacos注册
   cloud:
     nacos:
       discovery:
@@ -43,4 +43,5 @@ dubbo:
   cloud:
     subscribed-services: cs-activity-comment-service
   consumer:
+    loadbalance: leastactive
     check: false
