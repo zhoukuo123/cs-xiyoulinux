@@ -92,9 +92,10 @@ public class ActivityCommentController {
     })
     @ApiResponses(@ApiResponse(code = 200, message = "用户信息", response = CsUserInfoAndIdAndFileInfo.class))
     @PostMapping("/add")
-    public JSONResult addComment(@RequestBody CsUserActivityCommentBo comment, @RequestPart("files") MultipartFile[] files
+    public JSONResult addComment(@RequestPart("csUserActivityCommentBo") CsUserActivityCommentBo comment,
+                                 @RequestPart("files") MultipartFile[] files
     ) {
-        return JSONResult.ok(iCsUserActivityCommentService.addComment(comment, null));
+        return JSONResult.ok(iCsUserActivityCommentService.addComment(comment, files));
 
     }
 }
