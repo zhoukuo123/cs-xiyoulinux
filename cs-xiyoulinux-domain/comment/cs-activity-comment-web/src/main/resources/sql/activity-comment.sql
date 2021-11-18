@@ -1,24 +1,27 @@
 create table cs_user_activity_comment
 (
-    id                  varchar(20) not null comment '主键'
+    id                  varchar(20)   not null comment '主键'
         primary key,
-    user_id             varchar(20) null comment '用户id',
-    activity_id         varchar(20) not null comment '动态id',
+    user_id             varchar(20)   null comment '用户id',
+    activity_id         varchar(20)   not null comment '动态id',
     comment_content     varchar(1000) null comment '评论内容',
     comment_likes       int default 0 null comment '评论点赞数目',
-    comment_create_time datetime null comment '评论创建时间'
-    comment_files varchar(300) null comment '评论文件信息'
-) comment '用户评论表'  charset = utf8;
+    comment_create_time datetime      null comment '评论创建时间',
+    comment_files       varchar(300)  null comment '评论文件url以逗号分割'
+)
+    comment '用户评论表';
 
 create table cs_user_likes
 (
-    id            varchar(20) not null comment '主键id'
+    id             varchar(20) not null comment '主键id'
         primary key,
-    cs_comment_id varchar(20) not null comment '评论id',
-    cs_user_id    varchar(20) not null comment '用户id',
+    cs_comment_id  varchar(20) not null comment '评论id',
+    cs_user_id     varchar(20) not null comment '用户id',
+    cs_activity_id varchar(20) null comment '动态id',
     constraint cs_comment_likes_cs_comment_id_uindex
         unique (cs_comment_id, cs_user_id)
-) comment '用户点赞评论记录'
+)
+    comment '用户点赞评论记录';
 
 create table undo_log
 (
@@ -34,4 +37,5 @@ create table undo_log
     ext           varchar(100) null,
     constraint ux_undo_log
         unique (xid, branch_id)
-) comment 'seata need' charset = utf8
+)
+    charset = utf8;
