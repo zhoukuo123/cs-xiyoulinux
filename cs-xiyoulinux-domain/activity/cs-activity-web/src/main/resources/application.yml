@@ -10,6 +10,9 @@ spring:
   application:
     name: cs-activity-service
     address: 127.0.0.1
+  elasticsearch:
+    rest:
+      uris: http://localhost:9200
   rabbitmq:
     host: ${spring.application.address}
     port: 5672

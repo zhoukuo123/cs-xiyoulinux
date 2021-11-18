@@ -43,19 +43,15 @@ public class ActivityController {
     @PostMapping("/add")
     @ApiOperation(value = "增加动态", notes = "传入一个动态对象", httpMethod = "POST")
     @ApiImplicitParams({
-//            @ApiImplicitParam(name = "csUserActivityBo", value = "动态的信息", required = true)
-//            @ApiImplicitParam(paramType = "form", name = "files", value = "文件数组", allowMultiple = true,
-//                    dataType = "__file", required = false)
             @ApiImplicitParam(name = "files", value = "多个文件", paramType = "formData", allowMultiple = true, required = true, dataType = "file")
     })
     @ApiResponses({
             @ApiResponse(code = 200, message = "返回用户的信息", response = CsUserInfoAndIdAndFileInfo.class)
     })
-    public JSONResult addActivity(@RequestBody CsUserActivityBo csUserActivityBo,
+    public JSONResult addActivity(@RequestPart("csUserActivityBo") CsUserActivityBo csUserActivityBo,
                                   @RequestPart(value = "files") MultipartFile[] files
     ) {
-        System.out.println(files);
-        return JSONResult.ok(iCsUserActivityService.addActivity(csUserActivityBo, null));
+        return JSONResult.ok(iCsUserActivityService.addActivity(csUserActivityBo, files));
     }
 
 

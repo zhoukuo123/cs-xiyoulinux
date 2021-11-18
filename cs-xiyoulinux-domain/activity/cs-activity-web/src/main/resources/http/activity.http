@@ -92,7 +92,8 @@ cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXC
 
 ###
 POST http://127.0.0.1:8001/cs-activity/activity/add
-Content-Type: application/json
+Content-Type: multipart/form-data;boundary=123131421
+Cache-Control: no-cache
 Accept: application/json
 cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXCI6XCJxa21cIn0iLCJqdGkiOiJmNGYxNTQ4MC1hYzMyLTQ1OTgtOGYwOC0wYjZkZTkxMGIyNmEiLCJleHAiOjE2NDEzMTIwMDB9.kHekgxedbe75kO8S-BrYVbh3FzeKZ7TJdxWvnZUR7F637urVenrrbnSRe1ipXJ41RvZZoqUgr0nkeZ2zrOcsgMbWyEyV6xyY-i2gq0o0uYpPYGplLte34neJemYoelTPgxOPaQRYj5Kf65ivWBIA-ia3huC2ThgM4ZSBuJrh1ogxwZ1_wvrvIemmRSpOqs_CZEInUtdwMALXXLUq3wbcSqQOHODCDK0jlboFNc_9qzNwb20LRE7lRIt99EzU8xvil1JfbPGBUTpBSoqkqr8-8Y87dTR8Sjed2awFKnhpGB3xKc19fTCAlLomjO2chNJec4HGORRau5PvjuW3ySNz7A
 
@@ -105,6 +106,16 @@ cs-user: eyJhbGciOiJSUzI1NiJ9.eyJjcy11c2VyIjoie1wiaWRcIjpcIjFcIixcInVzZXJuYW1lXC
   "activityType": "发起任务",
   "activityStatus": "已完成"
 }
+
+### name接口定义的参数名，filename 文件名（我们可以自己取名字）
+--WebAppBoundary
+Content-Disposition: form-data; name="files"; filename="0113_1.jpg"
+Content-Type: multipart/form-data
+
+#文件地址 （注意⚠️，这个地方上面一定要空一行，不然文件上传失败，文件大小为0；多谢【简悦Pro】提醒；图片就不更新了）
+< /home/qkm/Pictures/0113_1.jpg
+--WebAppBoundary--
+
 
 
 ###

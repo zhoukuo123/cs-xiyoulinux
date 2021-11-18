@@ -37,7 +37,7 @@ public class CsUserTaskUpdateBo implements Serializable {
 /**
      * 任务结束时间
      */
-    @ApiModelProperty(value = "任务结合时间")
+    @ApiModelProperty(value = "任务结束时间")
     private Date taskEndTimeDate;
 
     /**
