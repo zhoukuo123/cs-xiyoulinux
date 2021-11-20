@@ -61,5 +61,5 @@ public class CsUserActivityComment {
      * 评论对应的文件信息
      */
     @TableField(value = "comment_files")
-    private List<String> commentFiles;
+    private String commentFiles;
 }

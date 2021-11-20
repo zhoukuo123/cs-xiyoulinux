@@ -13,7 +13,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author qkm
@@ -77,7 +76,7 @@ public class CsUserActivityCommentVo implements Serializable {
          * 评论对应的文件信息
          */
         @TableField(value = "comment_files")
-        private List<String> commentFiles;
+        private String commentFiles;
 
         public static ActivityComment to(CsUserActivityComment comment) {
             return new ActivityComment(comment.getId(),

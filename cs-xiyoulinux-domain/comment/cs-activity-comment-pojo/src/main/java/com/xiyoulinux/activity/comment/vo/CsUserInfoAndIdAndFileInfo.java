@@ -33,7 +33,7 @@ public class CsUserInfoAndIdAndFileInfo {
     /**
      * 文件url
      */
-    private List<String> files;
+    private String files;
 
 
 }
