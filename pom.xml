@@ -12,7 +12,6 @@
         <module>cs-xiyoulinux-common/cs-xiyoulinux-shared-pojo</module>
         <module>cs-xiyoulinux-common/cs-xiyoulinux-web-components</module>
         <module>cs-xiyoulinux-platform/gateway</module>
-        <module>cs-xiyoulinux-domain/auth/cs-auth-api</module>
         <module>cs-xiyoulinux-platform/zipkin-server</module>
         <module>cs-xiyoulinux-domain/activity/cs-activity-api</module>
         <module>cs-xiyoulinux-domain/activity/cs-activity-pojo</module>
@@ -43,8 +42,7 @@
         <module>cs-xiyoulinux-domain/user/cs-user-web</module>
         <module>cs-xiyoulinux-domain/search/cs-search-api</module>
         <module>cs-xiyoulinux-domain/search/cs-search-service</module>
-        <module>cs-xiyoulinux-domain/search/cs-search-web</module>
-    </modules>
+       </modules>
 
     <packaging>pom</packaging>
 

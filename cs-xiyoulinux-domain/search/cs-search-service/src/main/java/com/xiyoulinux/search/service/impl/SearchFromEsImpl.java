@@ -20,18 +20,18 @@ import org.elasticsearch.index.query.QueryBuilder;
 import org.elasticsearch.index.query.QueryBuilders;
 import org.elasticsearch.search.SearchHit;
 import org.elasticsearch.search.builder.SearchSourceBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightBuilder;
+import org.elasticsearch.search.fetch.subphase.highlight.HighlightField;
 import org.elasticsearch.search.sort.SortOrder;
 import org.elasticsearch.search.suggest.Suggest;
 import org.elasticsearch.search.suggest.SuggestBuilder;
 import org.elasticsearch.search.suggest.SuggestBuilders;
 import org.elasticsearch.search.suggest.completion.CompletionSuggestion;
+import org.springframework.util.CollectionUtils;
 
 import javax.annotation.Resource;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -41,7 +41,7 @@ import java.util.stream.Collectors;
 @Slf4j
 public class SearchFromEsImpl implements ISearchService {
 
-
+    private static final String INDEX_NAME = "cs-activity";
     @Resource
     private RestHighLevelClient client;
 
@@ -72,11 +72,13 @@ public class SearchFromEsImpl implements ISearchService {
     )
     @Override
     public PageActivityInfo searchByKey(PageInfo pageInfo, String userId) {
-        SearchRequest searchRequest = new SearchRequest("activity");
+        SearchRequest searchRequest = new SearchRequest(INDEX_NAME);
         SearchSourceBuilder searchSourceBuilder = getSearchSourceBuilder(pageInfo);
 
         //增加查询条件
         searchRequest.source(searchSourceBuilder);
+        searchRequest.source().highlighter(new HighlightBuilder().field("activityTitle").requireFieldMatch(false)
+                .field("activityContent").requireFieldMatch(false));
         return getResult(searchRequest, pageInfo, userId);
     }
 
@@ -102,7 +104,7 @@ public class SearchFromEsImpl implements ISearchService {
     )
     @Override
     public PageActivityInfo searchByKeyOrderByCreateTime(PageInfo pageInfo, String userId) {
-        SearchRequest searchRequest = new SearchRequest("activity");
+        SearchRequest searchRequest = new SearchRequest(INDEX_NAME);
         SearchSourceBuilder searchSourceBuilder = getSearchSourceBuilder(pageInfo);
 
         //按时间排序--DESC
@@ -110,6 +112,8 @@ public class SearchFromEsImpl implements ISearchService {
 
         //增加查询条件
         searchRequest.source(searchSourceBuilder);
+        searchRequest.source().highlighter(new HighlightBuilder().field("activityTitle").requireFieldMatch(false)
+                .field("activityContent").requireFieldMatch(false));
         return getResult(searchRequest, pageInfo, userId);
     }
 
@@ -136,7 +140,7 @@ public class SearchFromEsImpl implements ISearchService {
     )
     @Override
     public List<String> searchBoxAutoCompletion(String key) {
-        SearchRequest request = new SearchRequest("activity");
+        SearchRequest request = new SearchRequest(INDEX_NAME);
         request.source().suggest(new SuggestBuilder().addSuggestion("mySuggestion",
                 SuggestBuilders.completionSuggestion("activityTitle")
                         .prefix(key).skipDuplicates(true).size(20)));
@@ -173,7 +177,21 @@ public class SearchFromEsImpl implements ISearchService {
         for (SearchHit documentFields : search.getHits().getHits()) {
             //将结果转成jsonString
             String sourceAsString = documentFields.getSourceAsString();
-            activityList.add(JSON.parseObject(sourceAsString, CsUserActivity.class));
+            CsUserActivity csUserActivity = JSON.parseObject(sourceAsString, CsUserActivity.class);
+            Map<String, HighlightField> highlightFields = documentFields.getHighlightFields();
+            if (!CollectionUtils.isEmpty(highlightFields)) {
+                HighlightField activityTitle = highlightFields.get("activityTitle");
+                HighlightField activityContent = highlightFields.get("activityContent");
+                if (activityTitle != null) {
+                    String highlightTitle = activityTitle.getFragments()[0].string();
+                    csUserActivity.setActivityTitle(highlightTitle);
+                }
+                if (activityContent != null) {
+                    String highlightContent = activityContent.getFragments()[0].string();
+                    csUserActivity.setActivityContent(highlightContent);
+                }
+            }
+            activityList.add(csUserActivity);
         }
 
         PageActivityInfo pageActivityInfo = new PageActivityInfo();
