@@ -27,7 +27,7 @@ public class ActivityCommentController {
     @Resource
     private ICsUserActivityCommentService iCsUserActivityCommentService;
 
-    @ApiOperation(value = "获取评论", notes = "根据动态id ")
+    @ApiOperation(value = "获取评论", notes = "根据动态id ",httpMethod = "POST")
     @ApiResponses(@ApiResponse(code = 200, message = "评论集合", response = CsUserActivityCommentVo.class))
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", name = "activityId", value = "动态id", dataType = "String", required = true),
@@ -46,7 +46,7 @@ public class ActivityCommentController {
         return JSONResult.ok(pageCommentsByActivityIdAndUserId);
     }
 
-    @ApiOperation(value = "获取评论orderByLikes", notes = "根据动态id获取根据likes降序的评论 ")
+    @ApiOperation(value = "获取评论orderByLikes", notes = "根据动态id获取根据likes降序的评论 ",httpMethod = "POST")
     @ApiResponses(@ApiResponse(code = 200, message = "评论集合", response = CsUserActivityCommentVo.class))
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", name = "activityId", value = "动态id", dataType = "String", required = true),
@@ -64,7 +64,7 @@ public class ActivityCommentController {
         return JSONResult.ok(pageCommentsByActivityIdAndUserId);
     }
 
-    @ApiOperation(value = "给评论点赞")
+    @ApiOperation(value = "给评论点赞",httpMethod = "PUT")
     @ApiResponses({
             @ApiResponse(code = 200, message = "点赞成功")
     })
@@ -73,7 +73,7 @@ public class ActivityCommentController {
         return JSONResult.ok(iCsUserActivityCommentService.likesComment(csUserLikesBo));
     }
 
-    @ApiOperation(value = "给评论取消点赞")
+    @ApiOperation(value = "给评论取消点赞",httpMethod = "PUT")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", name = "id", value = "评论id", dataType = "String", required = true),
             @ApiImplicitParam(paramType = "path", name = "userId", value = "用户id", dataType = "String", required = true)
@@ -86,7 +86,7 @@ public class ActivityCommentController {
         return JSONResult.ok(iCsUserActivityCommentService.dislikeComment(commentId, userId));
     }
 
-    @ApiOperation(value = "增加评论")
+    @ApiOperation(value = "增加评论",httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "files", value = "多个文件", paramType = "formData", allowMultiple = true, required = true, dataType = "file")
     })
