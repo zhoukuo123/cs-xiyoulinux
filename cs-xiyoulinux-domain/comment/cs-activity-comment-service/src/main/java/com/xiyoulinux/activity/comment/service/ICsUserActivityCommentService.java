@@ -22,8 +22,9 @@ public interface ICsUserActivityCommentService {
      * @param userId     用户id
      * @return 评论集合
      */
-    PageCommentInfo getPageCommentsByActivityIdAndUserId(PageInfo pageInfo, String activityId, String userId);/**
+    PageCommentInfo getPageCommentsByActivityIdAndUserId(PageInfo pageInfo, String activityId, String userId);
 
+    /**
      * 根据动态id获取动态的所有评论根据likes降序
      *
      * @param activityId 动态id
