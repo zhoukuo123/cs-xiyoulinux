@@ -21,12 +21,13 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>cs-auth-api</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>cs-xiyoulinux-web-components</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.mybatis.spring.boot</groupId>
+                    <artifactId>mybatis-spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
             <version>${project.version}</version>
         </dependency>
 
