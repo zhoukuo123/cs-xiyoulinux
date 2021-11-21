@@ -29,12 +29,6 @@
             <artifactId>spring-cloud-starter-gateway</artifactId>
         </dependency>
 
-        <!--dubbo依赖-->
-        <dependency>
-            <groupId>com.alibaba.cloud</groupId>
-            <artifactId>spring-cloud-starter-dubbo</artifactId>
-        </dependency>
-
         <!--nacos-->
         <dependency>
             <groupId>com.alibaba.cloud</groupId>
