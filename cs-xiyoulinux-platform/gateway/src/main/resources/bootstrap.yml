@@ -15,6 +15,25 @@ spring:
         metadata:
           management:
             context-path: ${server.servlet.context-path}/actuator
+    gateway:
+      globalcors: #跨域问题
+        cors-configurations:
+          '[/**]':
+            allowedOrigins:
+              - "*"
+            allowedHeaders:
+              - "*"
+            allowCredentials: true
+            maxAge: 360000
+            allowedMethods:
+              - GET
+              - POST
+              - DELETE
+              - PUT
+              - OPTIONS
+              - HEAD
+          default-filters:
+            - DedupeResponseHeader=Vary Access-Control-Allow-Origin Access-Control-Allow-Credentials, RETAIN_FIRST
     # gateway 集成 sentinel
     sentinel:
       eager: true
@@ -40,25 +59,9 @@ spring:
             group-id: GATEWAY_SENTINEL_GROUP
             data-type: json
             rule-type: gw-api-group
-
 nacos:
   gateway:
     route:
       config:
         data-id: cs-gateway
         group: cs
-#################################
-# dubbo
-################################
-dubbo:
-  protocol:
-    name: dubbo
-    port: -1
-  registry:
-    address: spring-cloud://${spring.application.address}
-  # 需要订阅的服务，如果是提供者则填写本服务的名称
-  cloud:
-    subscribed-services: cs-gateway-service
-  consumer:
-    check: false
-    loadbalance: leastactive
