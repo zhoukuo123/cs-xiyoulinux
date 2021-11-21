@@ -65,7 +65,7 @@ public class ActivityController {
         return JSONResult.ok("删除成功");
     }
 
-    @ApiOperation(value = "获取动态", notes = "分页的获取动态数据", httpMethod = "GET")
+    @ApiOperation(value = "获取动态", notes = "分页的获取动态数据", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户id", required = true, paramType = "path", dataType = "string")
     })
@@ -80,7 +80,7 @@ public class ActivityController {
         return JSONResult.ok(pageActivity);
     }
 
-    @ApiOperation(value = "分页的获取未解决的问题", notes = "未解决的问题(1)", httpMethod = "GET")
+    @ApiOperation(value = "分页的获取未解决的问题", notes = "未解决的问题(1)", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户id", required = true, paramType = "path", dataType = "string")
     })
@@ -96,7 +96,7 @@ public class ActivityController {
     }
 
 
-    @ApiOperation(value = "分页的获取已解决的问题", notes = "已解决的问题(0)", httpMethod = "GET")
+    @ApiOperation(value = "分页的获取已解决的问题", notes = "已解决的问题(0)", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户id", required = true, paramType = "path", dataType = "string")
     })
@@ -112,7 +112,7 @@ public class ActivityController {
     }
 
 
-    @ApiOperation(value = "分页的获取进行中的任务", notes = "进行中的任务(2)", httpMethod = "GET")
+    @ApiOperation(value = "分页的获取进行中的任务", notes = "进行中的任务(2)", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户id", required = true, paramType = "path", dataType = "string")
     })
@@ -127,7 +127,7 @@ public class ActivityController {
         return JSONResult.ok(pageDoingTasks);
     }
 
-    @ApiOperation(value = "分页的获取已完成的任务", notes = "已完成的任务(4)", httpMethod = "GET")
+    @ApiOperation(value = "分页的获取已完成的任务", notes = "已完成的任务(4)", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户id", required = true, paramType = "path", dataType = "string")
     })
@@ -142,7 +142,7 @@ public class ActivityController {
         return JSONResult.ok(pageDidTasks);
     }
 
-    @ApiOperation(value = "分页的获取待完成的任务", notes = "待完成的任务(3)", httpMethod = "GET")
+    @ApiOperation(value = "分页的获取待完成的任务", notes = "待完成的任务(3)", httpMethod = "POST")
     @ApiImplicitParams({
             @ApiImplicitParam(name = "userId", value = "用户id", required = true, paramType = "path", dataType = "string")
     })
