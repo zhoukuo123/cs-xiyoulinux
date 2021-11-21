@@ -38,6 +38,7 @@ import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -93,11 +94,21 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
         csUserActivity.setId(sid.nextShort());
 
         List<String> fileUrl = null;
-        if (files != null) {
+        if (files.length != 0) {
+            //上传评论内容中的文件信息到文件服务
+            List<byte[]> bytes = new ArrayList<>();
+            for (MultipartFile file : files) {
+                try {
+                    bytes.add(file.getBytes());
+                } catch (IOException e) {
+                    log.error("upload pic convert byte error");
+                    throw new RuntimeException("upload pic convert byte error");
+                }
+            }
             //调用图片服务将图片上传到云服务器
-            fileUrl = iUploadFileService.uploadOSS(files);
+            fileUrl = iUploadFileService.uploadOSS(bytes);
         }
-        csUserActivity.setActivityFiles(fileUrl);
+        csUserActivity.setActivityFiles(JSON.toJSONString(fileUrl));
 
         //插入总表
         csUserActivityMapper.insert(csUserActivity);
@@ -141,16 +152,17 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
 
         }
 
-        //用户服务增加降级---如果前面出现异常则回滾，否则执行到此处，如果调用用户服务有问题，则降级就是说用户服务获取信息使用降级后的，然后返回，
+        //用户服务增加降级---如果前面出现异常则回滾，否则执行到此处，如果调csUserActivityComment用用户服务有问题，则降级就是说用户服务获取信息使用降级后的，然后返回，
         //也不需要回滾
         CsUserInfo csUserInfo = intelService.interCallPeople(csUserActivity.getUserId());
 
         CsUserInfoAndIdAndFileInfo userAndActivityIdAndFile = new CsUserInfoAndIdAndFileInfo();
         userAndActivityIdAndFile.setCsUserInfo(csUserInfo);
         userAndActivityIdAndFile.setId(csUserActivity.getId());
-        userAndActivityIdAndFile.setFiles(fileUrl);
+        userAndActivityIdAndFile.setFiles(JSON.toJSONString(fileUrl));
         return userAndActivityIdAndFile;
     }
+
 
     @Override
     @GlobalTransactional
