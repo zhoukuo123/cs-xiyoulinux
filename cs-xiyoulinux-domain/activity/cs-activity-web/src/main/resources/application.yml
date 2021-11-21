@@ -64,7 +64,7 @@ dubbo:
     address: spring-cloud://${spring.application.address}
   # dubbo订阅的服务，如果是提供者填写本服务的名称
   cloud:
-    subscribed-services: cs-activity-comment-service,cs-search-service
+    subscribed-services: cs-activity-comment-service,cs-search-service,cs-file-service
   consumer:
     loadbalance: leastactive
     check: false
