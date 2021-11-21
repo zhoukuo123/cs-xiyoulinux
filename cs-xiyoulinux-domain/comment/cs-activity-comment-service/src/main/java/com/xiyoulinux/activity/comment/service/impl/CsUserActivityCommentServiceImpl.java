@@ -1,5 +1,6 @@
 package com.xiyoulinux.activity.comment.service.impl;
 
+import com.alibaba.fastjson.JSON;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.netflix.hystrix.contrib.javanica.annotation.HystrixCommand;
@@ -28,6 +29,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -257,12 +259,21 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
         csUserActivityComment.setId(sid.nextShort());
 
         List<String> fileUrl = null;
-        if (files != null) {
+        if (files.length != 0) {
             //上传评论内容中的文件信息到文件服务
-            fileUrl = iUploadFileService.uploadOSS(files);
+            List<byte[]> bytes = new ArrayList<>();
+            for (MultipartFile file : files) {
+                try {
+                    bytes.add(file.getBytes());
+                } catch (IOException e) {
+                    log.error("upload pic convert byte error");
+                    throw new RuntimeException("upload pic convert byte error");
+                }
+            }
+            fileUrl = iUploadFileService.uploadOSS(bytes);
         }
 
-        csUserActivityComment.setCommentFiles(fileUrl);
+        csUserActivityComment.setCommentFiles(JSON.toJSONString(fileUrl));
 
         //插入评论
         csUserCommentMapper.insert(csUserActivityComment);
@@ -274,7 +285,7 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
         CsUserInfoAndIdAndFileInfo userAndActivityId = new CsUserInfoAndIdAndFileInfo();
         userAndActivityId.setCsUserInfo(csUserInfo);
         userAndActivityId.setId(csUserActivityComment.getId());
-        userAndActivityId.setFiles(fileUrl);
+        userAndActivityId.setFiles(JSON.toJSONString(fileUrl));
         return userAndActivityId;
     }
 
