@@ -70,7 +70,7 @@ public class SentinelGatewayConfiguration {
      */
     @Bean
     @Order(Ordered.HIGHEST_PRECEDENCE)
-    public GlobalFilter sentinelGatewayFilter() {
+    public GlobalFilter iSentinelGatewayFilter() {
         return new SentinelGatewayFilter();
     }
 
