@@ -10,7 +10,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 用户动态表
@@ -78,6 +77,6 @@ public class CsUserActivity {
      * 动态的文件信息
      */
     @TableField(value = "activity_files")
-    private List<String> activityFiles;
+    private String activityFiles;
 
 }

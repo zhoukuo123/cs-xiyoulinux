@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
-import java.util.List;
 
 /**
  * @author qkm
@@ -35,7 +34,7 @@ public class CsUserInfoAndIdAndFileInfo implements Serializable {
     /**
      * 文件url
      */
-    private List<String> files;
+    private String files;
 
 
 }

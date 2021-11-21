@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author qkm
@@ -93,7 +92,7 @@ public class CsUserQuestionVo implements Serializable {
          * 问题的文件信息
          */
         @TableField(value = "question_files")
-        private List<String> questionFiles;
+        private String questionFiles;
 
         public static Question to(CsUserQuestion csUserQuestion) {
             return new Question(csUserQuestion.getQuestionId()

@@ -14,7 +14,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author qkm
@@ -102,7 +101,7 @@ public class CsUserTaskVo implements Serializable {
          * 任务的文件信息
          */
         @TableField(value = "task_files")
-        private List<String> taskFiles;
+        private String taskFiles;
 
         public static Task to(CsUserTask csUserTask) {
             return new Task(csUserTask.getTaskId(),

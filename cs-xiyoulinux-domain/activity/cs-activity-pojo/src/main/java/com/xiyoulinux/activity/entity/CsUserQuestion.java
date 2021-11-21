@@ -9,7 +9,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
-import java.util.List;
 
 /**
  * 用户问题表
@@ -70,6 +69,6 @@ public class CsUserQuestion {
      * 问题的文件信息
      */
     @TableField(value = "question_files")
-    private List<String> questionFiles;
+    private String questionFiles;
 
 }

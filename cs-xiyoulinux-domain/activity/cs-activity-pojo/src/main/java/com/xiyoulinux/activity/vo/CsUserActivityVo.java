@@ -15,7 +15,6 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 /**
  * @author qkm
@@ -108,7 +107,7 @@ public class CsUserActivityVo implements Serializable {
          * 动态的文件信息
          */
         @TableField(value = "activity_files")
-        private List<String> activityFiles;
+        private String activityFiles;
 
         public static Activity to(CsUserActivity csUserActivity) {
             return new Activity(csUserActivity.getId(),
