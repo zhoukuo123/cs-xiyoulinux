@@ -50,7 +50,7 @@ public class IntelService {
      */
     @HystrixCommand()
     public CsUserInfo interCallPeople(String userId) {
-        return new CsUserInfo();
+        return new CsUserInfo("1","qwe","https://t7.baidu.com/it/u=1092574912,855301095&fm=193&f=GIF");
     }
 
 
