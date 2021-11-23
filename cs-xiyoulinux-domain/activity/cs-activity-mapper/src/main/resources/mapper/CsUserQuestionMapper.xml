@@ -14,25 +14,33 @@
         <result property="questionStatus" column="question_status" jdbcType="INTEGER"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
-        id
-        ,user_id,question_title,question_content,question_id
-        question_create_time,question_status
-    </sql>
-
     <delete id="deleteByQuestionId">
-        delete from cs_user_question where question_id = #{questionId}
+        delete
+        from cs_user_question
+        where question_id = #{questionId}
     </delete>
 
     <select id="getPageUnresolvedIssues" resultMap="BaseResultMap">
-        select *
+        select id,
+               user_id,
+               question_title,
+               question_content,
+               question_id,
+               question_create_time,
+               question_status
         from cs_user_question
         where question_status = 1
         order by question_create_time DESC
     </select>
 
     <select id="getPageResolvedIssues" resultMap="BaseResultMap">
-        select *
+        select id,
+               user_id,
+               question_title,
+               question_content,
+               question_id,
+               question_create_time,
+               question_status
         from cs_user_question
         where question_status = 0
         order by question_create_time DESC

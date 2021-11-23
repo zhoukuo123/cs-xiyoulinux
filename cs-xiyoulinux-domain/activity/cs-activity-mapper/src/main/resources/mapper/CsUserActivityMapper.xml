@@ -15,17 +15,12 @@
         <result property="activityStatus" column="activity_status" jdbcType="INTEGER"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
-        id
-        ,user_id,activity_title,activity_content,task_id
-        activity_create_time,activity_end_time,activity_type,activity_status
-    </sql>
 
     <update id="updateEndTimeAndStatusById">
         update cs_user_activity
-        set activity_end_time = #{endTime},
+        set activity_end_time    = #{endTime},
             activity_create_time = #{startTime},
-            activity_status   = #{activityStatus}
+            activity_status      = #{activityStatus}
         where id = #{id}
     </update>
 
@@ -43,19 +38,29 @@
     </delete>
 
     <select id="selectPageActivity" resultMap="BaseResultMap">
-        select *
+        select id,
+               user_id,
+               activity_title,
+               activity_content,
+               activity_create_time,
+               activity_end_time,
+               activity_type,
+               activity_status
         from cs_user_activity
         order by activity_create_time DESC
     </select>
 
     <select id="selectPageByUserId" resultMap="BaseResultMap">
-        select *
+        select id,
+               activity_title,
+               activity_content,
+               activity_create_time,
+               activity_end_time,
+               activity_type,
+               activity_status
         from cs_user_activity
         where user_id = #{userId}
         order by activity_create_time DESC
-    </select>
-    <select id="searchAll" resultType="com.xiyoulinux.activity.entity.CsUserActivity">
-        select * from cs_dynamic
     </select>
 
 

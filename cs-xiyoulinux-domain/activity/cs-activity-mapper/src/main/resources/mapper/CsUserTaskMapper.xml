@@ -16,17 +16,11 @@
 
     </resultMap>
 
-    <sql id="Base_Column_List">
-        id
-        ,user_id,task_title,task_content,
-        task_create_time,task_end_time,task_status
-    </sql>
-
     <update id="updateEndTimeAndStatusByTaskId">
         update cs_user_task
-        set task_end_time   = #{taskEndTime},
+        set task_end_time    = #{taskEndTime},
             task_create_time = #{taskStartTime},
-            task_status     = #{taskStatus}
+            task_status      = #{taskStatus}
         where task_id = #{taskId}
     </update>
 
@@ -37,21 +31,42 @@
     </delete>
 
     <select id="getPageDoingTasks" resultMap="BaseResultMap">
-        select *
+        select id,
+               user_id,
+               task_id,
+               task_title,
+               task_content,
+               task_create_time,
+               task_end_time,
+               task_status
         from cs_user_task
         where task_status = 2
         order by task_create_time DESC
     </select>
 
     <select id="getPageDidTasks" resultMap="BaseResultMap">
-        select *
+        select id,
+               user_id,
+               task_id,
+               task_title,
+               task_content,
+               task_create_time,
+               task_end_time,
+               task_status
         from cs_user_task
         where task_status = 4
         order by task_create_time DESC
     </select>
 
     <select id="getPageFutureTasks" resultMap="BaseResultMap">
-        select *
+        select id,
+               user_id,
+               task_id,
+               task_title,
+               task_content,
+               task_create_time,
+               task_end_time,
+               task_status
         from cs_user_task
         where task_status = 3
         order by task_create_time DESC
