@@ -17,7 +17,7 @@ public interface ICsUserQuestionService {
      * @param pageInfo 分页
      * @return 未解决问题集合
      */
-    PageQuestionInfo getPageUnresolvedIssues(PageInfo pageInfo, String userId);
+    PageQuestionInfo getPageUnresolvedIssues(PageInfo pageInfo, ActivityStatus activityStatus, String userId);
 
     /**
      * 获取已解决的问题
@@ -25,7 +25,7 @@ public interface ICsUserQuestionService {
      * @param pageInfo f分页
      * @return 已解决问题集合
      */
-    PageQuestionInfo getPageResolvedIssues(PageInfo pageInfo, String userId);
+    PageQuestionInfo getPageResolvedIssues(PageInfo pageInfo, ActivityStatus activityStatus, String userId);
 
     /**
      * 更新问题状态

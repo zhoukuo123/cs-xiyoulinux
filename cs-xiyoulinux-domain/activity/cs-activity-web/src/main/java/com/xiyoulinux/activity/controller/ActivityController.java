@@ -10,11 +10,11 @@ import com.xiyoulinux.activity.service.ICsUserActivityService;
 import com.xiyoulinux.activity.service.ICsUserQuestionService;
 import com.xiyoulinux.activity.service.ICsUserTaskService;
 import com.xiyoulinux.common.PageInfo;
+import com.xiyoulinux.enums.ActivityStatus;
 import com.xiyoulinux.enums.ReturnCode;
 import com.xiyoulinux.pojo.JSONResult;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
@@ -42,16 +42,12 @@ public class ActivityController {
 
     @PostMapping("/add")
     @ApiOperation(value = "增加动态", notes = "传入一个动态对象", httpMethod = "POST")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "files", value = "多个文件", paramType = "formData", allowMultiple = true, required = true, dataType = "file")
-    })
     @ApiResponses({
             @ApiResponse(code = 200, message = "返回用户的信息", response = CsUserInfoAndIdAndFileInfo.class)
     })
-    public JSONResult addActivity(@RequestPart("csUserActivityBo") CsUserActivityBo csUserActivityBo,
-                                  @RequestPart(value = "files") MultipartFile[] files
+    public JSONResult addActivity(@RequestBody CsUserActivityBo csUserActivityBo
     ) {
-        return JSONResult.ok(iCsUserActivityService.addActivity(csUserActivityBo, files));
+        return JSONResult.ok(iCsUserActivityService.addActivity(csUserActivityBo, null));
     }
 
 
@@ -73,6 +69,7 @@ public class ActivityController {
     @PostMapping("/home/{userId}")
     public JSONResult getPageActivities(@PathVariable("userId") String userId,
                                         @RequestBody PageInfo pageInfo) {
+
         PageActivityInfo pageActivity = iCsUserActivityService.getPageActivity(pageInfo, userId);
         if (pageActivity == null) {
             return JSONResult.errorMsg(ReturnCode.DEGRADATION.code, "一大波动态向你赶来...");
@@ -88,7 +85,8 @@ public class ActivityController {
     @PostMapping("/issues/unsolved/{userId}")
     public JSONResult getUnresolvedIssues(@PathVariable("userId") String userId,
                                           @RequestBody PageInfo pageInfo) {
-        PageQuestionInfo pageUnresolvedIssues = iCsUserQuestionService.getPageUnresolvedIssues(pageInfo, userId);
+        PageQuestionInfo pageUnresolvedIssues = iCsUserQuestionService.
+                getPageUnresolvedIssues(pageInfo, ActivityStatus.UNRESOLVED, userId);
         if (pageUnresolvedIssues == null) {
             return JSONResult.errorMsg(ReturnCode.DEGRADATION.code, "一大波问题向你赶来...");
         }
@@ -104,7 +102,8 @@ public class ActivityController {
     @PostMapping("/issues/solved/{userId}")
     public JSONResult getResolvedIssues(@PathVariable("userId") String userId,
                                         @RequestBody PageInfo pageInfo) {
-        PageQuestionInfo pageResolvedIssues = iCsUserQuestionService.getPageResolvedIssues(pageInfo, userId);
+        PageQuestionInfo pageResolvedIssues = iCsUserQuestionService.
+                getPageResolvedIssues(pageInfo, ActivityStatus.RESOLVED, userId);
         if (pageResolvedIssues == null) {
             return JSONResult.errorMsg(ReturnCode.DEGRADATION.code, "一大波问题向你赶来...");
         }
@@ -120,7 +119,7 @@ public class ActivityController {
     @PostMapping("/tasks/doing/{userId}")
     public JSONResult getDoingTasks(@PathVariable("userId") String userId,
                                     @RequestBody PageInfo pageInfo) {
-        PageTaskInfo pageDoingTasks = iCsUserTaskService.getPageDoingTasks(pageInfo, userId);
+        PageTaskInfo pageDoingTasks = iCsUserTaskService.getPageDoingTasks(pageInfo, ActivityStatus.ONGOING, userId);
         if (pageDoingTasks == null) {
             return JSONResult.errorMsg(ReturnCode.DEGRADATION.code, "一大波任务向你赶来...");
         }
@@ -135,7 +134,7 @@ public class ActivityController {
     @PostMapping("/tasks/did/{userId}")
     public JSONResult getDidTasks(@PathVariable("userId") String userId,
                                   @RequestBody PageInfo pageInfo) {
-        PageTaskInfo pageDidTasks = iCsUserTaskService.getPageDidTasks(pageInfo, userId);
+        PageTaskInfo pageDidTasks = iCsUserTaskService.getPageDidTasks(pageInfo, ActivityStatus.ACHIEVE, userId);
         if (pageDidTasks == null) {
             return JSONResult.errorMsg(ReturnCode.DEGRADATION.code, "一大波任务向你赶来...");
         }
@@ -150,7 +149,7 @@ public class ActivityController {
     @PostMapping("/tasks/future/{userId}")
     public JSONResult getFutureTasks(@PathVariable("userId") String userId,
                                      @RequestBody PageInfo pageInfo) {
-        PageTaskInfo pageFutureTasks = iCsUserTaskService.getPageFutureTasks(pageInfo, userId);
+        PageTaskInfo pageFutureTasks = iCsUserTaskService.getPageFutureTasks(pageInfo, ActivityStatus.PENDING, userId);
         if (pageFutureTasks == null) {
             return JSONResult.errorMsg(ReturnCode.DEGRADATION.code, "一大波任务向你赶来...");
         }
@@ -187,4 +186,5 @@ public class ActivityController {
     public JSONResult getQuestionNumber() {
         return JSONResult.ok(iCsUserQuestionService.getQuestionNumber());
     }
+
 }

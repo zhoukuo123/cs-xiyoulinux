@@ -4,6 +4,8 @@ import com.xiyoulinux.activity.bo.CsUserTaskUpdateBo;
 import com.xiyoulinux.activity.vo.PageTaskInfo;
 import com.xiyoulinux.activity.vo.TaskNumber;
 import com.xiyoulinux.common.PageInfo;
+import com.xiyoulinux.enums.ActivityStatus;
+
 /**
  * @author qkm
  */
@@ -16,7 +18,7 @@ public interface ICsUserTaskService {
      * @param userId   用户id
      * @return 进行中的任务集合 {@link PageTaskInfo}
      */
-    PageTaskInfo getPageDoingTasks(PageInfo pageInfo, String userId);
+    PageTaskInfo getPageDoingTasks(PageInfo pageInfo, ActivityStatus activityStatus, String userId);
 
     /**
      * 分页获取已完成的任务数
@@ -25,7 +27,7 @@ public interface ICsUserTaskService {
      * @param userId   用户id
      * @return 已完成的任务集合 {@link PageTaskInfo}
      */
-    PageTaskInfo getPageDidTasks(PageInfo pageInfo, String userId);
+    PageTaskInfo getPageDidTasks(PageInfo pageInfo, ActivityStatus activityStatus,String userId);
 
 
     /**
@@ -35,7 +37,7 @@ public interface ICsUserTaskService {
      * @param userId   用户id
      * @return 待进行的任务集合 {@link PageTaskInfo}
      */
-    PageTaskInfo getPageFutureTasks(PageInfo pageInfo, String userId);
+    PageTaskInfo getPageFutureTasks(PageInfo pageInfo,ActivityStatus activityStatus, String userId);
 
     /**
      * 管理员更新任务信息

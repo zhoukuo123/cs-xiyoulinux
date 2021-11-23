@@ -42,9 +42,9 @@ public interface ICsUserActivityService {
      * 根据userId获取所有动态
      *
      * @param userId 用户id
-     * @param page   分页
+     * @param pageInfo   分页
      * @return 该用户发表的动态集合
      */
-    PageActivityInfo getPageActivityByUserId(String userId, int page);
+    PageActivityInfo getPageActivityByUserId(String userId, PageInfo pageInfo);
 
 }
