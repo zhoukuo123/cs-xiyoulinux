@@ -8,7 +8,7 @@ public class GlobalConstant {
     /**
      * 登录 uri
      */
-    public static final String USER_LOGIN_PATH = "/token";
+    public static final String USER_LOGIN_PATH = "/login";
 
     /**
      * 注册 uri
