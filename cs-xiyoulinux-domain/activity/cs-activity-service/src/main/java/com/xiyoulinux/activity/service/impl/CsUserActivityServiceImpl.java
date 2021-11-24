@@ -28,7 +28,6 @@ import com.xiyoulinux.file.service.IUploadFileService;
 import com.xiyoulinux.pojo.ActivityMessage;
 import com.xiyoulinux.utils.DateUtil;
 import com.xiyoulinux.utils.RedisOperator;
-import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.n3r.idworker.Sid;
@@ -36,6 +35,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.cloud.stream.annotation.EnableBinding;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.*;
@@ -49,6 +50,8 @@ import java.util.stream.Collectors;
 @Slf4j
 @EnableBinding(ActivitySource.class)
 public class CsUserActivityServiceImpl implements ICsUserActivityService {
+
+    private static final String ME = "-1";
 
     private final CsUserActivityMapper csUserActivityMapper;
 
@@ -86,7 +89,7 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
 
 
     @Override
-    @GlobalTransactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public CsUserInfoAndIdAndFileInfo addActivity(CsUserActivityBo csUserActivityBo, MultipartFile[] files) {
         CsUserActivity csUserActivity = new CsUserActivity();
         BeanUtils.copyProperties(csUserActivityBo, csUserActivity);
@@ -94,7 +97,7 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
         csUserActivity.setId(sid.nextShort());
 
         List<String> fileUrl = null;
-        if (files.length != 0) {
+        if (files != null && files.length != 0) {
             //上传评论内容中的文件信息到文件服务
             List<byte[]> bytes = new ArrayList<>();
             for (MultipartFile file : files) {
@@ -141,15 +144,20 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
             csUserTaskMapper.insert(csUserTask);
             log.info("Insert task success  --- [{}] to task table", JSON.toJSONString(csUserActivity));
 
-            //删除缓存
-            String deleteKey = judgeType(csUserActivity.getActivityStatus().code);
-            //根据deleteKey先删除redis中存储的任务
-            Set<String> keys = redisOperator.scan(deleteKey);
-            if (keys != null && keys.size() != 0) {
-                redisOperator.delCollect(keys);
-                log.info("delete [{}] from redis success", deleteKey);
-            }
 
+            try {
+                //删除缓存
+                String deleteKey = judgeType(csUserActivity.getActivityStatus().code);
+                //根据deleteKey先删除redis中存储的任务
+                Set<String> keys = redisOperator.scan(deleteKey);
+                if (keys != null && keys.size() != 0) {
+                    redisOperator.delCollect(keys);
+                    log.info("delete [{}] from redis success", deleteKey);
+                }
+            } catch (Exception e) {
+                log.error("add task del redis error:[{}]", e.getMessage());
+                throw new RuntimeException(e.getMessage());
+            }
         }
 
         //用户服务增加降级---如果前面出现异常则回滾，否则执行到此处，如果调csUserActivityComment用用户服务有问题，则降级就是说用户服务获取信息使用降级后的，然后返回，
@@ -165,12 +173,12 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
 
 
     @Override
-    @GlobalTransactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void deleteActivity(CsUserActivityDeleteBo csUserActivityDeleteBo) {
-        //删除总表根据三个索引字段删除,防止截包修改内容
+        //删除总表根据三个索引字段删除
         int index = csUserActivityMapper.deleteByIdAndTypeAndStatus(csUserActivityDeleteBo.getActivityId(),
                 csUserActivityDeleteBo.getActivityType().code, csUserActivityDeleteBo.getActivityStatus().code);
-        log.info("Delete activity success --- [{}] from summary table", csUserActivityDeleteBo.getActivityId());
+        log.info("Delete activity [{}] from summary table", csUserActivityDeleteBo.getActivityId());
 
         //总表删除记录为1
         if (index == 1) {
@@ -184,16 +192,21 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
                 //删除的是任务
             } else if (Objects.equals(csUserActivityDeleteBo.getActivityType().code, ActivityType.TASK.code)) {
 
-                //更新数据库
+                //删除数据库
                 csUserTaskMapper.deleteByTaskId(csUserActivityDeleteBo.getActivityId());
                 log.info("Delete task success --- [{}] from task table", csUserActivityDeleteBo.getActivityId());
 
-                //删除缓存
-                String deleteKey = judgeType(csUserActivityDeleteBo.getActivityStatus().code);
-                Set<String> keys = redisOperator.scan(deleteKey);
-                if (keys != null && keys.size() != 0) {
-                    redisOperator.delCollect(keys);
-                    log.info("delete [{}] from redis success", deleteKey);
+                try {
+                    //删除缓存
+                    String deleteKey = judgeType(csUserActivityDeleteBo.getActivityStatus().code);
+                    Set<String> keys = redisOperator.scan(deleteKey);
+                    if (keys != null && keys.size() != 0) {
+                        redisOperator.delCollect(keys);
+                        log.info("delete [{}] from redis success", deleteKey);
+                    }
+                } catch (Exception e) {
+                    log.error("add task del redis error:[{}]", e.getMessage());
+                    throw new RuntimeException(e.getMessage());
                 }
             }
 
@@ -236,11 +249,11 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
     @Override
     public PageActivityInfo getPageActivity(PageInfo pageInfo, String userId) {
         Page<CsUserActivity> activityPage = new Page<>(pageInfo.getPage(), pageInfo.getSize());
-
         IPage<CsUserActivity> csUserActivityPage = csUserActivityMapper.selectPageActivity(activityPage);
 
         List<CsUserActivity> activities = csUserActivityPage.getRecords();
-        log.info("Get all activity -- page [{}] -- [{}]", pageInfo.getPage(), activities);
+        log.info("Get all activity -- page [{}] size [{}] data size [{}]", pageInfo.getPage(),
+                pageInfo.getSize(), activities.size());
 
         PageActivityInfo pageActivityInfo = new PageActivityInfo();
 
@@ -250,7 +263,8 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
     }
 
     public PageActivityInfo getPageActivityFallBack(PageInfo pageInfo, String userId, Throwable throwable) {
-        log.error("user [{}] get page [{}] activity into fallBack method : [{}]", userId, pageInfo.getPage(), throwable.getMessage());
+        log.error("user [{}] get page [{}] size [{}] activity into fallBack method : [{}]", userId, pageInfo.getPage(),
+                pageInfo.getSize(), throwable.getMessage());
         return null;
     }
 
@@ -269,21 +283,23 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
             }
     )
     @Override
-    public PageActivityInfo getPageActivityByUserId(String userId, int page) {
-        Page<CsUserActivity> activityPage = new Page<>(page, 10);
+    public PageActivityInfo getPageActivityByUserId(String userId, PageInfo pageInfo) {
+        Page<CsUserActivity> activityPage = new Page<>(pageInfo.getPage(), pageInfo.getSize());
         IPage<CsUserActivity> csUserActivityPage = csUserActivityMapper.selectPageByUserId(activityPage, userId);
 
         List<CsUserActivity> activitiesByUserId = csUserActivityPage.getRecords();
-        log.info("Get activity by userId [{}] -- page [{}] -- [{}]", userId, page, activitiesByUserId);
+        log.info("Get activity by userId [{}] -- page [{}] size [{}] data size [{}] -- [{}]", userId, pageInfo.getPage(),
+                pageInfo.getSize(), activitiesByUserId.size(), activitiesByUserId);
 
         PageActivityInfo pageActivityInfo = new PageActivityInfo();
-        pageActivityInfo.setActivityInfos(getCsActivityVo(activitiesByUserId, userId));
-        pageActivityInfo.setHasMore(csUserActivityPage.getPages() > page);
+        pageActivityInfo.setActivityInfos(getCsActivityVo(activitiesByUserId, ME));
+        pageActivityInfo.setHasMore(csUserActivityPage.getPages() > pageInfo.getPage());
         return pageActivityInfo;
     }
 
-    public PageActivityInfo getPageActivityByUserIdFallBack(String userId, int page, Throwable throwable) {
-        log.error("get page [{}] user [{}] activity into fallBack method : [{}]", page, userId, throwable.getMessage());
+    public PageActivityInfo getPageActivityByUserIdFallBack(String userId, PageInfo pageInfo, Throwable throwable) {
+        log.error("get  page [{}] size [{}] user [{}] activity into fallBack method : [{}]", pageInfo.getPage()
+                , pageInfo.getSize(), userId, throwable.getMessage());
         return null;
     }
 
@@ -294,33 +310,39 @@ public class CsUserActivityServiceImpl implements ICsUserActivityService {
         }
         //用户id为了获取用户信息
         Set<String> idList = activityList.stream().map(CsUserActivity::getUserId).collect(Collectors.toSet());
-        log.info("Get activity --- get userId [{}]", JSON.toJSONString(idList));
 
         //动态id为了获取评论信息
         List<String> activityIdList = activityList.stream().map(CsUserActivity::getId).collect(Collectors.toList());
-        log.info("Get activity --- get activityId [{}]", JSON.toJSONString(activityIdList));
 
-
-        //调用用户服务
+        // 调用用户服务
         Map<String, CsUserInfo> userMap = intelService.interCallPeopleList(idList);
-        log.info("Get activity --- get userInfo success");
-
 
         //调用评论服务//记得让前端搞一下降级的 -1L
         Map<String, Long> commentMap = intelService.interCallComment(activityIdList);
-        log.info("Get activity --- get comment success");
 
         List<CsUserActivityVo> csActivityVos = new ArrayList<>();
 
-        activityList.forEach(csActivity -> {
-            CsUserActivityVo csActivityVo = new CsUserActivityVo();
-            CsUserActivityVo.Activity simpleActivity = CsUserActivityVo.Activity.to(csActivity);
-            csActivityVo.setCsUserActivity(simpleActivity);
-            csActivityVo.setCommentNumber(commentMap.get(csActivity.getId()));
-            csActivityVo.setCsUserInfo(userMap.get(csActivity.getUserId()));
-            csActivityVo.setIsModify(userId.equals(csActivity.getUserId()));
-            csActivityVos.add(csActivityVo);
-        });
+        if (!userId.equals(ME)) {
+            activityList.forEach(csActivity -> {
+                CsUserActivityVo csActivityVo = new CsUserActivityVo();
+                CsUserActivityVo.Activity simpleActivity = CsUserActivityVo.Activity.to(csActivity);
+                csActivityVo.setCsUserActivity(simpleActivity);
+                csActivityVo.setCommentNumber(commentMap.get(csActivity.getId()));
+                csActivityVo.setCsUserInfo(userMap.get(csActivity.getUserId()));
+                csActivityVo.setIsModify(userId.equals(csActivity.getUserId()));
+                csActivityVos.add(csActivityVo);
+            });
+        } else {
+            activityList.forEach(csActivity -> {
+                CsUserActivityVo csActivityVo = new CsUserActivityVo();
+                CsUserActivityVo.Activity simpleActivity = CsUserActivityVo.Activity.to(csActivity);
+                csActivityVo.setCsUserActivity(simpleActivity);
+                csActivityVo.setCommentNumber(commentMap.get(csActivity.getId()));
+                csActivityVo.setCsUserInfo(userMap.get(csActivity.getUserId()));
+                csActivityVos.add(csActivityVo);
+            });
+        }
+
         return csActivityVos;
 
     }

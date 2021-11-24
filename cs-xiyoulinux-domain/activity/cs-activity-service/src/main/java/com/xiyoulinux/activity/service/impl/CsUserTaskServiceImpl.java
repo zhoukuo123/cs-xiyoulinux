@@ -21,6 +21,7 @@ import com.xiyoulinux.common.PageInfo;
 import com.xiyoulinux.enums.ActivityStatus;
 import com.xiyoulinux.utils.RedisOperator;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.dubbo.rpc.RpcException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -57,19 +58,61 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
     }
 
 
+    @HystrixCommand(
+            groupKey = "activity",
+            // 舱壁模式
+            threadPoolKey = "activity",
+            // 后备模式
+            fallbackMethod = "getPageTaskInfoFallBack",
+            // 断路器模式
+            commandProperties = {
+                    // 超时时间, 单位毫秒, 超时进 fallback
+                    @HystrixProperty(
+                            name = "execution.isolation.thread.timeoutInMilliseconds",
+                            value = "3000")
+            }
+    )
     @Override
-    public PageTaskInfo getPageDoingTasks(PageInfo pageInfo, String userId) {
-        return getPageTaskInfo(pageInfo, ActivityStatus.ONGOING, userId);
+    public PageTaskInfo getPageDoingTasks(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
+        return getPageTaskInfo(pageInfo, activityStatus, userId);
     }
 
+    @HystrixCommand(
+            groupKey = "activity",
+            // 舱壁模式
+            threadPoolKey = "activity",
+            // 后备模式
+            fallbackMethod = "getPageTaskInfoFallBack",
+            // 断路器模式
+            commandProperties = {
+                    // 超时时间, 单位毫秒, 超时进 fallback
+                    @HystrixProperty(
+                            name = "execution.isolation.thread.timeoutInMilliseconds",
+                            value = "3000")
+            }
+    )
     @Override
-    public PageTaskInfo getPageDidTasks(PageInfo pageInfo, String userId) {
-        return getPageTaskInfo(pageInfo, ActivityStatus.ACHIEVE, userId);
+    public PageTaskInfo getPageDidTasks(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
+        return getPageTaskInfo(pageInfo, activityStatus, userId);
     }
 
+    @HystrixCommand(
+            groupKey = "activity",
+            // 舱壁模式
+            threadPoolKey = "activity",
+            // 后备模式
+            fallbackMethod = "getPageTaskInfoFallBack",
+            // 断路器模式
+            commandProperties = {
+                    // 超时时间, 单位毫秒, 超时进 fallback
+                    @HystrixProperty(
+                            name = "execution.isolation.thread.timeoutInMilliseconds",
+                            value = "3000")
+            }
+    )
     @Override
-    public PageTaskInfo getPageFutureTasks(PageInfo pageInfo, String userId) {
-        return getPageTaskInfo(pageInfo, ActivityStatus.PENDING, userId);
+    public PageTaskInfo getPageFutureTasks(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
+        return getPageTaskInfo(pageInfo, activityStatus, userId);
     }
 
     @Override
@@ -130,7 +173,7 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
 
     //前端搞一下降级的显示
     public TaskNumber getTaskNumberFallBack(Throwable throwable) {
-        log.error("get task number into fallback method : [{}]",throwable.getMessage());
+        log.error("get task number into fallback method : [{}]", throwable.getMessage());
         return new TaskNumber(-1, -1, -1);
     }
 
@@ -140,17 +183,12 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
             return null;
         }
         Set<String> idList = taskList.stream().map(CsUserTask::getUserId).collect(Collectors.toSet());
-        log.info("Get task --- get userId [{}]", JSON.toJSONString(idList));
 
         List<String> taskIdList = taskList.stream().map(CsUserTask::getTaskId).collect(Collectors.toList());
-        log.info("Get task --- get taskId [{}]", JSON.toJSONString(taskIdList));
-
 
         Map<String, CsUserInfo> userMap = interService.interCallPeopleList(idList);
-        log.info("Get task --- get userInfo success");
 
         Map<String, Long> commentMap = interService.interCallComment(taskIdList);
-        log.info("Get task --- get comment success");
 
         List<CsUserTaskVo> csUserTaskVos = new ArrayList<>();
         taskList.forEach(csUserTask -> {
@@ -158,7 +196,8 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
             CsUserTaskVo.Task simpleTask = CsUserTaskVo.Task.to(csUserTask);
             csUserTaskVo.setCsUserTask(simpleTask);
             csUserTaskVo.setCsUserInfo(userMap.get(csUserTask.getUserId()));
-            csUserTaskVo.setCommentNumber(commentMap.get(csUserTask.getId()));
+            csUserTaskVo.setCommentNumber(commentMap.get(csUserTask.getTaskId()));
+            System.out.println(csUserTask.getUserId());
             csUserTaskVo.setIsModify(userId.equals(csUserTask.getUserId()));
             csUserTaskVos.add(csUserTaskVo);
         });
@@ -166,20 +205,6 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
     }
 
 
-    @HystrixCommand(
-            groupKey = "activity",
-            // 舱壁模式
-            threadPoolKey = "activity",
-            // 后备模式
-            fallbackMethod = "getPageTaskInfoFallBack",
-            // 断路器模式
-            commandProperties = {
-                    // 超时时间, 单位毫秒, 超时进 fallback
-                    @HystrixProperty(
-                            name = "execution.isolation.thread.timeoutInMilliseconds",
-                            value = "3000")
-            }
-    )
     private PageTaskInfo getPageTaskInfo(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
         PageTaskInfo pageTaskInfo = new PageTaskInfo();
         String key = "";
@@ -197,10 +222,23 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
         //不为空
         if (value != null && hasMoreForRedis != null) {
             //包装包装返回对象
-            pageTaskInfo.setTaskInfos(JSON.parseArray(value, CsUserTaskVo.class));
+            List<CsUserTaskVo> csUserTaskVos = JSON.parseArray(value, CsUserTaskVo.class);
+            ArrayList<String> taskIdList = new ArrayList<>();
+            csUserTaskVos.forEach(csUserTaskVo -> {
+                taskIdList.add(csUserTaskVo.getCsUserTask().getTaskId());
+            });
+            try {
+                Map<String, Long> commentMap = interService.interCallComment(taskIdList);
+                csUserTaskVos.forEach(csUserTaskVo -> {
+                    csUserTaskVo.setCommentNumber(commentMap.get(csUserTaskVo.getCsUserTask().getTaskId()));
+                });
+            } catch (RpcException e) {
+                log.error("comment server error: [{}]", e.getMessage());
+            }
+            pageTaskInfo.setTaskInfos(csUserTaskVos);
             pageTaskInfo.setHasMore(JSON.parseObject(hasMoreForRedis, Boolean.class));
-            log.info("Get [{}] task from redis --- page [{}] -- [{}]", activityStatus.description,
-                    pageInfo.getPage(), pageTaskInfo.getTaskInfos());
+            log.info("Get [{}] task from redis --- page [{}] size[{}]", activityStatus.description,
+                    pageInfo.getPage(), pageInfo.getSize());
             //直接从缓存里面获取到然后返回
             return pageTaskInfo;
         }
@@ -222,13 +260,14 @@ public class CsUserTaskServiceImpl implements ICsUserTaskService {
         List<CsUserTaskVo> csTaskVo = getCsTaskVo(task, userId);
         //是否还有下一页
         boolean hasMoreForDb = pageTasks.getPages() > pageInfo.getPage();
-        log.info("Get [{}] task from db -- page [{}] -- [{}]", activityStatus.description, pageInfo.getPage(), task);
+        log.info("Get [{}] task from db -- page [{}] size [{}]", activityStatus.description,
+                pageInfo.getPage(), pageInfo.getSize());
 
         //存入缓存
         redisOperator.hset(key, "value", JSON.toJSONString(csTaskVo));
         redisOperator.hset(key, "hasMore", JSON.toJSONString(hasMoreForDb));
-        log.info("select from db to save redis -- page [{}] [{}] task [{}]", pageInfo.getPage(),
-                activityStatus.description, task);
+        log.info("select from db to save redis -- page [{}] size [{}] [{}] task", pageInfo.getPage(),
+                pageInfo.getSize(), activityStatus.description);
 
         //包装返回对象
         pageTaskInfo.setTaskInfos(csTaskVo);

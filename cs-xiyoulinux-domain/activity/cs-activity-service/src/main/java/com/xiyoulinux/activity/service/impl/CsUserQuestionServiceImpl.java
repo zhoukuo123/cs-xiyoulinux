@@ -46,14 +46,44 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
         this.interService = interService;
     }
 
+    @HystrixCommand(
+            groupKey = "activity",
+            // 舱壁模式
+            threadPoolKey = "activity",
+            // 后备模式
+            fallbackMethod = "getPageQuestionInfoFallBack",
+            // 断路器模式
+            commandProperties = {
+                    // 超时时间, 单位毫秒, 超时进 fallback
+                    @HystrixProperty(
+                            name = "execution.isolation.thread.timeoutInMilliseconds",
+                            value = "3000")
+            }
+
+    )
     @Override
-    public PageQuestionInfo getPageUnresolvedIssues(PageInfo pageInfo, String userId) {
-        return getPageQuestionInfo(pageInfo, ActivityStatus.UNRESOLVED, userId);
+    public PageQuestionInfo getPageUnresolvedIssues(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
+        return getPageQuestionInfo(pageInfo, activityStatus, userId);
     }
 
+    @HystrixCommand(
+            groupKey = "activity",
+            // 舱壁模式
+            threadPoolKey = "activity",
+            // 后备模式
+            fallbackMethod = "getPageQuestionInfoFallBack",
+            // 断路器模式
+            commandProperties = {
+                    // 超时时间, 单位毫秒, 超时进 fallback
+                    @HystrixProperty(
+                            name = "execution.isolation.thread.timeoutInMilliseconds",
+                            value = "3000")
+            }
+
+    )
     @Override
-    public PageQuestionInfo getPageResolvedIssues(PageInfo pageInfo, String userId) {
-        return getPageQuestionInfo(pageInfo, ActivityStatus.RESOLVED, userId);
+    public PageQuestionInfo getPageResolvedIssues(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
+        return getPageQuestionInfo(pageInfo, activityStatus, userId);
     }
 
     @Override
@@ -92,7 +122,7 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
 
     //前端搞一下降级显示
     public QuestionNumber getQuestionNumberFallback(Throwable throwable) {
-        log.error("get question number into fallback method : [{}]",throwable.getMessage());
+        log.error("get question number into fallback method : [{}]", throwable.getMessage());
         return new QuestionNumber(-1, -1);
     }
 
@@ -102,18 +132,12 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
             return null;
         }
         Set<String> idList = questionList.stream().map(CsUserQuestion::getUserId).collect(Collectors.toSet());
-        log.info("Get question --- get userId [{}]", idList);
 
         List<String> questionIdList = questionList.stream().map(CsUserQuestion::getQuestionId).collect(Collectors.toList());
-        log.info("Get question --- get questionId [{}]", questionIdList);
-
 
         Map<String, CsUserInfo> userMap = interService.interCallPeopleList(idList);
-        log.info("Get question --- get userInfo success");
-
 
         Map<String, Long> commentMap = interService.interCallComment(questionIdList);
-        log.info("Get question --- get comment success");
 
         List<CsUserQuestionVo> csUserQuestionVos = new ArrayList<>();
         questionList.forEach(csUserQuestion -> {
@@ -121,29 +145,15 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
             CsUserQuestionVo.Question simpleQuestion = CsUserQuestionVo.Question.to(csUserQuestion);
             csUserQuestionVo.setCsUserQuestion(simpleQuestion);
             csUserQuestionVo.setCsUserInfo(userMap.get(csUserQuestion.getUserId()));
-            csUserQuestionVo.setCommentNumber(commentMap.get(csUserQuestion.getId()));
+            csUserQuestionVo.setCommentNumber(commentMap.get(csUserQuestion.getQuestionId()));
             csUserQuestionVo.setIsModify(userId.equals(csUserQuestion.getUserId()));
             csUserQuestionVos.add(csUserQuestionVo);
         });
         return csUserQuestionVos;
     }
 
-    @HystrixCommand(
-            groupKey = "activity",
-            // 舱壁模式
-            threadPoolKey = "activity",
-            // 后备模式
-            fallbackMethod = "getPageQuestionInfoFallBack",
-            // 断路器模式
-            commandProperties = {
-                    // 超时时间, 单位毫秒, 超时进 fallback
-                    @HystrixProperty(
-                            name = "execution.isolation.thread.timeoutInMilliseconds",
-                            value = "3000")
-            }
 
-    )
-    private PageQuestionInfo getPageQuestionInfo(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
+    public PageQuestionInfo getPageQuestionInfo(PageInfo pageInfo, ActivityStatus activityStatus, String userId) {
         Page<CsUserQuestion> questionPage = new Page<>(pageInfo.getPage(), pageInfo.getSize());
         IPage<CsUserQuestion> pageIssues = null;
         if (activityStatus.code.equals(ActivityStatus.RESOLVED.code)) {
@@ -152,7 +162,7 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
             pageIssues = csUserQuestionMapper.getPageUnresolvedIssues(questionPage);
         }
         List<CsUserQuestion> questions = pageIssues.getRecords();
-        log.info("Get {} question -- page [{}] -- [{}]", activityStatus.description, pageInfo.getPage(), questions);
+        log.info("Get {} question -- page [{}] size[{}]", activityStatus.description, pageInfo.getPage(), pageInfo.getSize());
         PageQuestionInfo pageQuestionInfo = new PageQuestionInfo();
         pageQuestionInfo.setQuestionInfos(getCsQuestionVo(questions, userId));
         pageQuestionInfo.setHasMore(pageIssues.getPages() > pageInfo.getPage());
@@ -160,9 +170,9 @@ public class CsUserQuestionServiceImpl implements ICsUserQuestionService {
     }
 
     private PageQuestionInfo getPageQuestionInfoFallBack(PageInfo pageInfo, ActivityStatus activityStatus, String userId
-    ,Throwable throwable) {
-        log.error("user [{}] get page [{}] [{}] question into fallback method : [{}]", userId, pageInfo.getPage(),
-                activityStatus.description,throwable.getMessage());
+            , Throwable throwable) {
+        log.error("user [{}] get page [{}] size [{}] [{}] question into fallback method : [{}]", userId, pageInfo.getPage(),
+                pageInfo.getSize(), activityStatus.description, throwable.getMessage());
         return null;
     }
 }

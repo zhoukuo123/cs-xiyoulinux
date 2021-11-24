@@ -50,7 +50,7 @@ public class IntelService {
      */
     @HystrixCommand()
     public CsUserInfo interCallPeople(String userId) {
-        return new CsUserInfo("1","qwe","https://t7.baidu.com/it/u=1092574912,855301095&fm=193&f=GIF");
+        return new CsUserInfo("1", "qwe", "https://t7.baidu.com/it/u=1092574912,855301095&fm=193&f=GIF");
     }
 
 
@@ -61,7 +61,8 @@ public class IntelService {
      * @return activityId-commentNumber
      */
     public Map<String, Long> interCallComment(List<String> activityIdList) {
-        //调用评论服务获取评论数目
+        // 此调用会立即返回null
         return iCommentService.getCommentNumber(activityIdList);
+
     }
 }
