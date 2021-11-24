@@ -24,8 +24,8 @@ spring:
   servlet:
     multipart:
       enabled: true
-      max-file-size: 20MB
-      max-request-size: 100MB
+      max-file-size: 5MB
+      max-request-size: 25MB
   # 数据库连接池
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource

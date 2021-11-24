@@ -1,24 +1,28 @@
-create table cs_user_activity
+create table cs_dynamic.cs_user_activity
 (
-    id                   varchar(20)   not null comment '主键'
+    id                   varchar(20)                        not null comment '主键'
         primary key,
-    user_id              mediumtext    not null comment '用户Id',
-    activity_title       varchar(70)   not null comment '活动标题',
-    activity_content     varchar(2000) not null comment '问题or动态or讲座or任务的内容',
-    activity_end_time    datetime      null comment '结束时间',
-    activity_status      int           null,
-    activity_type        int           not null comment '问题or动态or讲座or任务(0/1/2/3)',
-    activity_create_time datetime      not null comment '创建时间',
-    activity_files       varchar(500)  null comment '动态文件url以逗号分割',
-    activity_update_time datetime    not null ON UPDATE CURRENT_TIMESTAMP DEFAULT CURRENT_TIMESTAMP comment '更新时间',
-    activity_update_time datetime      null comment '更新时间'
+    user_id              varchar(20)                        not null comment '用户Id',
+    activity_title       varchar(70)                        not null comment '活动标题',
+    activity_content     varchar(2000)                      not null comment '问题or动态or讲座or任务的内容',
+    activity_end_time    datetime                           null comment '结束时间',
+    activity_status      int                                null,
+    activity_type        int                                not null comment '问题or动态or讲座or任务(0/1/2/3)',
+    activity_create_time datetime                           not null comment '创建时间',
+    activity_files       varchar(700)                       null comment '动态文件url以逗号分割',
+    activity_update_time datetime default CURRENT_TIMESTAMP not null on update CURRENT_TIMESTAMP comment '更新时间',
+    constraint cs_user_activity_id_activity_status_activity_type_uindex
+        unique (id, activity_status, activity_type)
 )
     comment '用户动态表' charset = utf8;
 
-create index cs_user_activity_id_activity_type_activity_status_index
-    on cs_user_activity (id, activity_type, activity_status);
+create index cs_user_activity_activity_create_time_index
+    on cs_dynamic.cs_user_activity (activity_create_time);
 
-create table cs_user_question
+create index cs_user_activity_user_id_activity_create_time_index
+    on cs_dynamic.cs_user_activity (user_id, activity_create_time);
+
+create table cs_dynamic.cs_user_question
 (
     id                   varchar(20)   not null comment '主键id'
         primary key,
@@ -34,10 +38,7 @@ create table cs_user_question
 )
     comment '用户问题表';
 
-create index cs_user_question_question_id_question_status_index
-    on cs_user_question (question_id, question_status);
-
-create table cs_user_task
+create table cs_dynamic.cs_user_task
 (
     id               varchar(20)   not null comment '主键id'
         primary key,
@@ -53,7 +54,7 @@ create table cs_user_task
         unique (task_id)
 );
 
-create table undo_log
+create table cs_dynamic.undo_log
 (
     id            bigint auto_increment
         primary key,
