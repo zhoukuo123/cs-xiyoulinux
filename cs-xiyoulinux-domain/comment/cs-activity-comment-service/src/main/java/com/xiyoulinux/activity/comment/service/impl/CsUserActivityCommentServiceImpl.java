@@ -21,12 +21,13 @@ import com.xiyoulinux.common.CsUserInfo;
 import com.xiyoulinux.common.PageInfo;
 import com.xiyoulinux.file.service.IUploadFileService;
 import com.xiyoulinux.utils.RedisOperator;
-import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.n3r.idworker.Sid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -97,7 +98,8 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
         IPage<CsUserActivityComment> csUserActivityCommentPage = new Page<>(pageInfo.getPage(), pageInfo.getSize());
         IPage<CsUserActivityComment> csUserActivityCommentIPage =
                 csUserCommentMapper.selectPageByActivityId(activityId, csUserActivityCommentPage);
-        return getPageCommentInfo(pageInfo, activityId, userId, csUserActivityCommentIPage);
+
+        return getPageCommentInfo(pageInfo, activityId, userId, csUserActivityCommentIPage, false);
     }
 
 
@@ -105,8 +107,8 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
                                                                         String activityId,
                                                                         String userId,
                                                                         Throwable throwable) {
-        log.error("user [{}] get activity [{}] page [{}] comments into fallback : [{}]",
-                userId, activityId, pageInfo.getPage(), throwable.getMessage());
+        log.error("user [{}] get activity [{}] page [{}] size [{}] comments into fallback : [{}]",
+                userId, activityId, pageInfo.getPage(), pageInfo.getSize(), throwable.getMessage());
         return null;
     }
 
@@ -140,7 +142,7 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
         IPage<CsUserActivityComment> csUserActivityCommentPage = new Page<>(pageInfo.getPage(), pageInfo.getSize());
         IPage<CsUserActivityComment> csUserActivityCommentIPage =
                 csUserCommentMapper.selectPageByActivityIdOrderByLikes(activityId, csUserActivityCommentPage);
-        return getPageCommentInfo(pageInfo, activityId, userId, csUserActivityCommentIPage);
+        return getPageCommentInfo(pageInfo, activityId, userId, csUserActivityCommentIPage, true);
     }
 
 
@@ -148,118 +150,103 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
                                                                                     String activityId,
                                                                                     String userId,
                                                                                     Throwable throwable) {
-        log.error("user [{}] get activity [{}]  page [{}] comments orderBy likes into fallback : [{}]",
-                userId, activityId, pageInfo.getPage(), throwable.getMessage());
+        log.error("user [{}] get activity [{}] page [{}] size [{}] comments orderBy likes into fallback : [{}]",
+                userId, activityId, pageInfo.getPage(), pageInfo.getSize(), throwable.getStackTrace());
         return null;
     }
 
 
-    private PageCommentInfo getPageCommentInfo(PageInfo pageInfo, String activityId, String userId, IPage<CsUserActivityComment> csUserActivityCommentIPage) {
+    private PageCommentInfo getPageCommentInfo(PageInfo pageInfo, String activityId, String userId,
+                                               IPage<CsUserActivityComment> csUserActivityCommentIPage,
+                                               boolean isSort) {
         List<CsUserActivityComment> commentList = csUserActivityCommentIPage.getRecords();
-        log.info("Get comment --- all comments [{}] of activity [{}] has not userInfo and files",
-                commentList, activityId);
 
         PageCommentInfo pageCommentInfo = new PageCommentInfo();
 
-        //从缓存里面获取2个小时内的点赞和数据库相加得到总评论的点赞数目，只有点赞了该评论,才会被放进缓存，缓存只记录点赞的数目
-        commentList.forEach(comment -> {
-            String commentLikesNumber = redisOperator.get("LIKE:" + comment.getId());
-            if (commentLikesNumber != null) {
-                comment.setCommentLikes(Integer.parseInt(commentLikesNumber)
-                        + comment.getCommentLikes());
-            }
-            System.out.println(comment.getCommentLikes() + "result");
-        });
+        if (!commentList.isEmpty()) {
+            //从缓存里面获取2个小时内的点赞和数据库相加得到总评论的点赞数目，只有点赞了该评论,才会被放进缓存，缓存只记录点赞的数目
+            commentList.forEach(comment -> {
+                String commentLikesNumber = redisOperator.get("LIKE:" + comment.getId());
+                if (commentLikesNumber != null) {
+                    comment.setCommentLikes(Integer.parseInt(commentLikesNumber)
+                            + comment.getCommentLikes());
+                }
+            });
+        }
 
         //是否还有下一页
         pageCommentInfo.setHasMore(csUserActivityCommentIPage.getPages() > pageInfo.getPage());
 
+        List<CsUserActivityCommentVo> csActivityCommentVo = getCsActivityCommentVo(commentList, userId);
 
+        if (isSort) {
+            csActivityCommentVo.sort(new Comparator<CsUserActivityCommentVo>() {
+                @Override
+                public int compare(CsUserActivityCommentVo o1, CsUserActivityCommentVo o2) {
+                    return o2.getActivityComment().getCommentLikes() - o1.getActivityComment().getCommentLikes();
+                }
+            });
+        }
         //当前页面的评论信息
-        pageCommentInfo.setCommentInfo(getCsActivityCommentVo(commentList, userId));
+        pageCommentInfo.setCommentInfo(csActivityCommentVo);
 
+
+        log.info("get activityId [{}] page [{}]  size [{}] comment", activityId, pageInfo.getPage(),
+                pageInfo.getSize());
         return pageCommentInfo;
     }
 
-
-    @HystrixCommand(
-            groupKey = "comment",
-            // 舱壁模式
-            threadPoolKey = "comment",
-            // 后备模式
-            fallbackMethod = "likesCommentFallBack",
-            // 断路器模式
-            commandProperties = {
-                    // 超时时间, 单位毫秒, 超时进 fallback
-                    @HystrixProperty(
-                            name = "execution.isolation.thread.timeoutInMilliseconds",
-                            value = "3000")
-            }
-
-    )
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String likesComment(CsUserLikesBo csUserLikesBo) {
         CsUserLikes csUserLikes = new CsUserLikes();
         BeanUtils.copyProperties(csUserLikesBo, csUserLikes);
         csUserLikes.setId(sid.nextShort());
         try {
             csUserLikesMapper.insert(csUserLikes);
-            log.info("userId [{}] likes commentId [{}]", csUserLikes.getCsUserId(), csUserLikes.getCsCommentId());
         } catch (Exception e) {
+            log.error("insert user [{}] likes commentId [{}] error [{}]", csUserLikes.getCsUserId(),
+                    csUserLikes.getCsCommentId(), e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
-        log.info("commentId [{}] add likes number [{}]", csUserLikes.getCsCommentId(),
-                redisOperator.incr("LIKE:" + csUserLikes.getCsCommentId(), 1));
+        try {
+            redisOperator.incr("LIKE:" + csUserLikes.getCsCommentId(), 1);
+        } catch (Exception e) {
+            log.error("likes commentId [{}] redis error [{}]", csUserLikes.getCsCommentId(), e.getMessage());
+            throw new RuntimeException("likes comment redis error");
+        }
+        log.info("commentId [{}] add likes", csUserLikes.getCsCommentId());
         return "点赞成功";
     }
 
-    public String likesCommentFallBack(CsUserLikesBo csUserLikesBo,
-                                       Throwable throwable) {
-        log.error("user [{}] like comment [{}] into fallback : [{}]", csUserLikesBo.getCsUserId()
-                , csUserLikesBo.getCsCommentId(), throwable.getMessage());
-        return "努力发射中";
-    }
-
-    @HystrixCommand(
-            groupKey = "comment",
-            // 舱壁模式
-            threadPoolKey = "comment",
-            // 后备模式
-            fallbackMethod = "dislikeCommentFallBack",
-            // 断路器模式
-            commandProperties = {
-                    // 超时时间, 单位毫秒, 超时进 fallback
-                    @HystrixProperty(
-                            name = "execution.isolation.thread.timeoutInMilliseconds",
-                            value = "3000")
-            }
-    )
     @Override
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public String dislikeComment(String commentId, String userId) {
         try {
             csUserLikesMapper.deleteByCsUserIdAndCsCommentId(userId, commentId);
-            log.info("userId [{}] disLikes commentId [{}]", userId, commentId);
         } catch (Exception e) {
+            log.error("delete user [{}] likes commentId [{}] error [{}]", userId, commentId, e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
-        log.info("commentId [{}] add likes number [{}]", commentId, redisOperator.decr("LIKE:" + commentId, 1));
+        try {
+            redisOperator.decr("LIKE:" + commentId, 1);
+        } catch (Exception e) {
+            log.error("dislikes commentId [{}] redis error [{}]", commentId, e.getMessage());
+            throw new RuntimeException("dislikes comment redis error");
+        }
+        log.info("commentId [{}] decr likes ", commentId);
         return "取消成功";
     }
 
-    public String dislikeCommentFallBack(String commentId, String userId, Throwable throwable) {
-        log.error("user [{}] disLike comment [{}] into fallback : [{}]", userId, commentId, throwable.getMessage());
-        return "努力发射中";
-    }
-
     @Override
-    @GlobalTransactional
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public CsUserInfoAndIdAndFileInfo addComment(CsUserActivityCommentBo comment, MultipartFile[] files) {
         CsUserActivityComment csUserActivityComment = new CsUserActivityComment();
         BeanUtils.copyProperties(comment, csUserActivityComment);
         csUserActivityComment.setId(sid.nextShort());
 
         List<String> fileUrl = null;
-        if (files.length != 0) {
+        if (files != null && files.length != 0) {
             //上传评论内容中的文件信息到文件服务
             List<byte[]> bytes = new ArrayList<>();
             for (MultipartFile file : files) {
@@ -316,7 +303,6 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
         for (ActivityCommentNumber activityCommentNumber : commentNumberByActivityId) {
             commentMap.put(activityCommentNumber.getActivityId(), activityCommentNumber.getCommentNumbers());
         }
-        log.info("Get comments number --- comment number [{}] of activity [{}]", commentMap, activityIdList);
         return commentMap;
     }
 
@@ -351,14 +337,18 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
      * @return 评论信息集合
      */
     public List<CsUserActivityCommentVo> getCsActivityCommentVo(List<CsUserActivityComment> commentList, String userId) {
+        if (null == commentList || commentList.size() == 0) {
+            return null;
+        }
         //用户id
-        Set<String> idList = commentList.stream().map(CsUserActivityComment::getUserId).collect(Collectors.toSet());
-        log.info("get all userId [{}] of comments [{}]", idList, commentList);
+        Set<String> userIdList = commentList.stream().map(CsUserActivityComment::getUserId).collect(Collectors.toSet());
 
         //调用用户服务获取用户信息
-        Map<String, CsUserInfo> userMap = interService.interCallPeopleList(idList);
-        log.info("call user server get userInfo success --- get all userInfo [{}] of comment [{}]", userMap, commentList);
+        Map<String, CsUserInfo> userMap = interService.interCallPeopleList(userIdList);
 
+        Set<String> commentIdList = commentList.stream().map(CsUserActivityComment::getId).collect(Collectors.toSet());
+
+        List<String> likeCommentId = csUserLikesMapper.selectLikesUserId(commentIdList, userId);
         //构造评论vo
         List<CsUserActivityCommentVo> csActivityVos = new ArrayList<>();
         commentList.forEach(comment -> {
@@ -366,10 +356,9 @@ public class CsUserActivityCommentServiceImpl implements ICsUserActivityCommentS
             CsUserActivityCommentVo.ActivityComment simpleComment = CsUserActivityCommentVo.ActivityComment.to(comment);
             commentVo.setActivityComment(simpleComment);
             commentVo.setCsUserInfo(userMap.get(comment.getUserId()));
-            commentVo.setLike(Objects.equals(userId, comment.getUserId()));
+            commentVo.setLike(likeCommentId.contains(comment.getId()));
             csActivityVos.add(commentVo);
         });
-        log.info("Fill comment object over --- comment objects that populate attributes [{}]", commentList);
         return csActivityVos;
     }
 

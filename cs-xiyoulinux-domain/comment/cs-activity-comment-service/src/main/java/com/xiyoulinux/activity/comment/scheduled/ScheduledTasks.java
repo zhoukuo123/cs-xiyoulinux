@@ -11,6 +11,8 @@ import io.seata.spring.annotation.GlobalTransactional;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -39,8 +41,8 @@ public class ScheduledTasks {
     /**
      * fixedRate：固定速率执行。每2小时执行一次。
      */
-    @Scheduled(fixedRate = 10 * 60 * 1_000)
-    @GlobalTransactional
+    @Scheduled(fixedRate = 12 * 10 * 60 * 1_000)
+    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     public void reportCurrentTimeWithFixedRate() {
         try {
             // 获取锁
@@ -56,6 +58,7 @@ public class ScheduledTasks {
                         likes.put(id, data);
                     }
                 });
+                System.out.println(likes);
 
                 try {
                     if (!likes.isEmpty()) {
@@ -65,8 +68,8 @@ public class ScheduledTasks {
                     log.info("merge redis likes to db success key: [{}] value:[{}] time [{}]", likes.keySet(),
                             likes.values(), DATE_FORMAT.format(new Date()));
                 } catch (Exception e) {
-                    log.error("merge likes error [{}], key: [{}],value:[{}]", likes.keySet(),
-                            likes.values(), e.getMessage());
+                    log.error("merge likes error [{}], key: [{}],value:[{}]",e.getMessage(), likes.keySet(),
+                            likes.values());
                     throw new RuntimeException("merge likes error");
                 }
             } else {

@@ -11,7 +11,6 @@ import com.xiyoulinux.enums.ReturnCode;
 import com.xiyoulinux.pojo.JSONResult;
 import io.swagger.annotations.*;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
 
@@ -22,12 +21,13 @@ import javax.annotation.Resource;
 @Api(tags = "动态评论中心")
 @RequestMapping("/activity-comment")
 @SuppressWarnings("all")
+//@CrossOrigin
 public class ActivityCommentController {
 
     @Resource
     private ICsUserActivityCommentService iCsUserActivityCommentService;
 
-    @ApiOperation(value = "获取评论", notes = "根据动态id ",httpMethod = "POST")
+    @ApiOperation(value = "获取评论", notes = "根据动态id ", httpMethod = "POST")
     @ApiResponses(@ApiResponse(code = 200, message = "评论集合", response = CsUserActivityCommentVo.class))
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", name = "activityId", value = "动态id", dataType = "String", required = true),
@@ -46,7 +46,7 @@ public class ActivityCommentController {
         return JSONResult.ok(pageCommentsByActivityIdAndUserId);
     }
 
-    @ApiOperation(value = "获取评论orderByLikes", notes = "根据动态id获取根据likes降序的评论 ",httpMethod = "POST")
+    @ApiOperation(value = "获取评论orderByLikes", notes = "根据动态id获取根据likes降序的评论 ", httpMethod = "POST")
     @ApiResponses(@ApiResponse(code = 200, message = "评论集合", response = CsUserActivityCommentVo.class))
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", name = "activityId", value = "动态id", dataType = "String", required = true),
@@ -64,7 +64,7 @@ public class ActivityCommentController {
         return JSONResult.ok(pageCommentsByActivityIdAndUserId);
     }
 
-    @ApiOperation(value = "给评论点赞",httpMethod = "PUT")
+    @ApiOperation(value = "给评论点赞", httpMethod = "PUT")
     @ApiResponses({
             @ApiResponse(code = 200, message = "点赞成功")
     })
@@ -73,7 +73,7 @@ public class ActivityCommentController {
         return JSONResult.ok(iCsUserActivityCommentService.likesComment(csUserLikesBo));
     }
 
-    @ApiOperation(value = "给评论取消点赞",httpMethod = "PUT")
+    @ApiOperation(value = "给评论取消点赞", httpMethod = "PUT")
     @ApiImplicitParams({
             @ApiImplicitParam(paramType = "path", name = "id", value = "评论id", dataType = "String", required = true),
             @ApiImplicitParam(paramType = "path", name = "userId", value = "用户id", dataType = "String", required = true)
@@ -86,16 +86,12 @@ public class ActivityCommentController {
         return JSONResult.ok(iCsUserActivityCommentService.dislikeComment(commentId, userId));
     }
 
-    @ApiOperation(value = "增加评论",httpMethod = "POST")
-    @ApiImplicitParams({
-            @ApiImplicitParam(name = "files", value = "多个文件", paramType = "formData", allowMultiple = true, required = true, dataType = "file")
-    })
+    @ApiOperation(value = "增加评论", httpMethod = "POST")
     @ApiResponses(@ApiResponse(code = 200, message = "用户信息", response = CsUserInfoAndIdAndFileInfo.class))
     @PostMapping("/add")
-    public JSONResult addComment(@RequestPart("csUserActivityCommentBo") CsUserActivityCommentBo comment,
-                                 @RequestPart("files") MultipartFile[] files
+    public JSONResult addComment(@RequestBody CsUserActivityCommentBo comment
     ) {
-        return JSONResult.ok(iCsUserActivityCommentService.addComment(comment, files));
+        return JSONResult.ok(iCsUserActivityCommentService.addComment(comment, null));
 
     }
 }

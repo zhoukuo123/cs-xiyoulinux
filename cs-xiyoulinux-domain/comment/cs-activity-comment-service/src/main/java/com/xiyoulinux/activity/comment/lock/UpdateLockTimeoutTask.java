@@ -22,21 +22,27 @@ public class UpdateLockTimeoutTask implements Runnable {
         this.key = key;
     }
 
+
     @Override
     public void run() {
         //以uuid为key，当前线程id为value保存到Redis中
         stringRedisTemplate.opsForValue().set(uuid, String.valueOf(Thread.currentThread().getId()));
         //定义更新锁的过期时间
         while (true) {
+            Thread thread = Thread.currentThread();
+            if (thread.isInterrupted()) {
+                break;
+            }
             stringRedisTemplate.expire(key, LOCK_TIME, TimeUnit.SECONDS);
             try {
                 //每隔20秒执行一次
                 Thread.sleep(SLEEP_TIME);
             } catch (InterruptedException e) {
                 e.printStackTrace();
-                break;
+                thread.interrupt();
             }
         }
     }
 }
+
 
