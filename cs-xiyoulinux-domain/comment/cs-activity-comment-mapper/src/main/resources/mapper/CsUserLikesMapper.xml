@@ -10,10 +10,6 @@
         <result property="csUserId" column="cs_user_id" jdbcType="VARCHAR"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
-        id
-        ,cs_comment_id,cs_user_id
-    </sql>
 
     <delete id="deleteByCsUserIdAndCsCommentId">
         delete
@@ -27,4 +23,14 @@
         from cs_user_likes
         where cs_activity_id = #{csActivityId}
     </delete>
+
+    <select id="selectLikesUserId" resultType="java.lang.String">
+        select cs_comment_id
+        from cs_user_likes
+        where cs_comment_id in
+        <foreach collection="commentIdList" item="commentId" open="(" close=")" separator=",">
+            #{commentId}
+        </foreach>
+        and cs_user_id = ${userId};
+    </select>
 </mapper>

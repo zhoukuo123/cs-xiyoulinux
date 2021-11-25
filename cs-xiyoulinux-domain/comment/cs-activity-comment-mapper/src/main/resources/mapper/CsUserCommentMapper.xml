@@ -20,21 +20,19 @@
         <result property="commentNumbers" column="count" javaType="Long"/>
     </resultMap>
 
-    <sql id="Base_Column_List">
-        id
-        ,user_id,activity_id,
-        comment_content,comment_likes,comment_create_time
-    </sql>
-
     <update id="mergeLikes" parameterType="java.util.Map">
         <foreach collection="likes.entrySet()" index="key" item="value" separator=";">
-            UPDATE cs_user_activity_comment SET comment_likes =
+            update cs_user_activity_comment set comment_likes =
             comment_likes + #{value} where id = #{key}
         </foreach>
     </update>
 
     <select id="selectPageByActivityId" resultMap="BaseResultMap">
-        select *
+        select id,
+               user_id,
+               comment_content,
+               comment_likes,
+               comment_create_time
         from cs_user_activity_comment
         where activity_id = #{activityId}
         order by comment_create_time DESC
@@ -51,12 +49,14 @@
         group by activity_id
 
     </select>
-    <select id="selectPageByActivityIdOrderByLikes"
-            resultType="com.xiyoulinux.activity.comment.entity.CsUserActivityComment">
-        select *
-        from cs_user_activity_comment
+    <select id="selectPageByActivityIdOrderByLikes" resultMap="BaseResultMap">
+        select id,
+               user_id,
+               comment_content,
+               comment_likes,
+               comment_create_time
+        from `cs_user_activity_comment`
         where activity_id = #{activityId}
-        order by comment_likes DESC
     </select>
 
     <delete id="deleteByActivityId">
