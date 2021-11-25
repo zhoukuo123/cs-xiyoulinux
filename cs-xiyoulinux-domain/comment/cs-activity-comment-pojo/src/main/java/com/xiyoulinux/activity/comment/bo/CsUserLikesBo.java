@@ -35,7 +35,7 @@ public class CsUserLikesBo implements Serializable {
      * 动态id
      */
     @ApiModelProperty(value = "动态id")
-    private String activityId;
+    private String csActivityId;
 
 
 }

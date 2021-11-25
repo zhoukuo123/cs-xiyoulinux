@@ -46,7 +46,8 @@ public class InterService {
     public CsUserInfo interCallPeople(String userId) {
         //调用用户服务获取用户信息
         log.info("Get userInfo [{}] --- from user service",userId);
-        return new CsUserInfo();
+        CsUserInfo qkm = new CsUserInfo("1", "qkm", "http://www.xiyoulinux.com/images/xiyoulinux.png");
+        return qkm;
     }
 
 }
