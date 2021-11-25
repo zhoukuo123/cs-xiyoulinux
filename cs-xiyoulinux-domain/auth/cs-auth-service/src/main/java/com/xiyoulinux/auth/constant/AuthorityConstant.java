@@ -35,7 +35,7 @@ public final class AuthorityConstant {
     /**
      * 默认的 refresh Token 超时时间, 一天
      */
-    public static final long DEFAULT_REFRESH_EXPIRE_DAY = 24 * 3600 * 1000;
+    public static final long DEFAULT_REFRESH_EXPIRE_DAY = 6 * 3600 * 1000;
 
 
     public static final long DEFAULT_EXPIRE_DAY = 2 * 3600 * 1000;
