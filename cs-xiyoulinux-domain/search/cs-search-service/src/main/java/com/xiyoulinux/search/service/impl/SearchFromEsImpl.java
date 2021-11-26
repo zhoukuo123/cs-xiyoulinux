@@ -83,7 +83,8 @@ public class SearchFromEsImpl implements ISearchService {
     }
 
     public PageActivityInfo searchByKeyFallBack(PageInfo pageInfo, String userId, Throwable throwable) {
-        log.error("userId [{}] search from es page [{}] into fallback : [{}]", userId, pageInfo.getPage(), throwable.getMessage());
+        log.error("userId [{}] search from es page [{}] size [{}]into fallback : [{}]", userId,
+                pageInfo.getPage(), pageInfo.getSize(), throwable.getMessage());
         return null;
     }
 
@@ -113,13 +114,13 @@ public class SearchFromEsImpl implements ISearchService {
         //增加查询条件
         searchRequest.source(searchSourceBuilder);
         searchRequest.source().highlighter(new HighlightBuilder().field("activityTitle").requireFieldMatch(false)
-                .field("activityContent").requireFieldMatch(false));
+                .numOfFragments(0).field("activityContent").requireFieldMatch(false).numOfFragments(0).preTags("<Strong>").postTags("</Strong>"));
         return getResult(searchRequest, pageInfo, userId);
     }
 
     public PageActivityInfo searchByKeyOrderByCreateTimeFallback(PageInfo pageInfo, String userId, Throwable throwable) {
-        log.error("userId [{}] search orderby time from es page [{}] into fallback : [{}]", userId, pageInfo.getPage()
-                , throwable.getMessage());
+        log.error("userId [{}] search orderby time from es page [{}] size [{}] into fallback : [{}]", userId, pageInfo.getPage()
+                , pageInfo.getSize(), throwable.getMessage());
         return null;
     }
 
@@ -142,7 +143,7 @@ public class SearchFromEsImpl implements ISearchService {
     public List<String> searchBoxAutoCompletion(String key) {
         SearchRequest request = new SearchRequest(INDEX_NAME);
         request.source().suggest(new SuggestBuilder().addSuggestion("mySuggestion",
-                SuggestBuilders.completionSuggestion("activityTitle")
+                SuggestBuilders.completionSuggestion("suggestion")
                         .prefix(key).skipDuplicates(true).size(20)));
         return getBoxResult(request);
     }
