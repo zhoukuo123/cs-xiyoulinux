@@ -62,8 +62,11 @@ public class GlobalExceptionHandler {
 
             return JSONResult.errorMsg(((InterviewException) e).getCode(), e.getMessage());
         } else if (e instanceof HttpMessageNotReadableException) {
-            log.error("HttpMessageNotReadableException: [{}]",e.getMessage());
-            return JSONResult.errorMsg(ReturnCode.ERROR.code, "字段转变异常--字段不符合要求!");
+
+            log.error("HttpMessageNotReadableException: [{}]", e.getMessage());
+
+            return JSONResult.errorMsg(ReturnCode.INVALID_PARAM.code, "字段转变异常--字段不符合要求!");
+
         } else {
             // 系统异常
             return JSONResult.errorMsg(ReturnCode.SYSTEM_EXCEPTION.code, e.getMessage());
