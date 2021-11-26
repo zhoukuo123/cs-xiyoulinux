@@ -27,7 +27,7 @@ public class UploadFileServiceImpl implements IUploadFileService {
             fileUrl = upload(files);
             log.info("upload files success");
         } catch (Exception e) {
-            log.error("upload files error");
+            log.error("upload files error:[{}]", e.getMessage());
             throw new RuntimeException(e.getMessage());
         }
 //        return Arrays.asList(fileUrl.split(","));
