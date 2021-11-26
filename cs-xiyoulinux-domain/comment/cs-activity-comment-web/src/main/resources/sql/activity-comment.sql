@@ -11,6 +11,12 @@ create table cs_user_activity_comment
 )
     comment '用户评论表';
 
+create index cs_user_activity_comment_activity_id_comment_create_time_index
+    on cs_user_activity_comment (activity_id, comment_create_time);
+
+create index cs_user_activity_comment_activity_id_comment_likes_index
+    on cs_user_activity_comment (activity_id, comment_likes);
+
 create table cs_user_likes
 (
     id             varchar(20) not null comment '主键id'
@@ -22,6 +28,9 @@ create table cs_user_likes
         unique (cs_comment_id, cs_user_id)
 )
     comment '用户点赞评论记录';
+
+create index cs_user_likes_cs_activity_id_index
+    on cs_user_likes (cs_activity_id);
 
 create table undo_log
 (
@@ -39,3 +48,4 @@ create table undo_log
         unique (xid, branch_id)
 )
     charset = utf8;
+
