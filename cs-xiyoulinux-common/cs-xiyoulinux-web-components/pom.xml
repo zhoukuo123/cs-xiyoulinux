@@ -21,12 +21,6 @@
 
         <dependency>
             <groupId>${project.groupId}</groupId>
-            <artifactId>cs-xiyoulinux-shared-pojo</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-
-        <dependency>
-            <groupId>${project.groupId}</groupId>
             <artifactId>cs-xiyoulinux-common</artifactId>
             <version>${project.version}</version>
         </dependency>
