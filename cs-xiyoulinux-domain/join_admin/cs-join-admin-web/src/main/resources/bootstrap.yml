@@ -11,6 +11,7 @@ spring:
       discovery:
         enabled: true
         server-addr: 127.0.0.1:8848
+        namespace: 2b1ec0ac-fd61-4aef-a32f-cd829bea9d97
 
 
 ###############################################

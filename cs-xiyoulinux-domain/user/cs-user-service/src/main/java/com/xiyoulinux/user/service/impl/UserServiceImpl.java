@@ -62,7 +62,8 @@ public class UserServiceImpl implements UserService {
         user.setCreatedTime(new Date());
         user.setUpdatedTime(new Date());
 
-        csUserMapper.insert(user);
+//        csUserMapper.insert(user);
+        csUserMapper.insertSelective(user);
         return user;
     }
 

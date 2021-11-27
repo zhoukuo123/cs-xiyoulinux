@@ -26,6 +26,33 @@ spring:
     port: 6379
     password: zhoukuo
 
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+####################################################################################
+# Stream配置
+####################################################################################
+  cloud:
+    stream:
+      bindings:
+        user-signup-consumer:
+          destination: user-signup-topic
+          group: user-signup-group
+          consumer:
+            max-attempts: 2
+        user-signup-producer:
+          destination: user-signup-topic
+      ## 延迟消息配置  设置某个交换机支持延迟消息推送
+      rabbit:
+        bindings:
+          user-signup-producer:
+            producer:
+              delayed-exchanged: true
+
+
+
 management:
   endpoints:
     web:

@@ -8,7 +8,10 @@ import com.xiyoulinux.joinadmin.pojo.JoinQueue;
 import com.xiyoulinux.joinadmin.pojo.JoinRecord;
 import com.xiyoulinux.joinadmin.pojo.JoinSetting;
 import com.xiyoulinux.joinadmin.pojo.bo.InterviewEvaluationBO;
-import com.xiyoulinux.joinadmin.pojo.vo.*;
+import com.xiyoulinux.joinadmin.pojo.vo.InterviewEvaluationRecordVO;
+import com.xiyoulinux.joinadmin.pojo.vo.InterviewRecordVO;
+import com.xiyoulinux.joinadmin.pojo.vo.IntervieweeInfoAndGradeVO;
+import com.xiyoulinux.joinadmin.pojo.vo.IntervieweeInfoVO;
 import com.xiyoulinux.joinadmin.service.InterviewService;
 import com.xiyoulinux.pojo.PagedGridResult;
 import com.xiyoulinux.service.BaseService;
@@ -21,10 +24,8 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import sun.java2d.loops.TransformHelper;
 import tk.mybatis.mapper.entity.Example;
 
-import java.sql.Time;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 

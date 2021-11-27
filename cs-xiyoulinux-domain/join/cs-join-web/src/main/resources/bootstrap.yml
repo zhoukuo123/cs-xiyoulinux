@@ -6,12 +6,12 @@
 spring:
   cloud:
     nacos:
-      config:
-        server-addr: localhost:8848
+#      config:
+#        server-addr: localhost:8848
       discovery:
         enabled: true
         register-enabled: true
-        server-addr: localhost:8848
+        server-addr: 127.0.0.1:8848
 
 
 ###############################################

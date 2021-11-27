@@ -1,5 +1,6 @@
 package com.xiyoulinux.user.controller.center;
 
+import com.alibaba.fastjson.JSON;
 import com.xiyoulinux.enums.ReturnCode;
 import com.xiyoulinux.exception.business.PassportException;
 import com.xiyoulinux.pojo.JSONResult;
@@ -8,6 +9,7 @@ import com.xiyoulinux.user.pojo.bo.center.CenterUserBO;
 import com.xiyoulinux.user.service.center.CenterUserService;
 import com.xiyoulinux.utils.CookieUtils;
 import com.xiyoulinux.utils.JsonUtils;
+import com.xiyoulinux.utils.RedisOperator;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
@@ -35,6 +37,9 @@ public class CenterUserController {
 
     @Resource
     private CenterUserService centerUserService;
+
+    @Resource
+    private RedisOperator redisOperator;
 
     @ApiOperation(value = "用户头像修改", notes = "用户头像修改", httpMethod = "POST")
     @PostMapping("/uploadFace")
@@ -67,21 +72,21 @@ public class CenterUserController {
                 }
 
                 // TODO 调用文件微服务
-                path = fdfsService.uploadOSS(file, userId, suffix);
+////////////////                path = fdfsService.uploadOSS(file, userId, suffix);
             }
         } else {
             throw new PassportException(ReturnCode.INVALID_PARAM.code, "文件不能为空");
         }
 
         if (StringUtils.isNotBlank(path)) {
-            String finalUserFaceUrl = fileResource.getOssHost() + path;
+//////////////// FIX 临时注释            String finalUserFaceUrl = fileResource.getOssHost() + path;
 
             // 更新用户头像到数据库
-            CsUser userResult = centerUserService.updateUserFace(userId, finalUserFaceUrl);
+//////////////// FIX 临时注释            CsUser userResult = centerUserService.updateUserFace(userId, finalUserFaceUrl);
 //
             // 把用户信息放入cookie中, 前端更新用户信息展示
-            CookieUtils.setCookie(request, response, "user",
-                    JsonUtils.objectToJson(userResult), true);
+//////////////// FIX 临时注释            CookieUtils.setCookie(request, response, "user",
+//////////////// FIX 临时注释                    JsonUtils.objectToJson(userResult), true);
 
         } else {
             throw new PassportException(ReturnCode.ERROR.code, "上传头像失败");
@@ -97,7 +102,12 @@ public class CenterUserController {
             @RequestBody @Valid CenterUserBO centerUserBO,
             HttpServletRequest request, HttpServletResponse response) {
 
+        // 缓存一致性: 缓存旁路模式(先更新数据库, 然后删除缓存)
+        // 遇到写请求, 先更新数据库
         CsUser userResult = centerUserService.updateUserInfo(userId, centerUserBO);
+        // 然后删除缓存, del 如果key不存在, 会忽略, 不会报错
+        redisOperator.delOne("USERID:" + userId);
+
 
         // 把用户信息放入cookie中, 前端更新用户信息展示
         CookieUtils.setCookie(request, response, "user",

@@ -4,15 +4,13 @@ import com.xiyoulinux.enums.ReturnCode;
 import com.xiyoulinux.exception.business.PassportException;
 import com.xiyoulinux.exception.business.UserJoinException;
 import com.xiyoulinux.join.pojo.bo.UserJoinBO;
+import com.xiyoulinux.join.pojo.dto.UserSignUpMsgDTO;
 import com.xiyoulinux.join.pojo.factory.InterviewStatus;
 import com.xiyoulinux.join.pojo.factory.InterviewStatusFactory;
 import com.xiyoulinux.join.pojo.vo.InterviewStatusVO;
-import com.xiyoulinux.join.pojo.vo.JoinSettingBO;
-import com.xiyoulinux.join.service.UserJoinService;
+import com.xiyoulinux.join.stream.UserSignUpTopic;
 import com.xiyoulinux.joinadmin.pojo.JoinInfo;
-import com.xiyoulinux.joinadmin.pojo.JoinSetting;
 import com.xiyoulinux.joinadmin.pojo.dto.JoinSettingDTO;
-import com.xiyoulinux.joinadmin.pojo.dto.UserJoinDTO;
 import com.xiyoulinux.joinadmin.service.SignUpService;
 import com.xiyoulinux.pojo.JSONResult;
 import com.xiyoulinux.user.pojo.CsUser;
@@ -24,6 +22,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.dubbo.config.annotation.DubboReference;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -42,6 +41,9 @@ public class JoinController {
 
     @DubboReference
     private SignUpService signUpService;
+
+    @Autowired
+    private UserSignUpTopic producer;
 
     @ApiOperation(value = "用户报名纳新", notes = "用户报名纳新", httpMethod = "POST")
     @PostMapping("/signUp")
@@ -64,10 +66,14 @@ public class JoinController {
             throw new PassportException(ReturnCode.INVALID_PARAM.code, "短信验证码错误");
         }
 
-        // 3. 设置对应信息 RPC 调用 join_admin
-        UserJoinDTO userJoinDTO = new UserJoinDTO();
-        BeanUtils.copyProperties(userJoinBO, userJoinDTO);
-        signUpService.createUserJoinInfo(userId, userJoinDTO);
+        // 3. 保存用户报名的信息
+        UserSignUpMsgDTO userSignUpMsgDTO = new UserSignUpMsgDTO();
+        BeanUtils.copyProperties(userJoinBO, userSignUpMsgDTO);
+        userSignUpMsgDTO.setUid(userId);
+
+        // 消息队列MQ流量削峰, 异步响应
+        log.info("send user sign up message");
+        producer.output().send(MessageBuilder.withPayload(userSignUpMsgDTO).build());
 
         return JSONResult.ok();
     }
