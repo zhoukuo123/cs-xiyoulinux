@@ -2,19 +2,23 @@ package com.xiyoulinux.joinadmin.controller;
 
 import com.xiyoulinux.enums.ReturnCode;
 import com.xiyoulinux.exception.business.InterviewException;
+import com.xiyoulinux.exception.business.SignUpException;
 import com.xiyoulinux.joinadmin.pojo.bo.InterviewEvaluationBO;
-import com.xiyoulinux.joinadmin.pojo.vo.InterviewEvaluationRecordVO;
+import com.xiyoulinux.joinadmin.pojo.dto.BatchDecisionDTO;
 import com.xiyoulinux.joinadmin.pojo.vo.InterviewRecordVO;
-import com.xiyoulinux.joinadmin.pojo.vo.IntervieweeInfoAndGradeVO;
 import com.xiyoulinux.joinadmin.pojo.vo.IntervieweeInfoVO;
 import com.xiyoulinux.joinadmin.service.InterviewService;
+import com.xiyoulinux.joinadmin.stream.BatchDecisionTopic;
 import com.xiyoulinux.pojo.JSONResult;
 import com.xiyoulinux.pojo.PagedGridResult;
+import com.xiyoulinux.search.service.SignUpEsService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiParam;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
@@ -33,6 +37,12 @@ public class InterviewController {
 
     @Autowired
     private InterviewService interviewService;
+
+    @Autowired
+    private SignUpEsService signUpEsService;
+
+    @Autowired
+    private BatchDecisionTopic producer;
 
     @ApiOperation(value = "开始面试(根据输入的学号), 修改join_queue, 是否开始面试是通过join_queue来判断的", notes = "开始面试(根据输入的学号)", httpMethod = "POST")
     @PostMapping("/startInterviewBySno")
@@ -163,6 +173,54 @@ public class InterviewController {
         interviewService.makeDecision(uid, round, pass);
 
         return JSONResult.ok();
+    }
+
+    @ApiOperation(value = "批量通过, 批量淘汰", notes = "批量通过, 批量淘汰", httpMethod = "POST")
+    @PostMapping("/batchDecision")
+    public JSONResult batchDecision(@RequestParam Integer round,
+                                    @RequestParam Integer grade,
+                                    @RequestParam boolean pass) {
+
+        List<String> uids = interviewService.queryBatchDecisionUid(round, grade);
+
+        if (uids != null) {
+            log.info("send batch decision message, decision is = {}", pass);
+
+            BatchDecisionDTO batchDecisionDTO = BatchDecisionDTO.builder().uids(uids).pass(pass).round(round).build();
+
+            producer.output().send(MessageBuilder.withPayload(batchDecisionDTO).build());
+        }
+
+        return JSONResult.ok();
+    }
+
+    @ApiOperation(value = "在面试结果中搜索某个学生", notes = "在面试结果中搜索某个学生", httpMethod = "POST")
+    @PostMapping("/es/searchFromInterviewResult")
+    public JSONResult searchFromInterviewResult(@RequestParam String keywords,
+                                                @RequestParam Integer round,
+                                                @RequestParam Integer status,
+                                                @ApiParam(name = "status2", value = "备用字段, 用于查询待定用户(包括未面试和已面试待决策), 在查询淘汰结果时, 不用传", required = false)
+                                                @RequestParam Integer status2,
+                                                @ApiParam(name = "page", value = "第几页", required = false)
+                                                @RequestParam(required = false) Integer page,
+                                                @ApiParam(name = "pageSize", value = "每一页显示的条数", required = false)
+                                                @RequestParam(required = false) Integer pageSize) throws SignUpException {
+
+        if (StringUtils.isBlank(keywords)) {
+            throw new SignUpException(ReturnCode.INVALID_PARAM.code, "搜索内容为空, 请重新输入");
+        }
+
+        if (page == null) {
+            page = 1;
+        }
+        if (pageSize == null) {
+            pageSize = COMMON_PAGE_SIZE;
+        }
+
+        // RPC 调用 cs-search
+        PagedGridResult grid = signUpEsService.searchFromInterviewResult(keywords, round, status, status2, page, pageSize);
+
+        return JSONResult.ok(grid);
     }
 
     @ApiOperation(value = "设置面试开始时间和截止时间", notes = "设置面试开始时间和截止时间", httpMethod = "POST")

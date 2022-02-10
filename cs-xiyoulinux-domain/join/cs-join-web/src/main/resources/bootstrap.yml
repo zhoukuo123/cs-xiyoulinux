@@ -23,11 +23,14 @@ dubbo:
   application:
     name: cs-join-service
   registry:
-    address: nacos://localhost:8848
+    address: spring-cloud://127.0.0.1
     # 启动时检查是否存在, 注册中心不存在就报错
     check: false
   protocol:
     name: dubbo
+    port: -1
+  cloud:
+    subscribed-services: cs-join-admin-service
   consumer:
     # 启动时检查服务提供者是否存在, 不存在就报错
     check: false

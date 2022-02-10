@@ -90,9 +90,14 @@ public interface InterviewService {
                                                                          Integer page, Integer pageSize);
 
     /**
-     * 决策 修改 round 和 status 在 join_info 和 join_queue 上
+     * 决策 修改 round 和 status 在 join_info, 删除 join_queue 上的记录
      */
     void makeDecision(String uid, Integer round, boolean pass);
+
+    /**
+     * 查询批量决策的用户uid
+     */
+    List<String> queryBatchDecisionUid(Integer round, Integer grade);
 
     /**
      * 设置面试 开始时间和截止时间
